@@ -1,0 +1,1 @@
+"""Operaciones locales sobre repositorios."""
