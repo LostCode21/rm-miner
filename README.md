@@ -1,36 +1,39 @@
 # rm-miner
 
-Esqueleto inicial para recuperar y clonar repositorios de una organizacion de GitHub. Esta version solo realiza listado paginado y clonacion; no ejecuta CodeQL ni genera informes.
+CLI para analizar con CodeQL los repositorios de una organizacion de GitHub y consolidar los hallazgos en JSON.
 
-## Configuracion
+## Requisitos
 
-Cree `.env` a partir de `.env.example` y defina la organizacion:
+- Linux, Python 3.10 o posterior, Git y CodeQL CLI disponibles en `PATH`.
+- Un token de GitHub en `GITHUB_TOKEN` para organizaciones privadas o para evitar limites bajos de la API. El token se usa solo para la API; Git debe tener configuradas sus propias credenciales HTTPS para clonar repositorios privados.
 
-```text
-GITHUB_ORGANIZATION=example-org
-GITHUB_TOKEN=
-```
-
-`GITHUB_TOKEN` es opcional para organizaciones publicas, pero se recomienda para evitar limites bajos de la API y es necesario para organizaciones privadas. No incluya el token en Git.
-
-## Uso
-
-Instale el paquete y sus dependencias de desarrollo:
+## Configuracion e instalacion
 
 ```bash
+cp .env.example .env
 python -m pip install -e '.[dev]'
 ```
 
-Clone todos los repositorios, ordenados por nombre:
+Defina el token en `.env` si lo necesita:
 
-```bash
-miner clone
+```text
+GITHUB_TOKEN=
 ```
 
-Limite la cantidad de repositorios o seleccione otro directorio de destino:
+No incluya tokens en Git, logs ni archivos de resultados.
+
+## Uso
 
 ```bash
-miner clone --limit 5 --workspace workspace
+miner scan --organization example-org --output results.json
 ```
 
-Cada clonacion se ejecuta de forma independiente. Si una falla, las restantes continuan.
+La herramienta obtiene y ordena todos los repositorios de la organizacion, detecta Python, JavaScript/TypeScript y Ruby, y analiza cada lenguaje compatible de forma independiente. Los repositorios y bases CodeQL se almacenan temporalmente y se eliminan al finalizar.
+
+El JSON incluye todos los repositorios, sus estados, lenguajes, hallazgos y un resumen global. Los fallos individuales no interrumpen el procesamiento, pero hacen que el comando termine con codigo 1.
+
+## Pruebas
+
+```bash
+python -m pytest
+```

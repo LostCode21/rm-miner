@@ -5,9 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "rm-miner"
 version = "0.1.0"
-description = "Clona repositorios de una organizacion de GitHub."
+description = "Analiza repositorios de una organizacion de GitHub con CodeQL."
 requires-python = ">=3.10"
-dependencies = ["requests>=2.31"]
+dependencies = ["pydantic>=2.0", "requests>=2.31", "typer>=0.12"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]

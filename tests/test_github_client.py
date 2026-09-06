@@ -32,3 +32,12 @@ def test_list_repositories_paginates_and_sorts(monkeypatch):
     repositories = client.list_repositories("example-org")
 
     assert [repository.name for repository in repositories] == ["Alpha", "archived", "zeta"]
+
+
+def test_list_languages_returns_stable_order(monkeypatch):
+    client = GitHubClient()
+    monkeypatch.setattr(client.session, "get", lambda *args, **kwargs: Response({"Ruby": 3, "Python": 4}))
+
+    languages = client.list_languages("example-org", "example-repo")
+
+    assert languages == ["Python", "Ruby"]

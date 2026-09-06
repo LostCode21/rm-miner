@@ -1,55 +1,39 @@
-"""Interfaz de linea de comandos del clonado inicial."""
+"""Interfaz de linea de comandos del miner."""
 
 from __future__ import annotations
 
-import argparse
 import os
 from pathlib import Path
+from typing import Annotated
 
-from miner.config import ConfigurationError, get_organization, load_dotenv
+import typer
+
+from miner.config import load_dotenv
 from miner.github.client import GitHubClient
-from miner.repository.cloner import RepositoryCloner
+from miner.scanner import OrganizationScanner
+
+app = typer.Typer(help="Analiza repositorios de una organizacion con CodeQL.")
 
 
-def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="miner")
-    commands = parser.add_subparsers(dest="command", required=True)
-    clone = commands.add_parser("clone", help="Clona los repositorios de la organizacion configurada.")
-    clone.add_argument("--limit", type=int, default=None, help="Maximo de repositorios a clonar.")
-    clone.add_argument("--workspace", type=Path, default=Path("workspace"), help="Directorio de destino.")
-    return parser
+@app.callback()
+def cli() -> None:
+    """Analiza repositorios de una organizacion con CodeQL."""
 
 
-def run_clone(limit: int | None, workspace: Path) -> int:
-    if limit is not None and limit < 1:
-        raise ValueError("--limit debe ser mayor que cero.")
-
+@app.command()
+def scan(
+    organization: Annotated[str, typer.Option("--organization", help="Organizacion de GitHub a analizar.")],
+    output: Annotated[Path, typer.Option("--output", help="Archivo JSON de salida.")],
+) -> None:
+    """Analiza todos los repositorios accesibles de una organizacion."""
     load_dotenv()
-    organization = get_organization()
-    repositories = GitHubClient(os.getenv("GITHUB_TOKEN")).list_repositories(organization)
-    if limit is not None:
-        repositories = repositories[:limit]
-
-    workspace.mkdir(parents=True, exist_ok=True)
-    print(f"Organizacion: {organization}. Repositorios a clonar: {len(repositories)}")
-    cloner = RepositoryCloner()
-    failures = 0
-    for index, repository in enumerate(repositories, start=1):
-        print(f"[{index}/{len(repositories)}] Clonando {repository.name}...", end=" ", flush=True)
-        result = cloner.clone(repository, workspace)
-        if result.success:
-            print("OK")
-        else:
-            failures += 1
-            print(f"ERROR: {result.error}")
-
-    print(f"Finalizado. Exitosos: {len(repositories) - failures}. Fallidos: {failures}.")
-    return 1 if failures else 0
+    result = OrganizationScanner(GitHubClient(os.getenv("GITHUB_TOKEN"))).scan(organization, typer.echo)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(result.model_dump_json(indent=2) + "\n", encoding="utf-8")
+    typer.echo(f"Finalizado. Resultados guardados en {output}.")
+    if result.summary.failed_repositories:
+        raise typer.Exit(1)
 
 
 def main() -> None:
-    args = build_parser().parse_args()
-    try:
-        raise SystemExit(run_clone(args.limit, args.workspace))
-    except (ConfigurationError, ValueError) as error:
-        raise SystemExit(f"Error: {error}")
+    app()

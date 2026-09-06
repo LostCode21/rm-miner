@@ -1,8 +1,10 @@
 Metadata-Version: 2.4
 Name: rm-miner
 Version: 0.1.0
-Summary: Clona repositorios de una organizacion de GitHub.
+Summary: Analiza repositorios de una organizacion de GitHub con CodeQL.
 Requires-Python: >=3.10
+Requires-Dist: pydantic>=2.0
 Requires-Dist: requests>=2.31
+Requires-Dist: typer>=0.12
 Provides-Extra: dev
 Requires-Dist: pytest>=8.0; extra == "dev"

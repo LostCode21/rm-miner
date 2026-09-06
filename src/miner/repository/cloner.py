@@ -22,12 +22,15 @@ class RepositoryCloner:
         if destination.exists():
             return CloneResult(repository.name, False, f"El destino ya existe: {destination}")
 
-        result = subprocess.run(
-            ["git", "clone", "--depth", "1", repository.clone_url, str(destination)],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        try:
+            result = subprocess.run(
+                ["git", "clone", "--depth", "1", repository.clone_url, str(destination)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        except OSError as error:
+            return CloneResult(repository.name, False, str(error))
         if result.returncode == 0:
             return CloneResult(repository.name, True)
 
