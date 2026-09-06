@@ -6,7 +6,7 @@
 # User-specific files
 *.rsuser
 .opencode/*
-AGENTS.md
+*AGENTS.md
 *.suo
 *.user
 *.userosscache

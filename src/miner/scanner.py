@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 from miner.codeql.runner import CodeQLRunner
 from miner.github.client import GitHubClient, Repository
@@ -27,14 +26,21 @@ class OrganizationScanner:
         self.cloner = cloner or RepositoryCloner()
         self.codeql = codeql or CodeQLRunner()
 
-    def scan(self, organization: str, progress: Progress | None = None) -> OrganizationResult:
+    def scan(
+        self,
+        organization: str,
+        workspace: Path,
+        progress: Progress | None = None,
+        limit: int | None = None,
+    ) -> OrganizationResult:
         report = progress or (lambda _: None)
+        report(f"Obteniendo repositorios de {organization}")
         repositories = self.client.list_repositories(organization)
+        if limit is not None:
+            repositories = repositories[:limit]
         results: list[RepositoryResult] = []
-        with TemporaryDirectory(prefix="rm-miner-") as temporary_directory:
-            workspace = Path(temporary_directory)
-            for index, repository in enumerate(repositories, start=1):
-                results.append(self._scan_repository(organization, repository, workspace, index, len(repositories), report))
+        for index, repository in enumerate(repositories, start=1):
+            results.append(self._scan_repository(organization, repository, workspace, index, len(repositories), report))
         return OrganizationResult(
             organization=organization,
             repositories=results,
@@ -77,7 +83,7 @@ class OrganizationScanner:
         findings = []
         errors: list[tuple[str, str]] = []
         for target in targets:
-            report(f"[{index}/{total}] {repository.name}: analizando {target.name}")
+            report(f"[{index}/{total}] {repository.name}: analizando con CodeQL ({target.name})")
             result = self.codeql.analyze(
                 workspace / repository.name,
                 target.codeql_name,
