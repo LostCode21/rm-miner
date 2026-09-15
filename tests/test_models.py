@@ -1,4 +1,4 @@
-from miner.models import Finding, RepositoryResult, build_summary
+from miner.models import Finding, RepositoryResult, SbomResult, build_sbom_summary, build_summary
 
 
 def test_build_summary_counts_statuses_and_findings():
@@ -16,3 +16,18 @@ def test_build_summary_counts_statuses_and_findings():
     assert summary.failed_repositories == 2
     assert summary.unsupported_repositories == 1
     assert summary.total_findings == 1
+
+
+def test_build_sbom_summary_distinguishes_empty_and_failed_results():
+    repositories = [
+        SbomResult(full_name="org/generated", generated_at="2026-01-01T00:00:00Z", status="generated", component_count=2),
+        SbomResult(full_name="org/empty", generated_at="2026-01-01T00:00:00Z", status="empty"),
+        SbomResult(full_name="org/failed", generated_at="2026-01-01T00:00:00Z", status="failed"),
+    ]
+
+    summary = build_sbom_summary("org", repositories)
+
+    assert summary.generated_repositories == 1
+    assert summary.empty_repositories == 1
+    assert summary.failed_repositories == 1
+    assert summary.total_components == 2

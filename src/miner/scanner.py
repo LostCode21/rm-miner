@@ -11,6 +11,7 @@ from miner.language.detector import supported_languages
 from miner.models import OrganizationResult, RepositoryResult, build_summary
 from miner.repository.cloner import RepositoryCloner
 from miner.sarif.parser import parse_sarif
+from miner.sbom.generator import SyftRunner
 
 Progress = Callable[[str], None]
 
@@ -21,10 +22,12 @@ class OrganizationScanner:
         client: GitHubClient,
         cloner: RepositoryCloner | None = None,
         codeql: CodeQLRunner | None = None,
+        syft: SyftRunner | None = None,
     ) -> None:
         self.client = client
         self.cloner = cloner or RepositoryCloner()
         self.codeql = codeql or CodeQLRunner()
+        self.syft = syft or SyftRunner()
 
     def scan(
         self,
@@ -32,6 +35,7 @@ class OrganizationScanner:
         workspace: Path,
         progress: Progress | None = None,
         limit: int | None = None,
+        sbom_output_dir: Path | None = None,
     ) -> OrganizationResult:
         report = progress or (lambda _: None)
         report(f"Obteniendo repositorios de {organization}")
@@ -40,7 +44,17 @@ class OrganizationScanner:
             repositories = repositories[:limit]
         results: list[RepositoryResult] = []
         for index, repository in enumerate(repositories, start=1):
-            results.append(self._scan_repository(organization, repository, workspace, index, len(repositories), report))
+            results.append(
+                self._scan_repository(
+                    organization,
+                    repository,
+                    workspace,
+                    sbom_output_dir or workspace / "sboms",
+                    index,
+                    len(repositories),
+                    report,
+                )
+            )
         return OrganizationResult(
             organization=organization,
             repositories=results,
@@ -52,33 +66,37 @@ class OrganizationScanner:
         organization: str,
         repository: Repository,
         workspace: Path,
+        sbom_output_dir: Path,
         index: int,
         total: int,
         report: Progress,
     ) -> RepositoryResult:
+        report(f"[{index}/{total}] {repository.name}: clonando")
+        clone = self.cloner.clone(repository, workspace)
+        if not clone.success:
+            report(f"[{index}/{total}] {repository.name}: ERROR: {clone.error}")
+            return RepositoryResult(name=repository.name, status="clone_failed", error=clone.error)
+
+        report(f"[{index}/{total}] {repository.name}: generando SBOM")
+        sbom = self.syft.generate(
+            f"{organization}/{repository.name}",
+            workspace / repository.name,
+            sbom_output_dir / f"{repository.name}.cdx.json",
+        )
+        if sbom.status == "failed":
+            report(f"[{index}/{total}] {repository.name}: ERROR SBOM: {sbom.error}")
+
         report(f"[{index}/{total}] {repository.name}: detectando lenguajes")
         try:
             languages = self.client.list_languages(organization, repository.name)
         except Exception as error:
             report(f"[{index}/{total}] {repository.name}: ERROR: {error}")
-            return RepositoryResult(name=repository.name, status="analysis_failed", error=str(error))
+            return RepositoryResult(name=repository.name, status="analysis_failed", error=str(error), sbom=sbom)
 
         targets = supported_languages(languages)
         if not targets:
             report(f"[{index}/{total}] {repository.name}: no soportado")
-            return RepositoryResult(name=repository.name, status="unsupported", languages=languages)
-
-        report(f"[{index}/{total}] {repository.name}: clonando")
-        clone = self.cloner.clone(repository, workspace)
-        if not clone.success:
-            report(f"[{index}/{total}] {repository.name}: ERROR: {clone.error}")
-            return RepositoryResult(
-                name=repository.name,
-                status="clone_failed",
-                languages=languages,
-                analyzed_languages=[target.name for target in targets],
-                error=clone.error,
-            )
+            return RepositoryResult(name=repository.name, status="unsupported", languages=languages, sbom=sbom)
 
         findings = []
         errors: list[tuple[str, str]] = []
@@ -108,6 +126,7 @@ class OrganizationScanner:
                 analyzed_languages=[target.name for target in targets],
                 findings=sorted(findings, key=lambda finding: (finding.file or "", finding.start_line or 0, finding.rule_id)),
                 error="; ".join(error for _, error in errors),
+                sbom=sbom,
             )
 
         report(f"[{index}/{total}] {repository.name}: analizado")
@@ -117,4 +136,5 @@ class OrganizationScanner:
             languages=languages,
             analyzed_languages=[target.name for target in targets],
             findings=sorted(findings, key=lambda finding: (finding.file or "", finding.start_line or 0, finding.rule_id)),
+            sbom=sbom,
         )

@@ -3,6 +3,7 @@ from pathlib import Path
 
 from miner.codeql.runner import CodeQLResult
 from miner.github.client import Repository
+from miner.models import SbomResult
 from miner.repository.cloner import CloneResult
 from miner.scanner import OrganizationScanner
 
@@ -28,6 +29,19 @@ class Runner:
         return CodeQLResult(True, sarif_path=self.sarif_path)
 
 
+class Syft:
+    def generate(self, full_name, source, output):
+        return SbomResult(
+            full_name=full_name,
+            commit="commit",
+            generated_at="2026-01-01T00:00:00Z",
+            syft_version="1.0.0",
+            status="generated",
+            component_count=1,
+            path=str(output),
+        )
+
+
 def test_scanner_returns_consolidated_analyzed_result(tmp_path):
     sarif = tmp_path / "result.sarif"
     sarif.write_text(
@@ -35,13 +49,15 @@ def test_scanner_returns_consolidated_analyzed_result(tmp_path):
         encoding="utf-8",
     )
 
-    result = OrganizationScanner(Client(), Cloner(), Runner(sarif)).scan("example-org", tmp_path / "temp_repos")
+    result = OrganizationScanner(Client(), Cloner(), Runner(sarif), Syft()).scan("example-org", tmp_path / "temp_repos")
 
     assert result.summary.total_repositories == 1
     assert result.summary.total_findings == 1
     assert result.repositories[0].status == "analyzed"
     assert result.repositories[0].languages == ["Go", "Python"]
     assert result.repositories[0].analyzed_languages == ["Python"]
+    assert result.repositories[0].sbom is not None
+    assert result.repositories[0].sbom.status == "generated"
 
 
 def test_scanner_limits_processed_repositories(tmp_path):
@@ -55,7 +71,7 @@ def test_scanner_limits_processed_repositories(tmp_path):
                 Repository("repo-2", "https://example/repo-2.git"),
             ]
 
-    result = OrganizationScanner(MultipleRepositoriesClient(), Cloner(), Runner(sarif)).scan(
+    result = OrganizationScanner(MultipleRepositoriesClient(), Cloner(), Runner(sarif), Syft()).scan(
         "example-org", tmp_path / "temp_repos", limit=1
     )
 

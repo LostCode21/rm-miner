@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, Field
@@ -15,6 +16,7 @@ RepositoryStatus = Literal[
     "database_creation_failed",
     "analysis_failed",
 ]
+SbomStatus = Literal["generated", "empty", "failed"]
 
 
 class Finding(BaseModel):
@@ -26,6 +28,17 @@ class Finding(BaseModel):
     language: str
 
 
+class SbomResult(BaseModel):
+    full_name: str
+    commit: str | None = None
+    generated_at: datetime
+    syft_version: str | None = None
+    status: SbomStatus
+    component_count: int = 0
+    path: str | None = None
+    error: str | None = None
+
+
 class RepositoryResult(BaseModel):
     name: str
     status: RepositoryStatus
@@ -33,6 +46,7 @@ class RepositoryResult(BaseModel):
     analyzed_languages: list[str] = Field(default_factory=list)
     findings: list[Finding] = Field(default_factory=list)
     error: str | None = None
+    sbom: SbomResult | None = None
 
 
 class Summary(BaseModel):
@@ -50,6 +64,21 @@ class OrganizationResult(BaseModel):
     summary: Summary
 
 
+class SbomSummary(BaseModel):
+    organization: str
+    total_repositories: int
+    generated_repositories: int
+    empty_repositories: int
+    failed_repositories: int
+    total_components: int
+
+
+class OrganizationSbomResult(BaseModel):
+    organization: str
+    repositories: list[SbomResult]
+    summary: SbomSummary
+
+
 def build_summary(organization: str, repositories: list[RepositoryResult]) -> Summary:
     statuses = Counter(repository.status for repository in repositories)
     return Summary(
@@ -62,4 +91,16 @@ def build_summary(organization: str, repositories: list[RepositoryResult]) -> Su
         ),
         unsupported_repositories=statuses["unsupported"],
         total_findings=sum(len(repository.findings) for repository in repositories),
+    )
+
+
+def build_sbom_summary(organization: str, repositories: list[SbomResult]) -> SbomSummary:
+    statuses = Counter(repository.status for repository in repositories)
+    return SbomSummary(
+        organization=organization,
+        total_repositories=len(repositories),
+        generated_repositories=statuses["generated"],
+        empty_repositories=statuses["empty"],
+        failed_repositories=statuses["failed"],
+        total_components=sum(repository.component_count for repository in repositories),
     )
