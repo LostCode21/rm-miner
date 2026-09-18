@@ -6,7 +6,6 @@
 # User-specific files
 *.rsuser
 .opencode/*
-*AGENTS.md
 *.suo
 *.user
 *.userosscache
@@ -19,6 +18,9 @@
 workspace/
 __pycache__/
 *.pyc
+results.json
+results-sboms/
+
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
