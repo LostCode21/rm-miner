@@ -17,17 +17,28 @@ class CloneResult:
 
 
 class RepositoryCloner:
+    def __init__(self, timeout: float = 600) -> None:
+        self.timeout = timeout
+
     def clone(self, repository: Repository, workspace: Path) -> CloneResult:
         destination = workspace / repository.name
         if destination.exists():
-            return CloneResult(repository.name, False, f"El destino ya existe: {destination}")
+            if (destination / ".git").exists():
+                return CloneResult(repository.name, True)
+            return CloneResult(repository.name, False, f"El destino existe y no es un repositorio Git: {destination}")
 
-        result = subprocess.run(
-            ["git", "clone", "--depth", "1", repository.clone_url, str(destination)],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        try:
+            result = subprocess.run(
+                ["git", "clone", "--depth", "1", repository.clone_url, str(destination)],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=self.timeout,
+            )
+        except subprocess.TimeoutExpired:
+            return CloneResult(repository.name, False, f"git clone excedio el limite de {self.timeout} segundos.")
+        except OSError as error:
+            return CloneResult(repository.name, False, str(error))
         if result.returncode == 0:
             return CloneResult(repository.name, True)
 

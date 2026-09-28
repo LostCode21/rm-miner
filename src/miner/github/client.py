@@ -36,3 +36,11 @@ class GitHubClient:
             params = None
 
         return sorted(repositories, key=lambda repository: repository.name.casefold())
+
+    def list_languages(self, organization: str, repository: str) -> list[str]:
+        response = self.session.get(
+            f"https://api.github.com/repos/{organization}/{repository}/languages",
+            timeout=30,
+        )
+        response.raise_for_status()
+        return sorted(response.json(), key=str.casefold)
