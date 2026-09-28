@@ -11,6 +11,9 @@ from miner.models import SbomResult
 
 
 class SyftRunner:
+    def __init__(self, timeout: float = 600) -> None:
+        self.timeout = timeout
+
     def generate(self, full_name: str, source: Path, output: Path) -> SbomResult:
         generated_at = datetime.now(timezone.utc)
         commit = self._commit(source)
@@ -21,6 +24,15 @@ class SyftRunner:
                 capture_output=True,
                 text=True,
                 check=False,
+                timeout=self.timeout,
+            )
+        except subprocess.TimeoutExpired:
+            return SbomResult(
+                full_name=full_name,
+                commit=commit,
+                generated_at=generated_at,
+                status="failed",
+                error=f"Syft excedio el limite de {self.timeout} segundos.",
             )
         except OSError as error:
             return SbomResult(
@@ -76,27 +88,30 @@ class SyftRunner:
             path=str(output),
         )
 
-    @staticmethod
-    def _commit(source: Path) -> str | None:
+    def _commit(self, source: Path) -> str | None:
         try:
             result = subprocess.run(
                 ["git", "-C", str(source), "rev-parse", "HEAD"],
                 capture_output=True,
                 text=True,
                 check=False,
+                timeout=self.timeout,
             )
-        except OSError:
+        except (OSError, subprocess.TimeoutExpired):
             return None
         return result.stdout.strip() if result.returncode == 0 else None
 
-    @staticmethod
-    def _version() -> str | None:
-        result = subprocess.run(
-            ["syft", "version", "-o", "json"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+    def _version(self) -> str | None:
+        try:
+            result = subprocess.run(
+                ["syft", "version", "-o", "json"],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=self.timeout,
+            )
+        except (OSError, subprocess.TimeoutExpired):
+            return None
         if result.returncode != 0:
             return None
         try:

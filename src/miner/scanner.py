@@ -36,6 +36,7 @@ class OrganizationScanner:
         progress: Progress | None = None,
         limit: int | None = None,
         sbom_output_dir: Path | None = None,
+        codeql_workspace: Path | None = None,
     ) -> OrganizationResult:
         report = progress or (lambda _: None)
         report(f"Obteniendo repositorios de {organization}")
@@ -50,6 +51,7 @@ class OrganizationScanner:
                     repository,
                     workspace,
                     sbom_output_dir or workspace / "sboms",
+                    codeql_workspace or workspace / ".codeql",
                     index,
                     len(repositories),
                     report,
@@ -67,6 +69,7 @@ class OrganizationScanner:
         repository: Repository,
         workspace: Path,
         sbom_output_dir: Path,
+        codeql_workspace: Path,
         index: int,
         total: int,
         report: Progress,
@@ -105,7 +108,7 @@ class OrganizationScanner:
             result = self.codeql.analyze(
                 workspace / repository.name,
                 target.codeql_name,
-                workspace / ".codeql" / repository.name,
+                codeql_workspace / repository.name,
             )
             if not result.success:
                 errors.append((result.stage or "analysis_failed", result.error or "Error desconocido."))
@@ -115,7 +118,11 @@ class OrganizationScanner:
                 errors.append(("analysis_failed", "CodeQL no genero un archivo SARIF."))
                 report(f"[{index}/{total}] {repository.name}: ERROR: {errors[-1][1]}")
                 continue
-            findings.extend(parse_sarif(result.sarif_path, target.name))
+            try:
+                findings.extend(parse_sarif(result.sarif_path, target.name))
+            except (OSError, ValueError) as error:
+                errors.append(("analysis_failed", f"No se pudo leer el SARIF: {error}"))
+                report(f"[{index}/{total}] {repository.name}: ERROR: {errors[-1][1]}")
 
         if errors:
             status = "database_creation_failed" if any(stage == "database_creation_failed" for stage, _ in errors) else "analysis_failed"

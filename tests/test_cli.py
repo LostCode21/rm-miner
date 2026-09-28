@@ -20,24 +20,29 @@ def test_scan_writes_consolidated_json(monkeypatch, tmp_path):
             total_repositories=0,
             analyzed_repositories=0,
             failed_repositories=0,
+            sbom_failed_repositories=0,
             unsupported_repositories=0,
             total_findings=0,
         ),
     )
-    temporary_directories = []
+    workspaces = []
+    codeql_workspaces = []
 
     class Scanner:
         def __init__(self, client):
             pass
 
-        def scan(self, organization, workspace, progress, limit, sbom_output_dir):
+        def scan(self, organization, workspace, progress, limit, sbom_output_dir, codeql_workspace):
             assert limit == 1
-            assert workspace.name.startswith("temp_repos-")
+            assert workspace == tmp_path / ".miner-work"
             workspace.joinpath("repo").mkdir()
-            temporary_directories.append(workspace)
+            codeql_workspace.joinpath("database").mkdir()
+            workspaces.append(workspace)
+            codeql_workspaces.append(codeql_workspace)
             return expected
 
     monkeypatch.setattr("miner.cli.OrganizationScanner", Scanner)
+    monkeypatch.chdir(tmp_path)
     output = tmp_path / "results.json"
 
     result = CliRunner().invoke(
@@ -48,9 +53,9 @@ def test_scan_writes_consolidated_json(monkeypatch, tmp_path):
     assert result.exit_code == 0
     assert output.exists()
     assert '"organization": "example-org"' in output.read_text(encoding="utf-8")
-    assert not temporary_directories[0].exists()
+    assert workspaces[0].joinpath("repo").is_dir()
+    assert not codeql_workspaces[0].exists()
     assert "Generando archivo JSON..." in result.output
-    assert "Limpiando repositorios temporales..." in result.output
 
 
 def test_sbom_writes_consolidated_json(monkeypatch, tmp_path):

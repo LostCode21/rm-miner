@@ -14,8 +14,24 @@ def test_build_summary_counts_statuses_and_findings():
     assert summary.total_repositories == 4
     assert summary.analyzed_repositories == 1
     assert summary.failed_repositories == 2
+    assert summary.sbom_failed_repositories == 0
     assert summary.unsupported_repositories == 1
     assert summary.total_findings == 1
+
+
+def test_build_summary_counts_sbom_failures_separately():
+    repositories = [
+        RepositoryResult(
+            name="sbom",
+            status="analyzed",
+            sbom=SbomResult(full_name="org/sbom", generated_at="2026-01-01T00:00:00Z", status="failed"),
+        )
+    ]
+
+    summary = build_summary("org", repositories)
+
+    assert summary.failed_repositories == 0
+    assert summary.sbom_failed_repositories == 1
 
 
 def test_build_sbom_summary_distinguishes_empty_and_failed_results():

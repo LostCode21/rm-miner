@@ -77,3 +77,26 @@ def test_scanner_limits_processed_repositories(tmp_path):
 
     assert result.summary.total_repositories == 1
     assert [repository.name for repository in result.repositories] == ["repo-1"]
+
+
+def test_scanner_continues_after_invalid_sarif(tmp_path):
+    invalid_sarif = tmp_path / "invalid.sarif"
+    invalid_sarif.write_text("not json", encoding="utf-8")
+    valid_sarif = tmp_path / "valid.sarif"
+    valid_sarif.write_text(json.dumps({"runs": []}), encoding="utf-8")
+
+    class MultipleRepositoriesClient(Client):
+        def list_repositories(self, organization):
+            return [
+                Repository("invalid", "https://example/invalid.git"),
+                Repository("valid", "https://example/valid.git"),
+            ]
+
+    class MultipleRunner:
+        def analyze(self, source, language, workdir):
+            return CodeQLResult(True, sarif_path=invalid_sarif if source.name == "invalid" else valid_sarif)
+
+    result = OrganizationScanner(MultipleRepositoriesClient(), Cloner(), MultipleRunner(), Syft()).scan("example-org", tmp_path)
+
+    assert [repository.status for repository in result.repositories] == ["analysis_failed", "analyzed"]
+    assert result.summary.failed_repositories == 1

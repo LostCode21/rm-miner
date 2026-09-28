@@ -39,9 +39,9 @@ No incluya tokens en Git, logs ni archivos de resultados.
 miner scan --organization example-org --output results.json
 ```
 
-La herramienta obtiene y ordena todos los repositorios de la organizacion, genera un SBOM CycloneDX JSON para cada clon y analiza con CodeQL cada lenguaje compatible (Python, JavaScript/TypeScript y Ruby). Los SBOMs se guardan en `results-sboms/`, junto al archivo indicado mediante `--output`; los repositorios y bases CodeQL temporales se eliminan al finalizar.
+La herramienta obtiene y ordena todos los repositorios de la organizacion, genera un SBOM CycloneDX JSON para cada clon y analiza con CodeQL cada lenguaje compatible (Python, JavaScript/TypeScript y Ruby). Los clones se guardan en `.miner-work/` relativo al directorio desde el que se ejecuta el comando y se reutilizan en ejecuciones posteriores. Para usar otra ubicacion, indique `--workspace /ruta/a/repositorios`. Los SBOMs se guardan en `results-sboms/`, junto al archivo indicado mediante `--output`; las bases CodeQL temporales se eliminan al finalizar.
 
-El JSON incluye todos los repositorios, sus estados, lenguajes, hallazgos y los metadatos del SBOM: nombre completo, commit, fecha de generacion, version de Syft, estado, cantidad de componentes y ruta al archivo CycloneDX. Los SBOMs originales permanecen como archivos independientes. Los estados `generated`, `empty` y `failed` distinguen respectivamente una generacion con componentes, una generacion valida sin componentes y un error. Los fallos individuales no interrumpen el procesamiento, pero hacen que el comando termine con codigo 1.
+El JSON incluye todos los repositorios, sus estados, lenguajes, hallazgos y los metadatos del SBOM: nombre completo, commit, fecha de generacion, version de Syft, estado, cantidad de componentes y ruta al archivo CycloneDX. El resumen informa por separado los fallos de clonacion/analisis y los de SBOM. Los SBOMs originales permanecen como archivos independientes. Los estados `generated`, `empty` y `failed` distinguen respectivamente una generacion con componentes, una generacion valida sin componentes y un error. Los fallos individuales no interrumpen el procesamiento, pero hacen que el comando termine con codigo 1.
 
 ### Generar SBOMs desde clones existentes
 

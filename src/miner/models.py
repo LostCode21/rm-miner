@@ -54,6 +54,7 @@ class Summary(BaseModel):
     total_repositories: int
     analyzed_repositories: int
     failed_repositories: int
+    sbom_failed_repositories: int
     unsupported_repositories: int
     total_findings: int
 
@@ -89,6 +90,7 @@ def build_summary(organization: str, repositories: list[RepositoryResult]) -> Su
             statuses[status]
             for status in ("clone_failed", "database_creation_failed", "analysis_failed")
         ),
+        sbom_failed_repositories=sum(repository.sbom is not None and repository.sbom.status == "failed" for repository in repositories),
         unsupported_repositories=statuses["unsupported"],
         total_findings=sum(len(repository.findings) for repository in repositories),
     )

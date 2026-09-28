@@ -22,6 +22,9 @@ class CodeQLRunner:
         "ruby": "codeql/ruby-queries:codeql-suites/ruby-security-and-quality.qls",
     }
 
+    def __init__(self, timeout: float = 600) -> None:
+        self.timeout = timeout
+
     def analyze(self, source: Path, language: str, workdir: Path) -> CodeQLResult:
         workdir.mkdir(parents=True, exist_ok=True)
         database = workdir / f"database-{language}"
@@ -54,10 +57,11 @@ class CodeQLRunner:
             return CodeQLResult(False, "analysis_failed", error=self._error(analysis))
         return CodeQLResult(True, sarif_path=sarif_path)
 
-    @staticmethod
-    def _run(command: list[str]) -> subprocess.CompletedProcess[str]:
+    def _run(self, command: list[str]) -> subprocess.CompletedProcess[str]:
         try:
-            return subprocess.run(command, capture_output=True, text=True, check=False)
+            return subprocess.run(command, capture_output=True, text=True, check=False, timeout=self.timeout)
+        except subprocess.TimeoutExpired:
+            return subprocess.CompletedProcess(command, 1, "", f"CodeQL excedio el limite de {self.timeout} segundos.")
         except OSError as error:
             return subprocess.CompletedProcess(command, 1, "", str(error))
 

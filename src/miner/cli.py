@@ -26,6 +26,10 @@ def cli() -> None:
 def scan(
     organization: Annotated[str, typer.Option("--organization", help="Organizacion de GitHub a analizar.")],
     output: Annotated[Path, typer.Option("--output", help="Archivo JSON de salida.")],
+    workspace: Annotated[
+        Path,
+        typer.Option("--workspace", help="Directorio persistente para los repositorios clonados."),
+    ] = Path(".miner-work"),
     limit: Annotated[
         int | None,
         typer.Option("--limit", min=1, help="Cantidad maxima de repositorios a procesar."),
@@ -34,22 +38,22 @@ def scan(
     """Analiza todos los repositorios accesibles de una organizacion."""
     load_dotenv()
     sbom_output_dir = output.parent / f"{output.stem}-sboms"
-    with TemporaryDirectory(prefix="temp_repos-") as temporary_directory:
+    workspace = workspace.resolve()
+    workspace.mkdir(parents=True, exist_ok=True)
+    with TemporaryDirectory(prefix="miner-codeql-") as codeql_workspace:
         result = OrganizationScanner(GitHubClient(os.getenv("GITHUB_TOKEN"))).scan(
             organization,
-            Path(temporary_directory),
+            workspace,
             typer.echo,
             limit=limit,
             sbom_output_dir=sbom_output_dir,
+            codeql_workspace=Path(codeql_workspace),
         )
         typer.echo("Generando archivo JSON...")
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(result.model_dump_json(indent=2) + "\n", encoding="utf-8")
-        typer.echo("Limpiando repositorios temporales...")
     typer.echo(f"Finalizado. Resultados guardados en {output}.")
-    if result.summary.failed_repositories or any(
-        repository.sbom is not None and repository.sbom.status == "failed" for repository in result.repositories
-    ):
+    if result.summary.failed_repositories or result.summary.sbom_failed_repositories:
         raise typer.Exit(1)
 
 
