@@ -7,8 +7,16 @@ from pathlib import Path
 
 from miner.codeql.runner import CodeQLRunner
 from miner.github.client import GitHubClient, Repository
+from miner.grype.runner import GrypeRunner
 from miner.language.detector import supported_languages
-from miner.models import OrganizationResult, RepositoryResult, build_summary
+from miner.models import (
+    GrypeResult,
+    OrganizationResult,
+    RepositoryResult,
+    SbomResult,
+    build_findings,
+    build_summary,
+)
 from miner.repository.cloner import RepositoryCloner
 from miner.sarif.parser import parse_sarif
 from miner.sbom.generator import SyftRunner
@@ -23,11 +31,13 @@ class OrganizationScanner:
         cloner: RepositoryCloner | None = None,
         codeql: CodeQLRunner | None = None,
         syft: SyftRunner | None = None,
+        grype: GrypeRunner | None = None,
     ) -> None:
         self.client = client
         self.cloner = cloner or RepositoryCloner()
         self.codeql = codeql or CodeQLRunner()
         self.syft = syft or SyftRunner()
+        self.grype = grype or GrypeRunner()
 
     def scan(
         self,
@@ -60,6 +70,7 @@ class OrganizationScanner:
         return OrganizationResult(
             organization=organization,
             repositories=results,
+            findings=build_findings(organization, results),
             summary=build_summary(organization, results),
         )
 
@@ -89,17 +100,26 @@ class OrganizationScanner:
         if sbom.status == "failed":
             report(f"[{index}/{total}] {repository.name}: ERROR SBOM: {sbom.error}")
 
+        report(f"[{index}/{total}] {repository.name}: analizando dependencias con Grype")
+        grype = self._analyze_dependencies(sbom)
+        if grype.status == "failed":
+            report(f"[{index}/{total}] {repository.name}: ERROR Grype: {grype.error}")
+
         report(f"[{index}/{total}] {repository.name}: detectando lenguajes")
         try:
             languages = self.client.list_languages(organization, repository.name)
         except Exception as error:
             report(f"[{index}/{total}] {repository.name}: ERROR: {error}")
-            return RepositoryResult(name=repository.name, status="analysis_failed", error=str(error), sbom=sbom)
+            return RepositoryResult(
+                name=repository.name, status="analysis_failed", error=str(error), sbom=sbom, grype=grype
+            )
 
         targets = supported_languages(languages)
         if not targets:
             report(f"[{index}/{total}] {repository.name}: no soportado")
-            return RepositoryResult(name=repository.name, status="unsupported", languages=languages, sbom=sbom)
+            return RepositoryResult(
+                name=repository.name, status="unsupported", languages=languages, sbom=sbom, grype=grype
+            )
 
         findings = []
         errors: list[tuple[str, str]] = []
@@ -134,6 +154,7 @@ class OrganizationScanner:
                 findings=sorted(findings, key=lambda finding: (finding.file or "", finding.start_line or 0, finding.rule_id)),
                 error="; ".join(error for _, error in errors),
                 sbom=sbom,
+                grype=grype,
             )
 
         report(f"[{index}/{total}] {repository.name}: analizado")
@@ -144,4 +165,13 @@ class OrganizationScanner:
             analyzed_languages=[target.name for target in targets],
             findings=sorted(findings, key=lambda finding: (finding.file or "", finding.start_line or 0, finding.rule_id)),
             sbom=sbom,
+            grype=grype,
         )
+
+    def _analyze_dependencies(self, sbom: SbomResult) -> GrypeResult:
+        if sbom.status == "failed" or not sbom.path:
+            return GrypeResult(status="skipped", error="SBOM no disponible para analizar con Grype.")
+        path = Path(sbom.path)
+        if not path.is_file():
+            return GrypeResult(status="skipped", error=f"No se encontro el SBOM: {path}")
+        return self.grype.scan(path)

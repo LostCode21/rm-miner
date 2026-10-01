@@ -1,4 +1,13 @@
-from miner.models import Finding, RepositoryResult, SbomResult, build_sbom_summary, build_summary
+from miner.models import (
+    Finding,
+    GrypeResult,
+    RepositoryResult,
+    SbomResult,
+    Vulnerability,
+    build_findings,
+    build_sbom_summary,
+    build_summary,
+)
 
 
 def test_build_summary_counts_statuses_and_findings():
@@ -32,6 +41,72 @@ def test_build_summary_counts_sbom_failures_separately():
 
     assert summary.failed_repositories == 0
     assert summary.sbom_failed_repositories == 1
+
+
+def test_build_summary_counts_grype_failures_and_vulnerabilities():
+    repositories = [
+        RepositoryResult(
+            name="analyzed",
+            status="analyzed",
+            grype=GrypeResult(status="analyzed", vulnerability_count=2),
+        ),
+        RepositoryResult(
+            name="failed",
+            status="analyzed",
+            grype=GrypeResult(status="failed"),
+        ),
+    ]
+
+    summary = build_summary("org", repositories)
+
+    assert summary.grype_failed_repositories == 1
+    assert summary.total_vulnerabilities == 2
+
+
+def test_build_findings_relates_each_result_to_its_repository():
+    repositories = [
+        RepositoryResult(
+            name="repo",
+            status="analyzed",
+            findings=[
+                Finding(
+                    rule_id="js/xss",
+                    severity="warning",
+                    message="unsafe html",
+                    file="src/app.js",
+                    start_line=3,
+                    language="JavaScript",
+                )
+            ],
+            grype=GrypeResult(
+                status="analyzed",
+                vulnerability_count=1,
+                vulnerabilities=[
+                    Vulnerability(
+                        id="CVE-2021-1234",
+                        severity="High",
+                        package="requests",
+                        version="2.0.0",
+                        location="requirements.txt",
+                    )
+                ],
+            ),
+        )
+    ]
+
+    records = build_findings("example-org", repositories)
+
+    assert [record.tool for record in records] == ["codeql", "grype"]
+    assert {record.repository for record in records} == {"example-org/repo"}
+    codeql = records[0]
+    assert codeql.vulnerability_type == "js/xss"
+    assert codeql.severity == "warning"
+    assert codeql.location == "src/app.js"
+    assert codeql.line == 3
+    grype = records[1]
+    assert grype.vulnerability_type == "CVE-2021-1234"
+    assert grype.package == "requests"
+    assert grype.location == "requirements.txt"
 
 
 def test_build_sbom_summary_distinguishes_empty_and_failed_results():

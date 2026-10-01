@@ -1,10 +1,10 @@
 # rm-miner
 
-CLI para analizar con CodeQL los repositorios de una organizacion de GitHub, generar sus SBOMs con Syft y consolidar los resultados en JSON.
+CLI para analizar con CodeQL los repositorios de una organizacion de GitHub, generar sus SBOMs con Syft, detectar vulnerabilidades en las dependencias con Grype y consolidar los resultados en JSON.
 
 ## Requisitos
 
-- Linux, Python 3.10 o posterior, Git, CodeQL CLI y [Syft](https://github.com/anchore/syft) disponibles en `PATH`.
+- Linux, Python 3.10 o posterior, Git, CodeQL CLI, [Syft](https://github.com/anchore/syft) y [Grype](https://github.com/anchore/grype) disponibles en `PATH`.
 - Un token de GitHub en `GITHUB_TOKEN` para organizaciones privadas o para evitar limites bajos de la API. El token se usa solo para la API; Git debe tener configuradas sus propias credenciales HTTPS para clonar repositorios privados.
 
 ### Instalar Syft
@@ -17,6 +17,17 @@ syft version
 ```
 
 Consulte las [alternativas oficiales de instalacion](https://oss.anchore.com/docs/installation/) para Homebrew, Docker, Scoop, Chocolatey y Nix. El comando debe poder ejecutarse simplemente como `syft`; de lo contrario, `miner` registra ese repositorio con estado `failed` y continúa con los demas.
+
+### Instalar Grype
+
+Grype comparte el instalador de Anchore y tambien se instala en `/usr/local/bin`:
+
+```bash
+curl -sSfL https://get.anchore.io/grype | sudo sh -s -- -b /usr/local/bin
+grype version
+```
+
+Grype analiza el SBOM CycloneDX generado por Syft, por lo que no vuelve a inspeccionar el codigo fuente. Si el comando `grype` no esta disponible, el SBOM se conserva y el repositorio queda registrado con un error de Grype sin interrumpir el resto del procesamiento.
 
 ## Configuracion e instalacion
 
@@ -39,9 +50,27 @@ No incluya tokens en Git, logs ni archivos de resultados.
 miner scan --organization example-org --output results.json
 ```
 
-La herramienta obtiene y ordena todos los repositorios de la organizacion, genera un SBOM CycloneDX JSON para cada clon y analiza con CodeQL cada lenguaje compatible (Python, JavaScript/TypeScript y Ruby). Los clones se guardan en `.miner-work/` relativo al directorio desde el que se ejecuta el comando y se reutilizan en ejecuciones posteriores. Para usar otra ubicacion, indique `--workspace /ruta/a/repositorios`. Los SBOMs se guardan en `results-sboms/`, junto al archivo indicado mediante `--output`; las bases CodeQL temporales se eliminan al finalizar.
+La herramienta procesa sistematicamente cada repositorio de la organizacion: lo clona, genera un SBOM CycloneDX JSON con Syft, analiza el SBOM con Grype y ejecuta CodeQL sobre cada lenguaje compatible (Python, JavaScript/TypeScript y Ruby). Los clones se guardan en `.miner-work/` relativo al directorio desde el que se ejecuta el comando y se reutilizan en ejecuciones posteriores. Para usar otra ubicacion, indique `--workspace /ruta/a/repositorios`. Los SBOMs se guardan en `results-sboms/`, junto al archivo indicado mediante `--output`; las bases CodeQL temporales se eliminan al finalizar.
 
-El JSON incluye todos los repositorios, sus estados, lenguajes, hallazgos y los metadatos del SBOM: nombre completo, commit, fecha de generacion, version de Syft, estado, cantidad de componentes y ruta al archivo CycloneDX. El resumen informa por separado los fallos de clonacion/analisis y los de SBOM. Los SBOMs originales permanecen como archivos independientes. Los estados `generated`, `empty` y `failed` distinguen respectivamente una generacion con componentes, una generacion valida sin componentes y un error. Los fallos individuales no interrumpen el procesamiento, pero hacen que el comando termine con codigo 1.
+`--limit` acota la cantidad de repositorios procesados y por defecto es 50. El valor debe estar entre 1 y 50; si la organizacion tiene menos repositorios, se procesan los disponibles sin fallar.
+
+El JSON incluye todos los repositorios, sus estados, lenguajes, hallazgos de CodeQL, vulnerabilidades de Grype y los metadatos del SBOM: nombre completo, commit, fecha de generacion, version de Syft, estado, cantidad de componentes y ruta al archivo CycloneDX. El resumen informa por separado los fallos de clonacion/analisis, los de SBOM y los de Grype, ademas del total de vulnerabilidades. Los SBOMs originales permanecen como archivos independientes. Los estados `generated`, `empty` y `failed` distinguen respectivamente una generacion con componentes, una generacion valida sin componentes y un error. Los fallos individuales no interrumpen el procesamiento, pero hacen que el comando termine con codigo 1.
+
+### Dataset consolidado de hallazgos
+
+Ademas de los resultados por repositorio, el JSON de `scan` incluye en su raiz el arreglo `findings`. Cada entrada es un hallazgo normalizado que relaciona el resultado con su repositorio de origen y puede consumirse sin transformaciones manuales. Sus atributos son:
+
+- `repository`: nombre completo del repositorio de origen (`organizacion/repositorio`).
+- `tool`: herramienta que detecto el hallazgo (`codeql` o `grype`).
+- `vulnerability_type`: tipo de vulnerabilidad; el identificador de la consulta CodeQL o el identificador de la vulnerabilidad de Grype (por ejemplo, `CVE-2021-1234`).
+- `severity`: severidad reportada cuando esta disponible.
+- `location`: ubicacion del hallazgo; archivo en CodeQL o ruta del artefacto en Grype.
+- `line`: linea del archivo cuando aplica (solo CodeQL).
+- `package`, `version`, `fixed_version`, `artifact_type`: datos del paquete afectado (solo Grype).
+- `language`: lenguaje analizado (solo CodeQL).
+- `message`: descripcion del hallazgo.
+
+Los registros se ordenan de forma estable por repositorio, herramienta y ubicacion, de modo que dos ejecuciones sobre el mismo estado producen el mismo orden. Los hallazgos por repositorio siguen disponibles en `repositories[].findings` y `repositories[].grype`.
 
 ### Generar SBOMs desde clones existentes
 

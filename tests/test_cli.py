@@ -100,3 +100,13 @@ def test_scan_rejects_non_positive_limit(tmp_path):
 
     assert result.exit_code != 0
     assert "Invalid value" in result.output
+
+
+def test_scan_rejects_limit_above_fifty(tmp_path):
+    result = CliRunner().invoke(
+        app,
+        ["scan", "--organization", "example-org", "--output", str(tmp_path / "results.json"), "--limit", "51"],
+    )
+
+    assert result.exit_code != 0
+    assert "Invalid value" in result.output

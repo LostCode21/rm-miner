@@ -31,9 +31,9 @@ def scan(
         typer.Option("--workspace", help="Directorio persistente para los repositorios clonados."),
     ] = Path(".miner-work"),
     limit: Annotated[
-        int | None,
-        typer.Option("--limit", min=1, help="Cantidad maxima de repositorios a procesar."),
-    ] = None,
+        int,
+        typer.Option("--limit", min=1, max=50, help="Cantidad maxima de repositorios a procesar (1-50)."),
+    ] = 50,
 ) -> None:
     """Analiza todos los repositorios accesibles de una organizacion."""
     load_dotenv()
@@ -53,7 +53,11 @@ def scan(
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(result.model_dump_json(indent=2) + "\n", encoding="utf-8")
     typer.echo(f"Finalizado. Resultados guardados en {output}.")
-    if result.summary.failed_repositories or result.summary.sbom_failed_repositories:
+    if (
+        result.summary.failed_repositories
+        or result.summary.sbom_failed_repositories
+        or result.summary.grype_failed_repositories
+    ):
         raise typer.Exit(1)
 
 
