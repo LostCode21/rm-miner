@@ -122,6 +122,26 @@ def test_scanner_skips_grype_when_sbom_is_unavailable(tmp_path):
     assert result.repositories[0].grype.status == "skipped"
     assert result.summary.total_vulnerabilities == 0
     assert result.summary.grype_failed_repositories == 0
+    assert result.summary.grype_skipped_repositories == 1
+
+
+class FailingGrype:
+    def scan(self, sbom_path):
+        return GrypeResult(status="failed", error="grype boom")
+
+
+def test_scanner_reports_grype_failures_in_summary(tmp_path):
+    sarif = tmp_path / "result.sarif"
+    sarif.write_text(json.dumps({"runs": []}), encoding="utf-8")
+
+    result = OrganizationScanner(Client(), Cloner(), Runner(sarif), WritingSyft(), FailingGrype()).scan(
+        "example-org", tmp_path / "temp_repos"
+    )
+
+    assert result.repositories[0].grype is not None
+    assert result.repositories[0].grype.status == "failed"
+    assert result.summary.grype_failed_repositories == 1
+    assert result.summary.total_vulnerabilities == 0
 
 
 def test_scanner_limits_processed_repositories(tmp_path):

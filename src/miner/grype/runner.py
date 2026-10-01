@@ -31,23 +31,27 @@ class GrypeRunner:
         except OSError as error:
             return GrypeResult(status="failed", error=str(error))
 
-        if result.returncode != 0:
-            return GrypeResult(
-                status="failed",
-                version=version,
-                error=result.stderr.strip() or "Grype fallo sin mensajes de error.",
-            )
-
+        # Grype puede salir con un codigo distinto de cero (p. ej. --fail-on o GRYPE_FAIL_ON_SEVERITY)
+        # emitiendo igualmente el documento JSON completo, por lo que se intenta parsear primero.
         try:
             document = json.loads(result.stdout)
         except json.JSONDecodeError as error:
-            return GrypeResult(
-                status="failed",
-                version=version,
-                error=f"Grype no genero JSON valido: {error}",
-            )
+            message = result.stderr.strip() or f"Grype no genero JSON valido: {error}"
+            return GrypeResult(status="failed", version=version, error=message)
 
-        vulnerabilities = [_to_vulnerability(match) for match in document.get("matches", [])]
+        if "matches" not in document:
+            message = result.stderr.strip() or "Grype no genero un documento de resultados valido."
+            return GrypeResult(status="failed", version=version, error=message)
+
+        vulnerabilities = sorted(
+            (_to_vulnerability(match) for match in document.get("matches", [])),
+            key=lambda vulnerability: (
+                vulnerability.id,
+                vulnerability.package,
+                vulnerability.version or "",
+                vulnerability.location or "",
+            ),
+        )
         return GrypeResult(
             status="analyzed",
             version=version,

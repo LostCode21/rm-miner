@@ -48,7 +48,14 @@ def test_build_summary_counts_grype_failures_and_vulnerabilities():
         RepositoryResult(
             name="analyzed",
             status="analyzed",
-            grype=GrypeResult(status="analyzed", vulnerability_count=2),
+            grype=GrypeResult(
+                status="analyzed",
+                vulnerability_count=2,
+                vulnerabilities=[
+                    Vulnerability(id="CVE-1", package="a"),
+                    Vulnerability(id="CVE-2", package="b"),
+                ],
+            ),
         ),
         RepositoryResult(
             name="failed",
@@ -61,6 +68,31 @@ def test_build_summary_counts_grype_failures_and_vulnerabilities():
 
     assert summary.grype_failed_repositories == 1
     assert summary.total_vulnerabilities == 2
+
+
+def test_build_summary_total_findings_matches_the_flat_dataset():
+    repositories = [
+        RepositoryResult(
+            name="repo",
+            status="analyzed",
+            findings=[Finding(rule_id="r", message="m", language="Python")],
+            grype=GrypeResult(
+                status="analyzed",
+                vulnerability_count=2,
+                vulnerabilities=[
+                    Vulnerability(id="CVE-1", package="a"),
+                    Vulnerability(id="CVE-2", package="b"),
+                ],
+            ),
+        ),
+        RepositoryResult(name="skipped", status="analyzed", grype=GrypeResult(status="skipped")),
+    ]
+
+    summary = build_summary("org", repositories)
+
+    assert summary.total_findings == 3
+    assert summary.total_findings == len(build_findings("org", repositories))
+    assert summary.grype_skipped_repositories == 1
 
 
 def test_build_findings_relates_each_result_to_its_repository():

@@ -100,6 +100,7 @@ class Summary(BaseModel):
     unsupported_repositories: int
     total_findings: int
     grype_failed_repositories: int = 0
+    grype_skipped_repositories: int = 0
     total_vulnerabilities: int = 0
 
 
@@ -137,10 +138,15 @@ def build_summary(organization: str, repositories: list[RepositoryResult]) -> Su
         ),
         sbom_failed_repositories=sum(repository.sbom is not None and repository.sbom.status == "failed" for repository in repositories),
         unsupported_repositories=statuses["unsupported"],
-        total_findings=sum(len(repository.findings) for repository in repositories),
+        total_findings=sum(
+            len(repository.findings)
+            + (len(repository.grype.vulnerabilities) if repository.grype is not None else 0)
+            for repository in repositories
+        ),
         grype_failed_repositories=sum(repository.grype is not None and repository.grype.status == "failed" for repository in repositories),
+        grype_skipped_repositories=sum(repository.grype is not None and repository.grype.status == "skipped" for repository in repositories),
         total_vulnerabilities=sum(
-            repository.grype.vulnerability_count for repository in repositories if repository.grype is not None
+            len(repository.grype.vulnerabilities) for repository in repositories if repository.grype is not None
         ),
     )
 
