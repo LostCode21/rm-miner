@@ -1,0 +1,16 @@
+repository,security_findings,percentage,cumulative_percentage
+codemod,40,47.06,47.06
+body-parser,12,14.12,61.18
+express,5,5.88,67.06
+connect-markdown,4,4.71,71.77
+multer,4,4.71,76.48
+perf-wg,4,4.71,81.19
+urlrouter,4,4.71,85.9
+session,3,3.53,89.43
+connect-multiparty,2,2.35,91.78
+domain-middleware,2,2.35,94.13
+badgeboard,1,1.18,95.31
+cors,1,1.18,96.49
+expressjs.com,1,1.18,97.67
+method-override,1,1.18,98.85
+vhost,1,1.18,100.03

@@ -1,0 +1,322 @@
+repository,rule_id,severity,message,file,start_line,language,category
+badgeboard,js/prototype-pollution-utility,warning,Properties are copied from [stuff](1) to [obj](2) without guarding against prototype pollution.,scripts/config.js,83,JavaScript,security
+badgeboard,js/unused-local-variable,note,Unused function getUserInfo.,scripts/make-db.js,62,JavaScript,code_quality
+badgeboard,js/conditional-comment,warning,Do not use conditional comments.,static/sorttable.js,19,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable the is used like a local variable, but is missing a declaration.",static/sorttable.js,46,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable sortbottomrows is used like a local variable, but is missing a declaration.",static/sorttable.js,59,JavaScript,code_quality
+badgeboard,js/deletion-of-non-property,warning,Only properties should be deleted.,static/sorttable.js,74,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable headrow is used like a local variable, but is missing a declaration.",static/sorttable.js,78,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable mtch is used like a local variable, but is missing a declaration.",static/sorttable.js,82,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable sortrevind is used like a local variable, but is missing a declaration.",static/sorttable.js,101,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable sortfwdind is used like a local variable, but is missing a declaration.",static/sorttable.js,114,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable theadrow is used like a local variable, but is missing a declaration.",static/sorttable.js,122,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable row_array is used like a local variable, but is missing a declaration.",static/sorttable.js,144,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable col is used like a local variable, but is missing a declaration.",static/sorttable.js,145,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable rows is used like a local variable, but is missing a declaration.",static/sorttable.js,146,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable tb is used like a local variable, but is missing a declaration.",static/sorttable.js,155,JavaScript,code_quality
+badgeboard,js/deletion-of-non-property,warning,Only properties should be deleted.,static/sorttable.js,160,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable sortfn is used like a local variable, but is missing a declaration.",static/sorttable.js,168,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable text is used like a local variable, but is missing a declaration.",static/sorttable.js,170,JavaScript,code_quality
+badgeboard,js/regex/duplicate-in-character-class,warning,Character '�' is [repeated in the same character class](1).,static/sorttable.js,172,JavaScript,code_quality
+badgeboard,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing function](1) have an explicit semicolon).,static/sorttable.js,178,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable possdate is used like a local variable, but is missing a declaration.",static/sorttable.js,178,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable first is used like a local variable, but is missing a declaration.",static/sorttable.js,181,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable second is used like a local variable, but is missing a declaration.",static/sorttable.js,182,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable hasInputs is used like a local variable, but is missing a declaration.",static/sorttable.js,208,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable newrows is used like a local variable, but is missing a declaration.",static/sorttable.js,248,JavaScript,code_quality
+badgeboard,js/deletion-of-non-property,warning,Only properties should be deleted.,static/sorttable.js,255,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable aa is used like a local variable, but is missing a declaration.",static/sorttable.js,262,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable bb is used like a local variable, but is missing a declaration.",static/sorttable.js,264,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable mtch is used like a local variable, but is missing a declaration.",static/sorttable.js,274,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable y is used like a local variable, but is missing a declaration.",static/sorttable.js,275,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable m is used like a local variable, but is missing a declaration.",static/sorttable.js,275,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable d is used like a local variable, but is missing a declaration.",static/sorttable.js,275,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable dt1 is used like a local variable, but is missing a declaration.",static/sorttable.js,278,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable dt2 is used like a local variable, but is missing a declaration.",static/sorttable.js,283,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable mtch is used like a local variable, but is missing a declaration.",static/sorttable.js,289,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable y is used like a local variable, but is missing a declaration.",static/sorttable.js,290,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable d is used like a local variable, but is missing a declaration.",static/sorttable.js,290,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable m is used like a local variable, but is missing a declaration.",static/sorttable.js,290,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable dt1 is used like a local variable, but is missing a declaration.",static/sorttable.js,293,JavaScript,code_quality
+badgeboard,js/missing-variable-declaration,warning,"Variable dt2 is used like a local variable, but is missing a declaration.",static/sorttable.js,298,JavaScript,code_quality
+badgeboard,js/trivial-conditional,warning,This use of variable 'swap' always evaluates to true.,static/sorttable.js,312,JavaScript,code_quality
+badgeboard,js/conditional-comment,warning,Do not use conditional comments.,static/sorttable.js,348,JavaScript,code_quality
+body-parser,js/log-injection,error,Log entry depends on a [user-provided value](1).,lib/read.js,63,JavaScript,security
+body-parser,js/log-injection,error,Log entry depends on a [user-provided value](1).,lib/read.js,193,JavaScript,security
+body-parser,js/superfluous-trailing-arguments,warning,Superfluous argument passed to [function onfinished](1).,lib/read.js,251,JavaScript,code_quality
+body-parser,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,test/json.js,775,JavaScript,security
+body-parser,js/xss-through-exception,warning,[Exception text](1) is reinterpreted as HTML without escaping meta-characters.,test/json.js,775,JavaScript,security
+body-parser,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/json.js,780,JavaScript,security
+body-parser,js/xss-through-exception,warning,[Exception text](1) is reinterpreted as HTML without escaping meta-characters.,test/raw.js,512,JavaScript,security
+body-parser,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/raw.js,517,JavaScript,security
+body-parser,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/raw.js,521,JavaScript,security
+body-parser,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/text.js,581,JavaScript,security
+body-parser,js/xss-through-exception,warning,[Exception text](1) is reinterpreted as HTML without escaping meta-characters.,test/text.js,581,JavaScript,security
+body-parser,js/xss-through-exception,warning,[Exception text](1) is reinterpreted as HTML without escaping meta-characters.,test/urlencoded.js,981,JavaScript,security
+body-parser,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/urlencoded.js,984,JavaScript,security
+codemod,js/log-injection,error,"Log entry depends on a [user-provided value](1).
+Log entry depends on a [user-provided value](2).",codemods/camelcase-sendfile/tests/expected/send-file.ts,20,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/expected/send-file.ts,25,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/expected/send-file.ts,29,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/expected/send-file.ts,33,TypeScript,security
+codemod,js/log-injection,error,Log entry depends on a [user-provided value](1).,codemods/camelcase-sendfile/tests/expected/send-file.ts,40,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/expected/send-file.ts,46,TypeScript,security
+codemod,js/log-injection,error,Log entry depends on a [user-provided value](1).,codemods/camelcase-sendfile/tests/expected/send-file.ts,53,TypeScript,security
+codemod,js/log-injection,error,"Log entry depends on a [user-provided value](1).
+Log entry depends on a [user-provided value](2).",codemods/camelcase-sendfile/tests/input/send-file.ts,20,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/input/send-file.ts,25,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/input/send-file.ts,29,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/input/send-file.ts,33,TypeScript,security
+codemod,js/log-injection,error,Log entry depends on a [user-provided value](1).,codemods/camelcase-sendfile/tests/input/send-file.ts,40,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/input/send-file.ts,46,TypeScript,security
+codemod,js/log-injection,error,Log entry depends on a [user-provided value](1).,codemods/camelcase-sendfile/tests/input/send-file.ts,53,TypeScript,security
+codemod,js/unused-local-variable,note,Unused variable reqBody.,codemods/explicit-request-params/tests/expected/params.ts,6,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQuery.,codemods/explicit-request-params/tests/expected/params.ts,7,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQueryTest.,codemods/explicit-request-params/tests/expected/params.ts,8,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOther.,codemods/explicit-request-params/tests/expected/params.ts,9,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOtherNested.,codemods/explicit-request-params/tests/expected/params.ts,10,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqBody.,codemods/explicit-request-params/tests/expected/params.ts,14,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQuery.,codemods/explicit-request-params/tests/expected/params.ts,15,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQueryTest.,codemods/explicit-request-params/tests/expected/params.ts,16,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOther.,codemods/explicit-request-params/tests/expected/params.ts,17,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOtherNested.,codemods/explicit-request-params/tests/expected/params.ts,18,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqBody.,codemods/explicit-request-params/tests/expected/params.ts,22,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQuery.,codemods/explicit-request-params/tests/expected/params.ts,23,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQueryTest.,codemods/explicit-request-params/tests/expected/params.ts,24,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOther.,codemods/explicit-request-params/tests/expected/params.ts,25,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOtherNested.,codemods/explicit-request-params/tests/expected/params.ts,26,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqBody.,codemods/explicit-request-params/tests/expected/params.ts,30,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQuery.,codemods/explicit-request-params/tests/expected/params.ts,31,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQueryTest.,codemods/explicit-request-params/tests/expected/params.ts,32,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOther.,codemods/explicit-request-params/tests/expected/params.ts,33,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOtherNested.,codemods/explicit-request-params/tests/expected/params.ts,34,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqBody.,codemods/explicit-request-params/tests/input/params.ts,6,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQuery.,codemods/explicit-request-params/tests/input/params.ts,7,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQueryTest.,codemods/explicit-request-params/tests/input/params.ts,8,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOther.,codemods/explicit-request-params/tests/input/params.ts,9,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOtherNested.,codemods/explicit-request-params/tests/input/params.ts,10,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqBody.,codemods/explicit-request-params/tests/input/params.ts,14,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQuery.,codemods/explicit-request-params/tests/input/params.ts,15,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQueryTest.,codemods/explicit-request-params/tests/input/params.ts,16,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOther.,codemods/explicit-request-params/tests/input/params.ts,17,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOtherNested.,codemods/explicit-request-params/tests/input/params.ts,18,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqBody.,codemods/explicit-request-params/tests/input/params.ts,22,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQuery.,codemods/explicit-request-params/tests/input/params.ts,23,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQueryTest.,codemods/explicit-request-params/tests/input/params.ts,24,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOther.,codemods/explicit-request-params/tests/input/params.ts,25,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOtherNested.,codemods/explicit-request-params/tests/input/params.ts,26,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqBody.,codemods/explicit-request-params/tests/input/params.ts,30,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQuery.,codemods/explicit-request-params/tests/input/params.ts,31,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqQueryTest.,codemods/explicit-request-params/tests/input/params.ts,32,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOther.,codemods/explicit-request-params/tests/input/params.ts,33,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable reqOtherNested.,codemods/explicit-request-params/tests/input/params.ts,34,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused function noModify.,codemods/route-del-to-delete/tests/expected/delete.ts,31,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused function noModify.,codemods/route-del-to-delete/tests/input/delete.ts,31,TypeScript,code_quality
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/handlers.ts,4,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/handlers.ts,14,TypeScript,security
+codemod,js/unused-local-variable,note,Unused function handler.,codemods/sendfile-options/tests/expected/handlers.ts,18,TypeScript,code_quality
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,6,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,10,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,14,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,18,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,22,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,26,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,30,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,34,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,38,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,44,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,48,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/handlers.ts,4,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/handlers.ts,13,TypeScript,security
+codemod,js/unused-local-variable,note,Unused function handler.,codemods/sendfile-options/tests/input/handlers.ts,17,TypeScript,code_quality
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,6,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,10,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,14,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,18,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,22,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,26,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,30,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,34,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,38,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,44,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,48,TypeScript,security
+codemod,js/unused-local-variable,note,Unused import staticExpress.,codemods/static-mime/tests/expected/aliases.ts,1,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused import expressNS.,codemods/static-mime/tests/expected/aliases.ts,3,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused import express.,codemods/static-mime/tests/expected/collision-exhausted.ts,1,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable mime.,codemods/static-mime/tests/expected/collision-exhausted.ts,4,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable mimeTypes.,codemods/static-mime/tests/expected/collision-exhausted.ts,5,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable mimeTypesLib.,codemods/static-mime/tests/expected/collision-exhausted.ts,6,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable type.,codemods/static-mime/tests/expected/collision-exhausted.ts,8,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused import express.,codemods/static-mime/tests/expected/collision-lib.ts,1,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable mime.,codemods/static-mime/tests/expected/collision-lib.ts,4,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable mimeTypes.,codemods/static-mime/tests/expected/collision-lib.ts,5,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable type.,codemods/static-mime/tests/expected/collision-lib.ts,7,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused import express.,codemods/static-mime/tests/expected/collision.ts,1,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable express.,codemods/static-mime/tests/expected/commonjs.ts,1,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused import express.,codemods/static-mime/tests/expected/existing-import.ts,1,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused import express.,codemods/static-mime/tests/expected/existing-namespace.ts,1,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable jsonType.,codemods/static-mime/tests/expected/existing-namespace.ts,4,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable express.,codemods/static-mime/tests/expected/existing-require.ts,1,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable jsonType.,codemods/static-mime/tests/expected/existing-require.ts,4,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused import express.,codemods/static-mime/tests/expected/maps.ts,1,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable types.,codemods/static-mime/tests/expected/maps.ts,4,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable extensions.,codemods/static-mime/tests/expected/maps.ts,6,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable jsonType.,codemods/static-mime/tests/expected/maps.ts,8,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused import express.,codemods/static-mime/tests/expected/static.ts,1,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable jsonType.,codemods/static-mime/tests/expected/static.ts,4,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable charset.,codemods/static-mime/tests/expected/static.ts,6,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable ext.,codemods/static-mime/tests/expected/static.ts,8,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable fallback.,codemods/static-mime/tests/expected/static.ts,14,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable mime.,codemods/static-mime/tests/input/collision-exhausted.ts,3,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable mimeTypes.,codemods/static-mime/tests/input/collision-exhausted.ts,4,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable mimeTypesLib.,codemods/static-mime/tests/input/collision-exhausted.ts,5,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable type.,codemods/static-mime/tests/input/collision-exhausted.ts,7,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable mime.,codemods/static-mime/tests/input/collision-lib.ts,3,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable mimeTypes.,codemods/static-mime/tests/input/collision-lib.ts,4,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable type.,codemods/static-mime/tests/input/collision-lib.ts,6,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable jsonType.,codemods/static-mime/tests/input/existing-namespace.ts,4,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable jsonType.,codemods/static-mime/tests/input/existing-require.ts,4,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable types.,codemods/static-mime/tests/input/maps.ts,3,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable extensions.,codemods/static-mime/tests/input/maps.ts,5,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable jsonType.,codemods/static-mime/tests/input/maps.ts,7,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable jsonType.,codemods/static-mime/tests/input/static.ts,3,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable charset.,codemods/static-mime/tests/input/static.ts,5,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable ext.,codemods/static-mime/tests/input/static.ts,7,TypeScript,code_quality
+codemod,js/unused-local-variable,note,Unused variable fallback.,codemods/static-mime/tests/input/static.ts,13,TypeScript,code_quality
+connect-markdown,js/functionality-from-untrusted-domain,error,Content loaded from untrusted domain with no integrity check.,example/docs/layout.html,14,JavaScript,security
+connect-markdown,js/functionality-from-untrusted-domain,error,Content loaded from untrusted domain with no integrity check.,example/docs/layout.html,16,JavaScript,security
+connect-markdown,js/functionality-from-untrusted-domain,error,Content loaded from untrusted domain with no integrity check.,example/docs/layout.html,19,JavaScript,security
+connect-markdown,js/path-injection,error,This path depends on a [user-provided value](1).,lib/connect-markdown.js,33,JavaScript,security
+connect-markdown,js/unused-local-variable,note,Unused variable should.,test/connect-markdown.test.js,13,JavaScript,code_quality
+connect-multiparty,js/remote-property-injection,warning,"A property name to write to depends on a [user-provided value](1).
+A property name to write to depends on a [user-provided value](2).",index.js,72,JavaScript,security
+connect-multiparty,js/remote-property-injection,warning,"A property name to write to depends on a [user-provided value](1).
+A property name to write to depends on a [user-provided value](2).",index.js,74,JavaScript,security
+connect-rid,js/unused-local-variable,note,Unused variable should.,test/connect-rid.test.js,17,JavaScript,code_quality
+cors,js/cors-permissive-configuration,warning,"CORS Origin allows broad access due to [permissive or user controlled value](1).
+CORS Origin allows broad access due to [permissive or user controlled value](2).
+CORS Origin allows broad access due to [permissive or user controlled value](3).",lib/index.js,223,JavaScript,security
+domain-middleware,js/log-injection,error,Log entry depends on a [user-provided value](1).,lib/domain.js,38,JavaScript,security
+domain-middleware,js/unused-local-variable,note,Unused variable should.,test/domain.test.js,17,JavaScript,code_quality
+domain-middleware,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/domain.test.js,52,JavaScript,security
+express,js/clear-text-cookie,warning,Sensitive cookie sent without enforcing SSL encryption.,examples/auth/index.js,22,JavaScript,security
+express,js/clear-text-logging,error,This logs sensitive data returned by [an access to password](1) as clear text.,examples/auth/index.js,61,JavaScript,security
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (91% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/ejs/index.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (92% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/markdown/index.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/mvc/db.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/mvc/index.js,1,JavaScript,code_quality
+express,js/clear-text-cookie,warning,Sensitive cookie sent without enforcing SSL encryption.,examples/mvc/index.js,40,JavaScript,security
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/mvc/index.js,47,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (97% of all statements in [the enclosing function](1) have an explicit semicolon).,examples/mvc/lib/boot.js,15,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/online/index.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/resource/index.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/route-middleware/index.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (92% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/route-separation/index.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (92% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/route-separation/index.js,31,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/search/index.js,1,JavaScript,code_quality
+express,js/clear-text-cookie,warning,Sensitive cookie sent without enforcing SSL encryption.,examples/session/index.js,16,JavaScript,security
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/session/redis.js,1,JavaScript,code_quality
+express,js/clear-text-cookie,warning,Sensitive cookie sent without enforcing SSL encryption.,examples/session/redis.js,20,JavaScript,security
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (93% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/static-files/index.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (93% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/vhost/index.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (91% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/view-constructor/index.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (91% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/view-locals/index.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/view-locals/user.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (93% of all statements in [the enclosing script](1) have an explicit semicolon).,examples/web-service/index.js,1,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (93% of all statements in [the enclosing script](1) have an explicit semicolon).,lib/application.js,25,JavaScript,code_quality
+express,js/useless-assignment-to-local,warning,The value assigned to exports here is unused.,lib/application.js,40,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (94% of all statements in [the enclosing function](1) have an explicit semicolon).,lib/application.js,97,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing function](1) have an explicit semicolon).,lib/application.js,213,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (94% of all statements in [the enclosing function](1) have an explicit semicolon).,lib/application.js,561,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (93% of all statements in [the enclosing script](1) have an explicit semicolon).,lib/application.js,606,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (93% of all statements in [the enclosing script](1) have an explicit semicolon).,lib/request.js,30,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (93% of all statements in [the enclosing script](1) have an explicit semicolon).,lib/request.js,37,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (92% of all statements in [the enclosing function](1) have an explicit semicolon).,lib/response.js,387,JavaScript,code_quality
+express,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing function](1) have an explicit semicolon).,test/Router.js,605,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable expose.,examples/app.js,9,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable url.,examples/app.js,11,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable expose.,examples/require.js,9,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable url.,examples/require.js,11,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable basename.,lib/express-expose.js,12,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable extname.,lib/express-expose.js,13,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable fs.,lib/express-expose.js,14,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable len.,lib/express-expose.js,138,JavaScript,code_quality
+express-expose,js/useless-assignment-to-local,warning,The value assigned to exports here is unused.,lib/express-expose.js,187,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable assert.,test/express-expose.test.js,8,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable should.,test/express-expose.test.js,9,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable err.,test/express-expose.test.js,92,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable bar.,test/express-expose.test.js,97,JavaScript,code_quality
+express-expose,js/unused-local-variable,note,Unused variable err.,test/express-expose.test.js,127,JavaScript,code_quality
+express-namespace,js/unused-local-variable,note,Unused variable assert.,test/namespace.test.js,7,JavaScript,code_quality
+express-namespace,js/unused-local-variable,note,Unused variable namespace.,test/namespace.test.js,9,JavaScript,code_quality
+express-namespace,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing function](1) have an explicit semicolon).,test/namespace.test.js,60,JavaScript,code_quality
+express-paginate,js/unused-local-variable,note,Unused variable util.,index.js,16,JavaScript,code_quality
+express-paginate,js/node/assignment-to-exports-variable,warning,Assigning to 'exports' does not export anything.,index.js,18,JavaScript,code_quality
+express-paginate,js/useless-assignment-to-local,warning,The value assigned to prev here is unused.,index.js,28,JavaScript,code_quality
+express-paginate,js/useless-assignment-to-property,warning,"This write to property 'page' is useless, since [another property write](1) always overrides it.",index.js,32,JavaScript,code_quality
+express-paginate,js/useless-assignment-to-property,warning,"This write to property 'page' is useless, since [another property write](1) always overrides it.",index.js,32,JavaScript,code_quality
+express-paginate,js/unused-local-variable,note,Unused variable maxPage.,index.js,57,JavaScript,code_quality
+express-paginate,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing script](1) have an explicit semicolon).,index.js,88,JavaScript,code_quality
+expressjs.com,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",scripts/orama-documents.mjs,18,TypeScript,security
+generator,js/regex/missing-regexp-anchor,warning,"Misleading operator precedence. The subexpression 'true$' is anchored at the end, but the other parts of this regular expression are not
+Misleading operator precedence. The subexpression '^y' is anchored at the beginning, but the other parts of this regular expression are not",bin/express-cli.js,56,JavaScript,code_quality
+method-override,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/test.js,192,JavaScript,security
+morgan,js/unneeded-defensive-code,note,This guard always evaluates to false.,index.js,61,JavaScript,code_quality
+multer,js/type-confusion-through-parameter-tampering,error,Potential type confusion as [this HTTP request parameter](1) may be either an array or a string.,lib/file-appender.js,2,JavaScript,security
+multer,js/type-confusion-through-parameter-tampering,error,Potential type confusion as [this HTTP request parameter](1) may be either an array or a string.,test/async-file-filter-file-size.js,55,JavaScript,security
+multer,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",test/orphan-before-path-assignment.js,51,JavaScript,security
+multer,js/path-injection,error,This path depends on a [user-provided value](1).,test/orphan-before-path-assignment.js,55,JavaScript,security
+perf-wg,js/trivial-conditional,warning,This expression always evaluates to true.,dashboards/index.html,503,JavaScript,code_quality
+perf-wg,js/unused-local-variable,note,Unused variable isSame.,dashboards/index.html,572,JavaScript,code_quality
+perf-wg,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (92% of all statements in [the enclosing function](1) have an explicit semicolon).,packages/autocannon/spawn.mjs,98,JavaScript,code_quality
+perf-wg,js/unused-local-variable,note,Unused import access.,packages/cli/test/load.test.mjs,3,JavaScript,code_quality
+perf-wg,js/useless-expression,warning,This expression has no effect.,packages/requests/post-json.mjs,97,JavaScript,code_quality
+perf-wg,js/superfluous-trailing-arguments,warning,Superfluous argument passed to [function startClient](1).,packages/runner-local/index.mjs,18,JavaScript,code_quality
+perf-wg,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (90% of all statements in [the enclosing function](1) have an explicit semicolon).,packages/wrk2/index.mjs,135,JavaScript,code_quality
+perf-wg,js/log-injection,error,Log entry depends on a [user-provided value](1).,servers/express-body-parser/index.js,20,JavaScript,security
+perf-wg,js/log-injection,error,Log entry depends on a [user-provided value](1).,servers/express-helloworld/index.js,15,JavaScript,security
+perf-wg,js/missing-token-validation,error,"This cookie middleware is serving a [request handler](1) without CSRF protection.
+This cookie middleware is serving a [request handler](2) without CSRF protection.
+This cookie middleware is serving a [request handler](3) without CSRF protection.
+This cookie middleware is serving a [request handler](4) without CSRF protection.",servers/express-todo/server.js,19,JavaScript,security
+perf-wg,js/insufficient-password-hash,warning,"Password from [an access to password](1) is hashed insecurely.
+Password from [an access to password](2) is hashed insecurely.
+Password from [an access to password](3) is hashed insecurely.
+Password from [an access to password](4) is hashed insecurely.
+Password from [an access to password](5) is hashed insecurely.",servers/express-todo/server.js,42,JavaScript,security
+restful-router,js/unused-local-variable,note,Unused variable should.,test/restful-router.test.js,14,JavaScript,code_quality
+restful-router,js/unused-local-variable,note,Unused variable restful.,test/restful-router.test.js,16,JavaScript,code_quality
+serve-index,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (94% of all statements in [the enclosing function](1) have an explicit semicolon).,index.js,474,JavaScript,code_quality
+session,js/automatic-semicolon-insertion,note,Avoid automated semicolon insertion (92% of all statements in [the enclosing function](1) have an explicit semicolon).,index.js,295,JavaScript,code_quality
+session,js/weak-cryptographic-algorithm,warning,[A broken or weak cryptographic algorithm](1) depends on [sensitive data from an access to sessionID](2).,index.js,665,JavaScript,security
+session,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/session.js,1304,JavaScript,security
+session,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/session.js,1935,JavaScript,security
+urlrouter,js/unused-local-variable,note,Unused variable urlparse.,benchmark/simple.js,2,JavaScript,code_quality
+urlrouter,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,lib/urlrouter.js,25,JavaScript,security
+urlrouter,js/regex-injection,error,This regular expression is constructed from a [user-provided value](1).,lib/urlrouter.js,131,JavaScript,security
+urlrouter,js/prototype-polluting-assignment,warning,This assignment may alter Object.prototype if a malicious '__proto__' string is injected from [library input](1).,lib/urlrouter.js,141,JavaScript,security
+urlrouter,js/incomplete-sanitization,warning,This does not escape backslash characters in the input.,lib/utils.js,30,JavaScript,security
+urlrouter,js/unused-local-variable,note,Unused variable EventEmitter.,test/support/http.js,7,JavaScript,code_quality
+urlrouter,js/unused-local-variable,note,Unused variable util.,test/support/http.js,10,JavaScript,code_quality
+urlrouter,js/unused-local-variable,note,Unused variable fs.,test/urlrouter.test.js,14,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,11,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,12,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,26,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,50,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,51,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,67,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,68,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,92,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,96,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,102,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,106,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,110,JavaScript,code_quality
+vhost,js/incomplete-hostname-regexp,warning,"This string, which is used as a regular expression [here](1), has an unescaped '.' before 'b.com', so it might match more hosts than expected.",test/test.js,139,JavaScript,security
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,139,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,161,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,176,JavaScript,code_quality
+vhost,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test/test.js,204,JavaScript,code_quality
+vhostess,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test.js,21,JavaScript,code_quality
+vhostess,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test.js,34,JavaScript,code_quality
+vhostess,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test.js,47,JavaScript,code_quality
+vhostess,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",test.js,77,JavaScript,code_quality

@@ -1,0 +1,99 @@
+repository,rule_id,severity,message,file,start_line,language,category
+badgeboard,js/prototype-pollution-utility,warning,Properties are copied from [stuff](1) to [obj](2) without guarding against prototype pollution.,scripts/config.js,83,JavaScript,security
+body-parser,js/log-injection,error,Log entry depends on a [user-provided value](1).,lib/read.js,63,JavaScript,security
+body-parser,js/log-injection,error,Log entry depends on a [user-provided value](1).,lib/read.js,193,JavaScript,security
+body-parser,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,test/json.js,775,JavaScript,security
+body-parser,js/xss-through-exception,warning,[Exception text](1) is reinterpreted as HTML without escaping meta-characters.,test/json.js,775,JavaScript,security
+body-parser,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/json.js,780,JavaScript,security
+body-parser,js/xss-through-exception,warning,[Exception text](1) is reinterpreted as HTML without escaping meta-characters.,test/raw.js,512,JavaScript,security
+body-parser,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/raw.js,517,JavaScript,security
+body-parser,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/raw.js,521,JavaScript,security
+body-parser,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/text.js,581,JavaScript,security
+body-parser,js/xss-through-exception,warning,[Exception text](1) is reinterpreted as HTML without escaping meta-characters.,test/text.js,581,JavaScript,security
+body-parser,js/xss-through-exception,warning,[Exception text](1) is reinterpreted as HTML without escaping meta-characters.,test/urlencoded.js,981,JavaScript,security
+body-parser,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/urlencoded.js,984,JavaScript,security
+codemod,js/log-injection,error,"Log entry depends on a [user-provided value](1).
+Log entry depends on a [user-provided value](2).",codemods/camelcase-sendfile/tests/expected/send-file.ts,20,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/expected/send-file.ts,25,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/expected/send-file.ts,29,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/expected/send-file.ts,33,TypeScript,security
+codemod,js/log-injection,error,Log entry depends on a [user-provided value](1).,codemods/camelcase-sendfile/tests/expected/send-file.ts,40,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/expected/send-file.ts,46,TypeScript,security
+codemod,js/log-injection,error,Log entry depends on a [user-provided value](1).,codemods/camelcase-sendfile/tests/expected/send-file.ts,53,TypeScript,security
+codemod,js/log-injection,error,"Log entry depends on a [user-provided value](1).
+Log entry depends on a [user-provided value](2).",codemods/camelcase-sendfile/tests/input/send-file.ts,20,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/input/send-file.ts,25,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/input/send-file.ts,29,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/input/send-file.ts,33,TypeScript,security
+codemod,js/log-injection,error,Log entry depends on a [user-provided value](1).,codemods/camelcase-sendfile/tests/input/send-file.ts,40,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/camelcase-sendfile/tests/input/send-file.ts,46,TypeScript,security
+codemod,js/log-injection,error,Log entry depends on a [user-provided value](1).,codemods/camelcase-sendfile/tests/input/send-file.ts,53,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/handlers.ts,4,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/handlers.ts,14,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,6,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,10,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,14,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,18,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,22,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,26,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,30,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,34,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,38,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,44,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/expected/sendfile.ts,48,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/handlers.ts,4,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/handlers.ts,13,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,6,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,10,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,14,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,18,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,22,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,26,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,30,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,34,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,38,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,44,TypeScript,security
+codemod,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",codemods/sendfile-options/tests/input/sendfile.ts,48,TypeScript,security
+connect-markdown,js/functionality-from-untrusted-domain,error,Content loaded from untrusted domain with no integrity check.,example/docs/layout.html,14,JavaScript,security
+connect-markdown,js/functionality-from-untrusted-domain,error,Content loaded from untrusted domain with no integrity check.,example/docs/layout.html,16,JavaScript,security
+connect-markdown,js/functionality-from-untrusted-domain,error,Content loaded from untrusted domain with no integrity check.,example/docs/layout.html,19,JavaScript,security
+connect-markdown,js/path-injection,error,This path depends on a [user-provided value](1).,lib/connect-markdown.js,33,JavaScript,security
+connect-multiparty,js/remote-property-injection,warning,"A property name to write to depends on a [user-provided value](1).
+A property name to write to depends on a [user-provided value](2).",index.js,72,JavaScript,security
+connect-multiparty,js/remote-property-injection,warning,"A property name to write to depends on a [user-provided value](1).
+A property name to write to depends on a [user-provided value](2).",index.js,74,JavaScript,security
+cors,js/cors-permissive-configuration,warning,"CORS Origin allows broad access due to [permissive or user controlled value](1).
+CORS Origin allows broad access due to [permissive or user controlled value](2).
+CORS Origin allows broad access due to [permissive or user controlled value](3).",lib/index.js,223,JavaScript,security
+domain-middleware,js/log-injection,error,Log entry depends on a [user-provided value](1).,lib/domain.js,38,JavaScript,security
+domain-middleware,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/domain.test.js,52,JavaScript,security
+express,js/clear-text-cookie,warning,Sensitive cookie sent without enforcing SSL encryption.,examples/auth/index.js,22,JavaScript,security
+express,js/clear-text-logging,error,This logs sensitive data returned by [an access to password](1) as clear text.,examples/auth/index.js,61,JavaScript,security
+express,js/clear-text-cookie,warning,Sensitive cookie sent without enforcing SSL encryption.,examples/mvc/index.js,40,JavaScript,security
+express,js/clear-text-cookie,warning,Sensitive cookie sent without enforcing SSL encryption.,examples/session/index.js,16,JavaScript,security
+express,js/clear-text-cookie,warning,Sensitive cookie sent without enforcing SSL encryption.,examples/session/redis.js,20,JavaScript,security
+expressjs.com,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",scripts/orama-documents.mjs,18,TypeScript,security
+method-override,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/test.js,192,JavaScript,security
+multer,js/type-confusion-through-parameter-tampering,error,Potential type confusion as [this HTTP request parameter](1) may be either an array or a string.,lib/file-appender.js,2,JavaScript,security
+multer,js/type-confusion-through-parameter-tampering,error,Potential type confusion as [this HTTP request parameter](1) may be either an array or a string.,test/async-file-filter-file-size.js,55,JavaScript,security
+multer,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",test/orphan-before-path-assignment.js,51,JavaScript,security
+multer,js/path-injection,error,This path depends on a [user-provided value](1).,test/orphan-before-path-assignment.js,55,JavaScript,security
+perf-wg,js/log-injection,error,Log entry depends on a [user-provided value](1).,servers/express-body-parser/index.js,20,JavaScript,security
+perf-wg,js/log-injection,error,Log entry depends on a [user-provided value](1).,servers/express-helloworld/index.js,15,JavaScript,security
+perf-wg,js/missing-token-validation,error,"This cookie middleware is serving a [request handler](1) without CSRF protection.
+This cookie middleware is serving a [request handler](2) without CSRF protection.
+This cookie middleware is serving a [request handler](3) without CSRF protection.
+This cookie middleware is serving a [request handler](4) without CSRF protection.",servers/express-todo/server.js,19,JavaScript,security
+perf-wg,js/insufficient-password-hash,warning,"Password from [an access to password](1) is hashed insecurely.
+Password from [an access to password](2) is hashed insecurely.
+Password from [an access to password](3) is hashed insecurely.
+Password from [an access to password](4) is hashed insecurely.
+Password from [an access to password](5) is hashed insecurely.",servers/express-todo/server.js,42,JavaScript,security
+session,js/weak-cryptographic-algorithm,warning,[A broken or weak cryptographic algorithm](1) depends on [sensitive data from an access to sessionID](2).,index.js,665,JavaScript,security
+session,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/session.js,1304,JavaScript,security
+session,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,test/session.js,1935,JavaScript,security
+urlrouter,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,lib/urlrouter.js,25,JavaScript,security
+urlrouter,js/regex-injection,error,This regular expression is constructed from a [user-provided value](1).,lib/urlrouter.js,131,JavaScript,security
+urlrouter,js/prototype-polluting-assignment,warning,This assignment may alter Object.prototype if a malicious '__proto__' string is injected from [library input](1).,lib/urlrouter.js,141,JavaScript,security
+urlrouter,js/incomplete-sanitization,warning,This does not escape backslash characters in the input.,lib/utils.js,30,JavaScript,security
+vhost,js/incomplete-hostname-regexp,warning,"This string, which is used as a regular expression [here](1), has an unescaped '.' before 'b.com', so it might match more hosts than expected.",test/test.js,139,JavaScript,security
