@@ -124,3 +124,17 @@ Por tanto, el inventario no es una copia literal del manifiesto ni del lockfile:
 ```bash
 python -m pytest
 ```
+
+## Reporter: auditoría del propio proyecto
+
+Reporter es independiente de `miner scan` y `miner sbom`: no usa sus resultados, no clona repositorios ni requiere paquetes Python adicionales. Analiza exclusivamente archivos versionados en la raíz Git indicada de **rm-miner**, nunca los repositorios descargados en `.miner-work/`, `workspace/` u otros directorios sin seguimiento. Rechaza ejecutar desde un clon anidado o un proyecto distinto. Los enlaces simbólicos no se leen.
+
+Configure `REPORTER_API_KEY` y `REPORTER_MODEL` para una API compatible con Chat Completions; opcionalmente, `REPORTER_API_URL` (HTTPS; por defecto `https://api.openai.com/v1/chat/completions`). No se carga `.env` ni se usa `GITHUB_TOKEN`.
+
+```bash
+PYTHONPATH=src python -m miner.reporter --repository . --output .reporter-output/security-report.md
+```
+
+El comando siempre intenta guardar un Markdown con commit, alcance, evidencias y recomendaciones. Devuelve código 1 si falta el modelo, falla su respuesta o la cobertura es incompleta; en ese caso el archivo indica que la auditoría no concluyó. No se transmiten archivos completos al proveedor: solo líneas candidatas filtradas, sin líneas que parezcan contener credenciales, y con literales de código ocultos. **Evite auditar código confidencial con un proveedor externo sin autorización.** La detección es heurística: se centra en algunos patrones de ejecución dinámica, TLS, configuraciones, dependencias declaradas y workflows. No comprueba CVE ni garantiza una revisión exhaustiva de dependencias o configuraciones. Los resultados del modelo se presentan como asuntos que requieren revisión, no como vulnerabilidades confirmadas.
+
+El workflow `.github/workflows/reporter-security.yml` ejecuta la auditoría semanalmente o bajo demanda sobre el propio checkout. Guarde el secreto `REPORTER_API_KEY` y la variable `REPORTER_MODEL` en el repositorio; `REPORTER_API_URL` es opcional. El reporte queda disponible durante 30 días como artifact `rm-miner-security-report`, incluso si el modelo falla tras iniciar la auditoría. El workflow no publica issues ni modifica archivos versionados.
