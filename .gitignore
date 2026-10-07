@@ -15,6 +15,7 @@
 .venv/
 .pytest_cache/
 .miner-work/
+.reporter-output/
 workspace/
 __pycache__/
 *.pyc
