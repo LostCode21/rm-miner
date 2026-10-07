@@ -5,7 +5,7 @@ interface MetricCardProps {
   label: string;
   value: number | null;
   detail: string;
-  tone: string;
+  tone: "blue" | "red" | "teal" | "orange" | "slate";
 }
 
 export function MetricCard({ icon, label, value, detail, tone }: MetricCardProps) {

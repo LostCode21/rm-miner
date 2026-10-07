@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, FilterX, GitBranch, Search, X } from "lucide-react";
 import type { Finding, Repository, ScanData, SeverityCategory } from "../domain/scan";
 import { severityCategories, severityLabels } from "../domain/severity";
+import { formatToolLabel } from "../domain/labels";
 import { SeverityBadge, ToolBadge } from "./Badges";
 
 interface Filters {
@@ -22,6 +23,15 @@ const initialFilters: Filters = { repository: "all", tool: "all", severity: "all
 export function FindingsExplorer({ scan, onClose }: FindingsExplorerProps) {
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [selectedFinding, setSelectedFinding] = useState<Finding | null>(null);
+
+  useEffect(() => {
+    if (!selectedFinding) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelectedFinding(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedFinding]);
 
   const repositories = useMemo(() => [...new Set([
     ...scan.repositories.map((repository) => repository.fullName),
@@ -71,8 +81,7 @@ export function FindingsExplorer({ scan, onClose }: FindingsExplorerProps) {
 }
 
 function toolLabel(tool: string): string {
-  const knownLabels: Record<string, string> = { codeql: "CodeQL", grype: "Grype" };
-  return knownLabels[tool] ?? tool.replaceAll("_", " ");
+  return formatToolLabel(tool);
 }
 
 function severityLabel(value: string): string {
@@ -97,7 +106,7 @@ function FindingsTable({ findings, selectedFinding, onSelect }: { findings: Find
 }
 
 function FindingDetail({ finding, repository, onClose }: { finding: Finding; repository?: Repository; onClose: () => void }) {
-  return <aside className="detail-panel" aria-label="Detalle del hallazgo"><div className="detail-header"><div><span className="section-kicker">DETALLE DEL HALLAZGO</span><button className="detail-close" aria-label="Cerrar detalle" onClick={onClose}><X size={17} /></button></div><h3>{finding.vulnerabilityType}</h3><div className="detail-badges"><SeverityBadge severity={finding.severity} /><ToolBadge tool={finding.tool} /></div></div><div className="detail-body"><DetailField label="Repositorio" value={finding.repository} /><DetailField label="Descripción" value={finding.message || "No hay descripción disponible."} /><DetailField label="Ubicación" value={finding.location ? `${finding.location}${finding.line ? `:${finding.line}` : ""}` : null} /><DetailField label="Lenguaje" value={finding.language} /><DetailField label="Paquete afectado" value={finding.packageName} /><DetailField label="Versión instalada" value={finding.version} /><DetailField label="Versión corregida" value={finding.fixedVersion} /><DetailField label="Tipo de artefacto" value={finding.artifactType} /><DetailField label="Severidad reportada" value={finding.sourceSeverity} />{repository?.error && <DetailField label="Error del repositorio" value={repository.error} />}</div><div className="detail-note">Revisa el contexto en el repositorio antes de priorizar la remediación.</div></aside>;
+  return <aside className="detail-panel" aria-labelledby="finding-detail-title" aria-live="polite"><div className="detail-header"><div><span className="section-kicker">DETALLE DEL HALLAZGO</span><button className="detail-close" aria-label="Cerrar detalle" onClick={onClose}><X size={17} /></button></div><h3 id="finding-detail-title">{finding.vulnerabilityType}</h3><div className="detail-badges"><SeverityBadge severity={finding.severity} /><ToolBadge tool={finding.tool} /></div></div><div className="detail-body"><DetailField label="Repositorio" value={finding.repository} /><DetailField label="Descripción" value={finding.message || "No hay descripción disponible."} /><DetailField label="Ubicación" value={finding.location ? `${finding.location}${finding.line ? `:${finding.line}` : ""}` : null} /><DetailField label="Lenguaje" value={finding.language} /><DetailField label="Paquete afectado" value={finding.packageName} /><DetailField label="Versión instalada" value={finding.version} /><DetailField label="Versión corregida" value={finding.fixedVersion} /><DetailField label="Tipo de artefacto" value={finding.artifactType} /><DetailField label="Severidad reportada" value={finding.sourceSeverity} />{repository?.error && <DetailField label="Error del repositorio" value={repository.error} />}</div><div className="detail-note">Revisa el contexto en el repositorio antes de priorizar la remediación.</div></aside>;
 }
 
 function DetailField({ label, value }: { label: string; value: string | null | undefined }) {

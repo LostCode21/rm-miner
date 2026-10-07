@@ -137,27 +137,46 @@ function normalizeRepositoryStatus(sourceStatus: string): Repository["status"] {
   return "unknown";
 }
 
-function summarize(raw: unknown, organization: string, repositories: Repository[], findings: Finding[], repositoriesWithErrors: number | null, hasCompleteRepositoryData: boolean): ScanSummary {
+interface RepositoryCounts {
+  analyzed: number;
+  failed: number;
+  unsupported: number;
+  sbomFailures: number;
+  dependencyFailures: number;
+}
+
+function countRepositories(repositories: Repository[]): RepositoryCounts {
+  return repositories.reduce<RepositoryCounts>((counts, repository) => {
+    if (repository.status === "analyzed") counts.analyzed += 1;
+    if (repository.status === "failed") counts.failed += 1;
+    if (repository.status === "unsupported") counts.unsupported += 1;
+    if (repository.checks.some((check) => check.id === "sbom" && check.status === "failed")) {
+      counts.sbomFailures += 1;
+    }
+    if (repository.checks.some((check) => check.id === "grype" && check.status === "failed")) {
+      counts.dependencyFailures += 1;
+    }
+    return counts;
+  }, { analyzed: 0, failed: 0, unsupported: 0, sbomFailures: 0, dependencyFailures: 0 });
+}
+
+function summarize(raw: unknown, organization: string, repositories: Repository[], findings: Finding[], repositoriesWithErrors: number | null, hasCompleteRepositoryData: boolean, counts: RepositoryCounts): ScanSummary {
   const source = isObject(raw) ? raw : {};
   const vulnerabilities = findings.filter((finding) => finding.tool === "grype").length;
-  const analyzedCount = repositories.filter((repository) => repository.status === "analyzed").length;
-  const failedRepositories = repositories.filter((repository) => repository.status === "failed").length;
-  const unsupportedCount = repositories.filter((repository) => repository.status === "unsupported").length;
-  const sbomFailures = repositories.filter((repository) => repository.checks.some((check) => check.id === "sbom" && check.status === "failed")).length;
-  const dependencyFailures = repositories.filter((repository) => repository.checks.some((check) => check.id === "grype" && check.status === "failed")).length;
+  const failedRepositories = hasCompleteRepositoryData ? counts.failed : number(source.failed_repositories, counts.failed);
   return {
     organization: text(source.organization, organization),
     totalRepositories: number(source.total_repositories, repositories.length),
-    analyzedRepositories: hasCompleteRepositoryData ? analyzedCount : number(source.analyzed_repositories, analyzedCount),
-    failedRepositories: hasCompleteRepositoryData ? failedRepositories : number(source.failed_repositories, failedRepositories),
-    unsupportedRepositories: hasCompleteRepositoryData ? unsupportedCount : number(source.unsupported_repositories, unsupportedCount),
+    analyzedRepositories: hasCompleteRepositoryData ? counts.analyzed : number(source.analyzed_repositories, counts.analyzed),
+    failedRepositories,
+    unsupportedRepositories: hasCompleteRepositoryData ? counts.unsupported : number(source.unsupported_repositories, counts.unsupported),
     totalFindings: findings.length,
     totalVulnerabilities: vulnerabilities,
     repositoriesWithErrors,
     failureBreakdown: [
-      { key: "analysis", label: "Análisis", count: hasCompleteRepositoryData ? failedRepositories : number(source.failed_repositories, failedRepositories) },
-      { key: "sbom", label: "SBOM", count: hasCompleteRepositoryData ? sbomFailures : number(source.sbom_failed_repositories, sbomFailures) },
-      { key: "dependency-analysis", label: "Análisis de dependencias", count: hasCompleteRepositoryData ? dependencyFailures : number(source.grype_failed_repositories, dependencyFailures) },
+      { key: "analysis", label: "Análisis", count: failedRepositories },
+      { key: "sbom", label: "SBOM", count: hasCompleteRepositoryData ? counts.sbomFailures : number(source.sbom_failed_repositories, counts.sbomFailures) },
+      { key: "dependency-analysis", label: "Análisis de dependencias", count: hasCompleteRepositoryData ? counts.dependencyFailures : number(source.grype_failed_repositories, counts.dependencyFailures) },
     ].filter((item) => item.count > 0),
     vulnerabilityBreakdown: vulnerabilities > 0 ? [{ key: "grype", label: "Grype", count: vulnerabilities }] : [],
   };
@@ -182,6 +201,7 @@ export function parseMinerScan(input: unknown, sourceName = "resultados.json"): 
   }
 
   const sourceSummary = isObject(input.summary) ? input.summary : {};
+  const repositoryCounts = countRepositories(repositories);
   const reportedRepositoryCount = optionalNumber(sourceSummary.total_repositories);
   const hasCompleteCheckData = repositories.every((repository) => repository.status === "failed"
     || (repository.checks.some((check) => check.id === "sbom") && repository.checks.some((check) => check.id === "grype")));
@@ -198,11 +218,11 @@ export function parseMinerScan(input: unknown, sourceName = "resultados.json"): 
   }
   if (hasCompleteRepositoryData) {
     const repositoryMetricChecks = [
-      { field: "analyzed_repositories", actual: repositories.filter((repository) => repository.status === "analyzed").length, label: "repositorios analizados" },
-      { field: "failed_repositories", actual: repositories.filter((repository) => repository.status === "failed").length, label: "fallos de análisis" },
-      { field: "unsupported_repositories", actual: repositories.filter((repository) => repository.status === "unsupported").length, label: "repositorios no compatibles" },
-      { field: "sbom_failed_repositories", actual: repositories.filter((repository) => repository.checks.some((check) => check.id === "sbom" && check.status === "failed")).length, label: "fallos de SBOM" },
-      { field: "grype_failed_repositories", actual: repositories.filter((repository) => repository.checks.some((check) => check.id === "grype" && check.status === "failed")).length, label: "fallos de análisis de dependencias" },
+      { field: "analyzed_repositories", actual: repositoryCounts.analyzed, label: "repositorios analizados" },
+      { field: "failed_repositories", actual: repositoryCounts.failed, label: "fallos de análisis" },
+      { field: "unsupported_repositories", actual: repositoryCounts.unsupported, label: "repositorios no compatibles" },
+      { field: "sbom_failed_repositories", actual: repositoryCounts.sbomFailures, label: "fallos de SBOM" },
+      { field: "grype_failed_repositories", actual: repositoryCounts.dependencyFailures, label: "fallos de análisis de dependencias" },
     ];
     for (const metric of repositoryMetricChecks) {
       const reported = optionalNumber(sourceSummary[metric.field]);
@@ -262,7 +282,7 @@ export function parseMinerScan(input: unknown, sourceName = "resultados.json"): 
 
   return {
     organization,
-    summary: summarize(input.summary, organization, repositories, findings, repositoriesWithErrors, hasCompleteRepositoryData),
+    summary: summarize(input.summary, organization, repositories, findings, repositoriesWithErrors, hasCompleteRepositoryData, repositoryCounts),
     repositories,
     findings,
     warnings,
