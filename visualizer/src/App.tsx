@@ -43,11 +43,21 @@ function App() {
       setError(`El archivo supera el límite de ${MAX_SCAN_FILE_SIZE_MB} MB para la carga en el navegador.`);
       return;
     }
+    let contents: string;
     try {
-      loadData(JSON.parse(await readLocalFile(file)), file.name);
+      contents = await readLocalFile(file);
+    } catch {
+      setError("No se pudo leer el archivo seleccionado. Comprueba que siga disponible e inténtalo de nuevo.");
+      return;
+    }
+    let data: unknown;
+    try {
+      data = JSON.parse(contents);
     } catch {
       setError("El archivo no contiene JSON válido. Comprueba el archivo e inténtalo de nuevo.");
+      return;
     }
+    loadData(data, file.name);
   };
 
   return (

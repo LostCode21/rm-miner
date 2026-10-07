@@ -12,8 +12,11 @@ describe("Visualizer", () => {
     expect(screen.getAllByText("acme-security").length).toBeGreaterThan(0);
     expect(screen.getAllByText("CVE-2024-3094").length).toBeGreaterThan(0);
     fireEvent.click(screen.getByRole("button", { name: /py\/sql-injection/i }));
-    expect(screen.getByRole("complementary", { name: /detalle del hallazgo/i })).toBeInTheDocument();
-    expect(within(screen.getByRole("complementary", { name: /detalle del hallazgo/i })).getByText("src/api/users.py:87")).toBeInTheDocument();
+    const detail = screen.getByRole("complementary", { name: "py/sql-injection" });
+    expect(detail).toBeInTheDocument();
+    expect(within(detail).getByText("src/api/users.py:87")).toBeInTheDocument();
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(screen.queryByRole("complementary", { name: "py/sql-injection" })).not.toBeInTheDocument();
   });
 
   it("filtra hallazgos por herramienta", async () => {
@@ -32,6 +35,21 @@ describe("Visualizer", () => {
     const file = new File(["{ roto"], "resultados.json", { type: "application/json" });
     fireEvent.change(screen.getAllByLabelText("Seleccionar JSON de resultados")[0], { target: { files: [file] } });
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/no contiene JSON válido/i));
+  });
+
+  it("distingue un error de lectura del error de formato JSON", async () => {
+    const originalReadAsText = FileReader.prototype.readAsText;
+    FileReader.prototype.readAsText = function readAsText() {
+      this.dispatchEvent(new ProgressEvent("error"));
+    };
+    try {
+      render(<App />);
+      const file = new File(["{}"], "resultados.json", { type: "application/json" });
+      fireEvent.change(screen.getByLabelText("Seleccionar JSON de resultados"), { target: { files: [file] } });
+      await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/no se pudo leer el archivo/i));
+    } finally {
+      FileReader.prototype.readAsText = originalReadAsText;
+    }
   });
 
   it("carga el JSON seleccionado desde el formulario manual", async () => {
