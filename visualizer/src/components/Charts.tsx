@@ -27,7 +27,7 @@ export function ToolChart({ findings }: { findings: Finding[] }) {
     .sort((left, right) => left.tool.localeCompare(right.tool));
   const total = Math.max(1, findings.length);
   let accumulatedShare = 0;
-  const colors = ["#55cbb8", "#ff9a68", "#769ce8", "#c084fc", "#f4bf55", "#ef7192"];
+  const colors = ["#55df88", "#a3e635", "#34d399", "#84cc16", "#6ee7a0", "#22c55e"];
   const segments = counts.map(({ count }, index) => {
     const start = accumulatedShare;
     accumulatedShare += (count / total) * 100;
