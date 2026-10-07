@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import App from "./App";
-import { sampleScan } from "./data/sample";
+import { sampleMinerScan } from "./adapters/minerScan.sample";
 
 describe("Visualizer", () => {
   it("muestra los resultados de ejemplo y permite abrir el detalle de un hallazgo", async () => {
@@ -36,10 +36,26 @@ describe("Visualizer", () => {
 
   it("carga el JSON seleccionado desde el formulario manual", async () => {
     render(<App />);
-    const file = new File([JSON.stringify(sampleScan)], "scan.json", { type: "application/json" });
+    const file = new File([JSON.stringify(sampleMinerScan)], "scan.json", { type: "application/json" });
     fireEvent.change(screen.getByLabelText("Seleccionar JSON de resultados"), { target: { files: [file] } });
 
     expect(await screen.findByRole("heading", { name: /resumen de seguridad/i, level: 1 })).toBeInTheDocument();
     expect(screen.getByText("scan.json")).toBeInTheDocument();
+  });
+
+  it("presenta herramientas desconocidas sin etiquetarlas como CodeQL", async () => {
+    render(<App />);
+    const report = {
+      organization: "acme",
+      findings: [{ repository: "acme/api", tool: "analyzer_sast", vulnerability_type: "rule/new", severity: "blocker", message: "Hallazgo de otro analizador" }],
+      summary: { total_findings: 1, total_vulnerabilities: 0 },
+    };
+    const file = new File([JSON.stringify(report)], "miner-results.json", { type: "application/json" });
+    fireEvent.change(screen.getByLabelText("Seleccionar JSON de resultados"), { target: { files: [file] } });
+
+    const table = await screen.findByRole("table");
+    expect(within(table).getByText("analyzer sast")).toBeInTheDocument();
+    expect(screen.queryByText("CodeQL")).not.toBeInTheDocument();
+    expect(within(table).getByText("Sin dato")).toBeInTheDocument();
   });
 });
