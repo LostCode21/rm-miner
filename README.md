@@ -124,3 +124,7 @@ Por tanto, el inventario no es una copia literal del manifiesto ni del lockfile:
 ```bash
 python -m pytest
 ```
+
+## Visualizer
+
+El frontend independiente está en [`visualizer/`](visualizer/). Para ejecutarlo, consulta su [guía de instalación y uso](visualizer/README.md). La aplicación carga manualmente el JSON de `miner scan` y lo procesa en el navegador, sin enviarlo a un servidor.
