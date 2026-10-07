@@ -40,7 +40,17 @@ El adaptador consume el JSON actual de `miner scan`:
 - `repositories` para estados, lenguajes y errores por repositorio.
 - `findings` en la raíz para la tabla y gráficos, evitando volver a contar los hallazgos anidados.
 
-Se toleran campos opcionales y resultados parciales, que se muestran con advertencias. Si falta el arreglo raíz `findings`, se intenta reconstruir desde `repositories[].findings` y `repositories[].grype.vulnerabilities`. La aplicación no carga SBOMs desde rutas locales.
+Se toleran campos opcionales y resultados parciales, que se muestran con advertencias. Si falta el arreglo raíz `findings`, se intenta reconstruir desde `repositories[].findings` y `repositories[].grype.vulnerabilities`. Las herramientas desconocidas no se descartan y aparecen como fuentes adicionales; la severidad se normaliza para los gráficos sin perder el texto original.
+
+## Organización e integración futura
+
+- `src/domain/scan.ts` define el modelo neutral que consumen las páginas y componentes. No describe directamente las claves del JSON de Miner.
+- `src/adapters/minerScan.ts` convierte el JSON de Miner a ese modelo; `src/application/importScan.ts` selecciona un adaptador registrado.
+- Las vistas viven en `src/pages/` y los elementos reutilizables en `src/components/`; no leen campos del JSON de entrada.
+
+Cuando se defina el formato del Analyzer, se añadirá un adaptador que produzca el mismo modelo donde los conceptos coincidan. Las métricas específicas se añadirán solo después de acordar su significado. Si ambos formatos resultan estructuralmente parecidos, la selección requerirá una versión de esquema o una elección explícita, en lugar de adivinar por campos ambiguos. Aún no hay compatibilidad con resultados del Analyzer.
+
+Los totales de hallazgos y vulnerabilidades en el dashboard cuentan los registros válidos normalizados. Si difieren de los valores declarados por Miner, se muestra una advertencia. El conteo de repositorios con errores se presenta como no disponible cuando falta información suficiente para calcularlo sin asumir.
 
 ## Privacidad
 
