@@ -1,58 +1,43 @@
-export const sampleAnalyzerRepositorySummary = [
-  {
-    repository: "api",
-    total_findings: 18,
-    unique_rules: 7,
-    files_affected: 9,
-    security_findings: 11,
-    test_findings: 4,
-    security_percentage: 61.11,
-    test_percentage: 22.22,
-  },
-];
+import type { AnalyzerSourceFile } from "./analyzerOutputs";
 
-export const sampleAnalyzerSecurityConcentration = [
-  {
-    repository: "api",
-    security_findings: 11,
-    percentage: 68.75,
-    cumulative_percentage: 68.75,
-  },
-  {
-    repository: "web",
-    security_findings: 5,
-    percentage: 31.25,
-    cumulative_percentage: 100,
-  },
-];
+const findingHeader = "repository,tool,vulnerability_type,severity,location,line,package,version,fixed_version,artifact_type,language,message";
+const codeqlFinding = 'TanStack/api,codeql,js/sql-injection,warning,src/api.ts,42,,,,,TypeScript,"Entrada, sin validar"';
+const grypeFinding = "TanStack/web,grype,CVE-2026-0001,High,/pnpm-lock.yaml,,react,18.0.0,18.2.0,npm,,Dependencia vulnerable";
 
-export const sampleAnalyzerSbomRepositorySummary = [
+export const sampleAnalyzerFiles: AnalyzerSourceFile[] = [
   {
-    repository: "api",
-    unique_components: 120,
-    unique_component_names: 100,
-    npm_components: 110,
-    github_action_components: 3,
-    unknown_versions: 2,
-    with_purl: 118,
-    with_cpe: 115,
-    with_license: 40,
-    raw_component_occurrences: 145,
-    purl_percentage: 98.33,
-    cpe_percentage: 95.83,
-    license_percentage: 33.33,
-    dependency_edges: 312,
-    dependency_sources: 89,
-    dependency_targets: 116,
+    name: "integrated_findings.csv",
+    content: `${findingHeader}\n${codeqlFinding}\n${grypeFinding}\n`,
   },
-];
-
-export const sampleAnalyzerSharedPackages = [
   {
-    name: "react",
-    repositories: 8,
-    versions: 3,
-    total_occurrences: 12,
-    repository_percentage: 80,
+    name: "codeql_findings.csv",
+    content: `${findingHeader},is_test\n${codeqlFinding},False\n`,
+  },
+  {
+    name: "grype_findings.csv",
+    content: `${findingHeader},severity_weight\n${grypeFinding},3.0\n`,
+  },
+  {
+    name: "repository_integrated_summary.csv",
+    content: "repository,codeql_findings,grype_detections,total_security_evidence\nTanStack/api,1,0,1\nTanStack/web,0,1,1\n",
+  },
+  {
+    name: "repository_integrated_summary.json",
+    content: JSON.stringify([
+      { repository: "TanStack/api", codeql_findings: 1, grype_detections: 0, total_security_evidence: 1 },
+      { repository: "TanStack/web", codeql_findings: 0, grype_detections: 1, total_security_evidence: 1 },
+    ]),
+  },
+  {
+    name: "grype_repository_priority.csv",
+    content: "repository,detections,unique_vulnerabilities,affected_packages,priority_score\nTanStack/web,1,1,1,3.0\n",
+  },
+  {
+    name: "grype_concentration.csv",
+    content: "repository,detections,percentage,cumulative_percentage\nTanStack/web,1,100.0,100.0\n",
+  },
+  {
+    name: "grype_severity_summary.json",
+    content: JSON.stringify([{ severity: "High", cantidad: 1, porcentaje: 100 }]),
   },
 ];

@@ -2,12 +2,7 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { describe, expect, it } from "vitest";
 import App from "./App";
 import { sampleMinerScan } from "./adapters/minerScan.sample";
-import {
-  sampleAnalyzerRepositorySummary,
-  sampleAnalyzerSbomRepositorySummary,
-  sampleAnalyzerSecurityConcentration,
-  sampleAnalyzerSharedPackages,
-} from "./adapters/analyzerOutputs.sample";
+import { sampleAnalyzerFiles } from "./adapters/analyzerOutputs.sample";
 
 describe("Visualizer", () => {
   it("muestra los resultados de ejemplo y permite abrir el detalle de un hallazgo", async () => {
@@ -39,7 +34,7 @@ describe("Visualizer", () => {
   it("muestra un error entendible si el archivo seleccionado contiene JSON malformado", async () => {
     render(<App />);
     const file = new File(["{ roto"], "resultados.json", { type: "application/json" });
-    fireEvent.change(screen.getAllByLabelText("Seleccionar JSON de resultados")[0], { target: { files: [file] } });
+    fireEvent.change(screen.getAllByLabelText("Seleccionar archivos de resultados")[0], { target: { files: [file] } });
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/no contiene JSON válido/i));
   });
 
@@ -51,8 +46,8 @@ describe("Visualizer", () => {
     try {
       render(<App />);
       const file = new File(["{}"], "resultados.json", { type: "application/json" });
-      fireEvent.change(screen.getByLabelText("Seleccionar JSON de resultados"), { target: { files: [file] } });
-      await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/no se pudo leer el archivo/i));
+      fireEvent.change(screen.getByLabelText("Seleccionar archivos de resultados"), { target: { files: [file] } });
+      await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/no se pudieron leer los archivos/i));
     } finally {
       FileReader.prototype.readAsText = originalReadAsText;
     }
@@ -61,7 +56,7 @@ describe("Visualizer", () => {
   it("carga el JSON seleccionado desde el formulario manual", async () => {
     render(<App />);
     const file = new File([JSON.stringify(sampleMinerScan)], "scan.json", { type: "application/json" });
-    fireEvent.change(screen.getByLabelText("Seleccionar JSON de resultados"), { target: { files: [file] } });
+    fireEvent.change(screen.getByLabelText("Seleccionar archivos de resultados"), { target: { files: [file] } });
 
     expect(await screen.findByRole("heading", { name: /resumen de seguridad/i, level: 1 })).toBeInTheDocument();
     expect(screen.getByText("scan.json")).toBeInTheDocument();
@@ -75,7 +70,7 @@ describe("Visualizer", () => {
       summary: { total_findings: 1, total_vulnerabilities: 0 },
     };
     const file = new File([JSON.stringify(report)], "miner-results.json", { type: "application/json" });
-    fireEvent.change(screen.getByLabelText("Seleccionar JSON de resultados"), { target: { files: [file] } });
+    fireEvent.change(screen.getByLabelText("Seleccionar archivos de resultados"), { target: { files: [file] } });
 
     const table = await screen.findByRole("table");
     expect(within(table).getByText("analyzer sast")).toBeInTheDocument();
@@ -83,18 +78,17 @@ describe("Visualizer", () => {
     expect(within(table).getByText("Sin dato")).toBeInTheDocument();
   });
 
-  it.each([
-    ["repository_summary.json", sampleAnalyzerRepositorySummary, /resumen de repositorios/i, "api"],
-    ["security_concentration.json", sampleAnalyzerSecurityConcentration, /concentración de seguridad/i, "web"],
-    ["sbom_repository_summary.json", sampleAnalyzerSbomRepositorySummary, /resumen sbom por repositorio/i, "api"],
-    ["sbom_shared_packages.json", sampleAnalyzerSharedPackages, /paquetes compartidos/i, "react"],
-  ])("carga la salida %s de Analyzer", async (filename, contents, heading, expectedRow) => {
+  it("combina las salidas CSV y JSON actuales de Analyzer", async () => {
     render(<App />);
-    const file = new File([JSON.stringify(contents)], filename, { type: "application/json" });
-    fireEvent.change(screen.getByLabelText("Seleccionar JSON de resultados"), { target: { files: [file] } });
+    const files = sampleAnalyzerFiles.map((source) => new File([source.content], source.name, {
+      type: source.name.endsWith(".json") ? "application/json" : "text/csv",
+    }));
+    fireEvent.change(screen.getByLabelText("Seleccionar archivos de resultados"), { target: { files } });
 
-    expect(await screen.findByRole("heading", { name: heading, level: 1 })).toBeInTheDocument();
-    expect(screen.getAllByText(expectedRow).length).toBeGreaterThan(0);
-    expect(screen.getByText(filename)).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /resumen de seguridad integrado/i, level: 1 })).toBeInTheDocument();
+    const findingsTable = screen.getByRole("table", { name: /hallazgos de analyzer/i });
+    expect(within(findingsTable).getByText("js/sql-injection")).toBeInTheDocument();
+    expect(within(findingsTable).getByText("CVE-2026-0001")).toBeInTheDocument();
+    expect(screen.getByText("8 archivos de Analyzer")).toBeInTheDocument();
   });
 });

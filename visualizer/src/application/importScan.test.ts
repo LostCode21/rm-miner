@@ -1,14 +1,6 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { AmbiguousScanFormatError, importScanResult, UnsupportedScanFormatError } from "./importScan";
 import { sampleMinerScan } from "../adapters/minerScan.sample";
-import {
-  sampleAnalyzerRepositorySummary,
-  sampleAnalyzerSbomRepositorySummary,
-  sampleAnalyzerSecurityConcentration,
-  sampleAnalyzerSharedPackages,
-} from "../adapters/analyzerOutputs.sample";
 import { isAnalyzerData } from "../domain/analyzer";
 
 describe("importScanResult", () => {
@@ -28,28 +20,6 @@ describe("importScanResult", () => {
   it("rechaza con claridad formatos que ningún adaptador reconoce", () => {
     expect(() => importScanResult({ generatedBy: "analyzer" }, "analyzer.json"))
       .toThrow(UnsupportedScanFormatError);
-  });
-
-  it.each([
-    [sampleAnalyzerRepositorySummary, "analyzer-repository-summary"],
-    [sampleAnalyzerSecurityConcentration, "analyzer-security-concentration"],
-    [sampleAnalyzerSbomRepositorySummary, "analyzer-sbom-repository-summary"],
-    [sampleAnalyzerSharedPackages, "analyzer-sbom-shared-packages"],
-  ])("selecciona el adaptador correspondiente para una salida de Analyzer", (input, sourceFormat) => {
-    const result = importScanResult(input, "analyzer.json");
-    expect(result.sourceFormat).toBe(sourceFormat);
-    expect(result.sourceName).toBe("analyzer.json");
-  });
-
-  it.each([
-    ["repository_summary.json", "analyzer-repository-summary"],
-    ["security_concentration.json", "analyzer-security-concentration"],
-    ["sbom_repository_summary.json", "analyzer-sbom-repository-summary"],
-    ["sbom_shared_packages.json", "analyzer-sbom-shared-packages"],
-  ])("importa la salida real de Analyzer %s", (filename, sourceFormat) => {
-    const filePath = resolve(process.cwd(), "../analyzer/output", filename);
-    const input: unknown = JSON.parse(readFileSync(filePath, "utf8"));
-    expect(importScanResult(input, filename).sourceFormat).toBe(sourceFormat);
   });
 
   it("rechaza formatos que coinciden con más de un adaptador", () => {

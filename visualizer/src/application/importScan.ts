@@ -1,4 +1,3 @@
-import { analyzerAdapters } from "../adapters/analyzerOutputs";
 import { minerScanAdapter } from "../adapters/minerScan";
 import type { ScanAdapter } from "../adapters/scanAdapter";
 import type { VisualizationData } from "../domain/analyzer";
@@ -18,7 +17,7 @@ export class AmbiguousScanFormatError extends Error {
 }
 
 // El registro mantiene el formato de origen fuera de las vistas; futuros adaptadores se agregan aquí.
-const scanAdapters: readonly ScanAdapter[] = [minerScanAdapter, ...analyzerAdapters];
+const scanAdapters: readonly ScanAdapter[] = [minerScanAdapter];
 
 export function importScanResult(
   input: unknown,

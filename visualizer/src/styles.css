@@ -506,6 +506,9 @@ tbody tr.selected-row { background: rgba(74, 222, 128, .06); }
 .analyzer-table-card { border-radius: 0 0 var(--radius-card) var(--radius-card); }
 .analyzer-table-card td { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .analyzer-table-card td:first-child { color: #e4e4e7; font-weight: 600; }
+.standalone-table-card { border-radius: var(--radius-card); }
+.standalone-table-card td { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.standalone-table-card td:first-child { color: #e4e4e7; font-weight: 600; }
 .analyzer-table-footer { min-height: 40px; }
 .pagination-controls { display: flex; align-items: center; gap: 8px; }
 .pagination-controls button {

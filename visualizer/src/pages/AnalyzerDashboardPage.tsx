@@ -1,20 +1,24 @@
-import { useMemo, useState, type ComponentType } from "react";
+import { useMemo, useState } from "react";
 import {
+  AlertTriangle,
   ArrowLeft,
   ArrowRight,
-  Boxes,
-  Database,
+  Bug,
   FileJson2,
   FolderGit2,
-  GitFork,
   PackageSearch,
   Search,
   ShieldAlert,
   ShieldCheck,
+  Wrench,
 } from "lucide-react";
 import { Brand } from "../components/Brand";
+import { SeverityBadge, ToolBadge } from "../components/Badges";
+import { SeverityChart, ToolChart } from "../components/Charts";
 import { MetricCard } from "../components/MetricCard";
-import type { AnalyzerData } from "../domain/analyzer";
+import type { AnalyzerData, AnalyzerFinding } from "../domain/analyzer";
+import type { SeverityCategory } from "../domain/scan";
+import { severityCategories, severityLabels } from "../domain/severity";
 
 interface AnalyzerDashboardPageProps {
   data: AnalyzerData;
@@ -23,268 +27,152 @@ interface AnalyzerDashboardPageProps {
   onClose: () => void;
 }
 
-type CellValue = string | number;
-type MetricTone = "blue" | "red" | "teal" | "orange" | "slate";
-
-interface MetricView {
-  label: string;
-  value: number;
-  detail: string;
-  tone: MetricTone;
-}
-
-interface ColumnView {
-  key: string;
-  label: string;
-  percentage?: boolean;
-}
-
-interface RowView {
-  key: string;
-  search: string;
-  values: Record<string, CellValue>;
-}
-
-interface AnalyzerView {
-  title: string;
-  description: string;
-  category: string;
-  entityLabel: string;
-  tableTitle: string;
-  metrics: MetricView[];
-  columns: ColumnView[];
-  rows: RowView[];
-  chartTitle: string;
-  chartTotal: number;
-  chartRows: { label: string; value: number }[];
-}
-
 const PAGE_SIZE = 100;
-const metricIcons: ComponentType<{ size?: number }>[] = [FolderGit2, ShieldAlert, Boxes, GitFork];
-
-const sum = <T,>(items: readonly T[], value: (item: T) => number): number =>
-  items.reduce((total, item) => total + value(item), 0);
-
-const row = (key: string, values: Record<string, CellValue>): RowView => ({
-  key,
-  values,
-  search: Object.values(values).join(" ").toLowerCase(),
-});
-
-function buildView(data: AnalyzerData): AnalyzerView {
-  switch (data.sourceFormat) {
-    case "analyzer-repository-summary": {
-      const totalFindings = sum(data.rows, (item) => item.totalFindings);
-      const securityFindings = sum(data.rows, (item) => item.securityFindings);
-      const testFindings = sum(data.rows, (item) => item.testFindings);
-      return {
-        title: "Resumen de repositorios",
-        description: "Métricas agregadas por Analyzer para reglas y archivos afectados.",
-        category: "ANÁLISIS DE RESULTADOS",
-        entityLabel: "repositorios",
-        tableTitle: "Resumen por repositorio",
-        metrics: [
-          { label: "Repositorios", value: data.rows.length, detail: "Con resumen disponible", tone: "blue" },
-          { label: "Hallazgos", value: totalFindings, detail: "Total informado por Analyzer", tone: "teal" },
-          { label: "Hallazgos de seguridad", value: securityFindings, detail: "Clasificados como seguridad", tone: "orange" },
-          { label: "Hallazgos de pruebas", value: testFindings, detail: "Clasificados como pruebas", tone: "slate" },
-        ],
-        columns: [
-          { key: "repository", label: "REPOSITORIO" },
-          { key: "totalFindings", label: "HALLAZGOS" },
-          { key: "uniqueRules", label: "REGLAS" },
-          { key: "filesAffected", label: "ARCHIVOS" },
-          { key: "securityFindings", label: "SEGURIDAD" },
-          { key: "securityPercentage", label: "% SEGURIDAD", percentage: true },
-          { key: "testFindings", label: "PRUEBAS" },
-          { key: "testPercentage", label: "% PRUEBAS", percentage: true },
-        ],
-        rows: data.rows.map((item) => row(item.repository, { ...item })),
-        chartTitle: "Repositorios con más hallazgos",
-        chartTotal: totalFindings,
-        chartRows: data.rows.map((item) => ({ label: item.repository, value: item.totalFindings })),
-      };
-    }
-    case "analyzer-security-concentration": {
-      const totalSecurityFindings = sum(data.rows, (item) => item.securityFindings);
-      const repositoriesFor80 = data.rows.findIndex((item) => item.cumulativePercentage >= 80) + 1 || data.rows.length;
-      const largestShare = Math.max(...data.rows.map((item) => item.percentage));
-      return {
-        title: "Concentración de seguridad",
-        description: "Distribución de los hallazgos de seguridad entre repositorios.",
-        category: "CONCENTRACIÓN DE RIESGO",
-        entityLabel: "repositorios",
-        tableTitle: "Concentración por repositorio",
-        metrics: [
-          { label: "Repositorios", value: data.rows.length, detail: "Con hallazgos de seguridad", tone: "blue" },
-          { label: "Hallazgos de seguridad", value: totalSecurityFindings, detail: "Total distribuido", tone: "orange" },
-          { label: "Mayor concentración", value: largestShare, detail: "Porcentaje en un repositorio", tone: "red" },
-          { label: "Repositorios para 80%", value: repositoriesFor80, detail: "Según porcentaje acumulado", tone: "slate" },
-        ],
-        columns: [
-          { key: "repository", label: "REPOSITORIO" },
-          { key: "securityFindings", label: "HALLAZGOS DE SEGURIDAD" },
-          { key: "percentage", label: "PARTICIPACIÓN", percentage: true },
-          { key: "cumulativePercentage", label: "ACUMULADO", percentage: true },
-        ],
-        rows: data.rows.map((item) => row(item.repository, { ...item })),
-        chartTitle: "Repositorios con mayor concentración",
-        chartTotal: totalSecurityFindings,
-        chartRows: data.rows.map((item) => ({ label: item.repository, value: item.securityFindings })),
-      };
-    }
-    case "analyzer-sbom-repository-summary": {
-      const componentOccurrences = sum(data.rows, (item) => item.rawComponentOccurrences);
-      const unknownVersions = sum(data.rows, (item) => item.unknownVersions);
-      const dependencyEdges = sum(data.rows, (item) => item.dependencyEdges);
-      return {
-        title: "Resumen SBOM por repositorio",
-        description: "Cobertura de componentes y relaciones de dependencia observadas por Analyzer.",
-        category: "ANÁLISIS DE SBOM",
-        entityLabel: "repositorios",
-        tableTitle: "Cobertura SBOM por repositorio",
-        metrics: [
-          { label: "Repositorios", value: data.rows.length, detail: "Con inventario SBOM", tone: "blue" },
-          { label: "Ocurrencias", value: componentOccurrences, detail: "Componentes antes de deduplicar", tone: "teal" },
-          { label: "Versiones desconocidas", value: unknownVersions, detail: "Suma de los repositorios", tone: unknownVersions ? "orange" : "slate" },
-          { label: "Relaciones", value: dependencyEdges, detail: "Aristas de dependencia", tone: "slate" },
-        ],
-        columns: [
-          { key: "repository", label: "REPOSITORIO" },
-          { key: "uniqueComponents", label: "COMPONENTES" },
-          { key: "uniqueComponentNames", label: "NOMBRES ÚNICOS" },
-          { key: "npmComponents", label: "NPM" },
-          { key: "githubActionComponents", label: "ACTIONS" },
-          { key: "unknownVersions", label: "VERSIÓN DESCONOCIDA" },
-          { key: "purlPercentage", label: "PURL", percentage: true },
-          { key: "cpePercentage", label: "CPE", percentage: true },
-          { key: "licensePercentage", label: "LICENCIA", percentage: true },
-          { key: "rawComponentOccurrences", label: "OCURRENCIAS" },
-          { key: "dependencyEdges", label: "RELACIONES" },
-        ],
-        rows: data.rows.map((item) => row(item.repository, { ...item })),
-        chartTitle: "Repositorios con más componentes",
-        chartTotal: sum(data.rows, (item) => item.uniqueComponents),
-        chartRows: data.rows.map((item) => ({ label: item.repository, value: item.uniqueComponents })),
-      };
-    }
-    case "analyzer-sbom-shared-packages": {
-      const totalOccurrences = sum(data.rows, (item) => item.totalOccurrences);
-      const packagesWithMultipleVersions = data.rows.filter((item) => item.versions > 1).length;
-      const maximumRepositories = Math.max(...data.rows.map((item) => item.repositories));
-      return {
-        title: "Paquetes compartidos",
-        description: "Componentes SBOM presentes en varios repositorios y su diversidad de versiones.",
-        category: "DEPENDENCIAS COMPARTIDAS",
-        entityLabel: "paquetes",
-        tableTitle: "Paquetes compartidos entre repositorios",
-        metrics: [
-          { label: "Paquetes", value: data.rows.length, detail: "Componentes únicos listados", tone: "blue" },
-          { label: "Ocurrencias", value: totalOccurrences, detail: "Presencias en los SBOM", tone: "teal" },
-          { label: "Múltiples versiones", value: packagesWithMultipleVersions, detail: "Paquetes con diversidad de versión", tone: "orange" },
-          { label: "Cobertura máxima", value: maximumRepositories, detail: "Repositorios para un paquete", tone: "slate" },
-        ],
-        columns: [
-          { key: "name", label: "PAQUETE" },
-          { key: "repositories", label: "REPOSITORIOS" },
-          { key: "repositoryPercentage", label: "COBERTURA", percentage: true },
-          { key: "versions", label: "VERSIONES" },
-          { key: "totalOccurrences", label: "OCURRENCIAS" },
-        ],
-        rows: data.rows.map((item) => row(item.name, { ...item })),
-        chartTitle: "Paquetes con mayor cobertura",
-        chartTotal: data.rows.length,
-        chartRows: data.rows.map((item) => ({ label: item.name, value: item.repositories })),
-      };
-    }
-  }
-}
-
-const formatCell = (value: CellValue, percentage = false): string =>
-  typeof value === "number"
-    ? `${value.toLocaleString("es-ES", { maximumFractionDigits: 2 })}${percentage ? "%" : ""}`
-    : value;
 
 export function AnalyzerDashboardPage({ data, error, onChooseFile, onClose }: AnalyzerDashboardPageProps) {
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(0);
-  const view = useMemo(() => buildView(data), [data]);
-  const filteredRows = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-    return normalizedQuery ? view.rows.filter((item) => item.search.includes(normalizedQuery)) : view.rows;
-  }, [query, view]);
-  const pageCount = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
-  const currentPage = Math.min(page, pageCount - 1);
-  const visibleRows = filteredRows.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE);
-  const firstVisible = filteredRows.length ? currentPage * PAGE_SIZE + 1 : 0;
-  const lastVisible = Math.min((currentPage + 1) * PAGE_SIZE, filteredRows.length);
+  const codeqlCount = data.findings.filter((finding) => finding.tool === "codeql").length;
+  const grypeCount = data.findings.filter((finding) => finding.tool === "grype").length;
+  const repositoryCount = data.repositories.length || new Set(data.findings.map((finding) => finding.repository)).size;
 
   return (
     <div className="app-shell">
       <aside className="sidebar">
         <Brand />
         <div className="sidebar-section-label">FUENTE</div>
-        <div className="workspace-button"><div className="workspace-icon"><Database size={17} /></div><span><strong>Analyzer</strong><small>{view.entityLabel}</small></span></div>
+        <div className="workspace-button"><div className="workspace-icon"><FolderGit2 size={17} /></div><span><strong>{data.organization}</strong><small>Analyzer · {data.sourceNames.length} archivos</small></span></div>
         <div className="sidebar-section-label sidebar-section-spaced">ANÁLISIS</div>
         <nav aria-label="Análisis de Analyzer">
-          <a className="sidebar-nav-item active" href="#overview"><ShieldAlert size={17} /><span>Resumen</span><span className="nav-count">{view.rows.length}</span></a>
-          <a className="sidebar-nav-item" href="#analyzer-data"><PackageSearch size={17} /><span>Datos</span><span className="nav-count muted-count">{view.rows.length}</span></a>
+          <a className="sidebar-nav-item active" href="#overview"><ShieldAlert size={17} /><span>Resumen</span><span className="nav-count">{data.findings.length}</span></a>
+          <a className="sidebar-nav-item" href="#findings-section"><Bug size={17} /><span>Hallazgos</span><span className="nav-count muted-count">{data.findings.length}</span></a>
+          <a className="sidebar-nav-item" href="#repositories-section"><PackageSearch size={17} /><span>Repositorios</span><span className="nav-count muted-count">{repositoryCount}</span></a>
         </nav>
         <div className="sidebar-spacer" />
-        <div className="sidebar-privacy"><span className="privacy-shield"><ShieldCheck size={17} /></span><div><strong>Datos en este dispositivo</strong><small>El archivo no se transmite</small></div><span className="privacy-dot" /></div>
+        <div className="sidebar-privacy"><span className="privacy-shield"><ShieldCheck size={17} /></span><div><strong>Datos en este dispositivo</strong><small>Los archivos no se transmiten</small></div><span className="privacy-dot" /></div>
         <button className="sidebar-load" onClick={onChooseFile}><FileJson2 size={15} /> Cargar otro análisis</button>
       </aside>
 
       <main className="main-content">
-        <header className="topbar"><div className="breadcrumb"><span>Analyzer</span><span className="breadcrumb-slash">/</span><strong>{view.title}</strong></div><div className="topbar-right"><span className="loaded-file"><FileJson2 size={14} />{data.sourceName}</span><button className="icon-button" aria-label="Cargar otro análisis" title="Cargar otro análisis" onClick={onChooseFile}><FileJson2 size={17} /></button></div></header>
+        <header className="topbar"><div className="breadcrumb"><span>Analyzer</span><span className="breadcrumb-slash">/</span><strong>Resultados integrados</strong></div><div className="topbar-right"><span className="loaded-file"><FileJson2 size={14} />{data.sourceName}</span><button className="icon-button" aria-label="Cargar otro análisis" title="Cargar otro análisis" onClick={onChooseFile}><FileJson2 size={17} /></button></div></header>
         <div className="content-wrap">
-          <div className="page-heading"><div><div className="eyebrow page-eyebrow"><span className="eyebrow-line" /> {view.category}</div><h1>{view.title}</h1><p>{view.description}</p></div><div className="scan-stamp"><span className="stamp-dot" /> Datos agregados de Analyzer</div></div>
+          <div className="page-heading"><div><div className="eyebrow page-eyebrow"><span className="eyebrow-line" /> RESULTADOS DE ANALYZER</div><h1>Resumen de seguridad integrado</h1><p>CodeQL, Grype y agregados calculados para <strong>{data.organization}</strong>.</p></div><div className="scan-stamp"><span className="stamp-dot" /> {data.sourceNames.length} archivos combinados localmente</div></div>
 
-          {error && <div className="alert alert-error dashboard-error" role="alert">{error}</div>}
+          {error && <div className="alert alert-error dashboard-error" role="alert"><AlertTriangle size={16} />{error}</div>}
+          {data.warnings.length > 0 && <div className="warning-stack">{data.warnings.map((warning) => <div className="alert alert-warning" role="status" key={warning}>{warning}</div>)}</div>}
 
           <section id="overview" className="metrics-grid" aria-label="Métricas de Analyzer">
-            {view.metrics.map((metric, index) => {
-              const Icon = metricIcons[index];
-              return <MetricCard key={metric.label} icon={<Icon size={18} />} {...metric} />;
-            })}
+            <MetricCard icon={<FolderGit2 size={18} />} label="Repositorios con evidencia" value={repositoryCount} detail="Presentes en las salidas de Analyzer" tone="blue" />
+            <MetricCard icon={<ShieldAlert size={18} />} label="Evidencias" value={data.findings.length} detail="Consolidado sin duplicar archivos" tone="teal" />
+            <MetricCard icon={<Wrench size={18} />} label="CodeQL" value={codeqlCount} detail="Hallazgos de análisis estático" tone="slate" />
+            <MetricCard icon={<Bug size={18} />} label="Grype" value={grypeCount} detail="Detecciones de dependencias" tone="orange" />
           </section>
 
-          <AnalyzerBarChart title={view.chartTitle} total={view.chartTotal} rows={view.chartRows} />
-
-          <section id="analyzer-data" className="findings-section" aria-labelledby="analyzer-data-title">
-            <div className="section-heading"><div><div className="section-kicker">DATOS AGREGADOS</div><h2 id="analyzer-data-title">{view.tableTitle} <span className="heading-count">{filteredRows.length}</span></h2><p>Los valores proceden del archivo generado por Analyzer; no representan hallazgos individuales.</p></div><button className="button button-outline" onClick={onClose}>Cerrar análisis</button></div>
-            <div className="filter-bar analyzer-filter-bar">
-              <label className="search-field"><Search size={16} /><input value={query} onChange={(event) => { setQuery(event.target.value); setPage(0); }} placeholder="Buscar en los datos..." aria-label="Buscar en los datos de Analyzer" /></label>
-            </div>
-            <div className="table-card analyzer-table-card">
-              <div className="table-scroll">
-                <table aria-label={view.tableTitle}>
-                  <thead><tr>{view.columns.map((column) => <th key={column.key}>{column.label}</th>)}</tr></thead>
-                  <tbody>{visibleRows.map((item) => <tr key={item.key}>{view.columns.map((column) => <td key={column.key}>{formatCell(item.values[column.key], column.percentage)}</td>)}</tr>)}</tbody>
-                </table>
-                {visibleRows.length === 0 && <div className="empty-state"><strong>No hay filas que coincidan</strong><span>Prueba con otro término de búsqueda.</span></div>}
-              </div>
-              <div className="table-footer analyzer-table-footer">
-                <span>Mostrando <strong>{firstVisible}–{lastVisible}</strong> de {filteredRows.length}</span>
-                <div className="pagination-controls"><button aria-label="Página anterior" disabled={currentPage === 0} onClick={() => setPage((value) => Math.max(0, value - 1))}><ArrowLeft size={14} /></button><span>Página {currentPage + 1} de {pageCount}</span><button aria-label="Página siguiente" disabled={currentPage + 1 >= pageCount} onClick={() => setPage((value) => Math.min(pageCount - 1, value + 1))}><ArrowRight size={14} /></button></div>
-              </div>
-            </div>
+          <section className="overview-grid" aria-label="Visualizaciones de Analyzer">
+            <SeverityChart findings={data.findings} />
+            <ToolChart findings={data.findings} />
+            <RepositoryEvidenceChart data={data} />
           </section>
 
-          <footer className="app-footer"><span>Octa-Core · Miner Visualizer</span><span><ShieldCheck size={14} /> El resultado se procesa localmente en tu navegador.</span></footer>
+          <AnalyzerFindings data={data} onClose={onClose} />
+          <RepositoryAnalysis data={data} />
+
+          <footer className="app-footer"><span>Octa-Core · Miner Visualizer</span><span><ShieldCheck size={14} /> Los resultados se procesan localmente en tu navegador.</span></footer>
         </div>
       </main>
     </div>
   );
 }
 
-function AnalyzerBarChart({ title, total, rows }: { title: string; total: number; rows: { label: string; value: number }[] }) {
-  const topRows = [...rows].sort((left, right) => right.value - left.value || left.label.localeCompare(right.label)).slice(0, 8);
-  const maximum = Math.max(1, ...topRows.map((item) => item.value));
+function RepositoryEvidenceChart({ data }: { data: AnalyzerData }) {
+  const repositories = [...data.repositories]
+    .sort((left, right) => right.totalSecurityEvidence - left.totalSecurityEvidence || left.repository.localeCompare(right.repository))
+    .slice(0, 5);
+  const maximum = Math.max(1, ...repositories.map((item) => item.totalSecurityEvidence));
+  const total = data.repositories.reduce((sum, item) => sum + item.totalSecurityEvidence, 0);
   return (
-    <section className="analyzer-chart-card" aria-label={title}>
-      <div className="chart-heading"><div><span className="chart-eyebrow">DISTRIBUCIÓN</span><h3>{title}</h3></div><span className="chart-total">{total.toLocaleString("es-ES")}</span></div>
-      <div className="analyzer-bars">{topRows.map((item) => <div className="analyzer-bar-row" key={item.label}><span title={item.label}>{item.label}</span><div className="bar-track"><span className="bar-fill repo-fill" style={{ width: `${(item.value / maximum) * 100}%` }} /></div><strong>{item.value.toLocaleString("es-ES")}</strong></div>)}</div>
+    <article className="chart-card repo-chart">
+      <div className="chart-heading"><div><span className="chart-eyebrow">DISTRIBUCIÓN</span><h3>Mayor evidencia por repositorio</h3></div><span className="chart-total">{total.toLocaleString("es-ES")}</span></div>
+      <div className="repo-bars">{repositories.length ? repositories.map((item) => <div className="repo-bar-row" key={item.repository}><span title={item.repository}>{item.repository.split("/").at(-1)}</span><div className="bar-track"><span className="bar-fill repo-fill" style={{ width: `${(item.totalSecurityEvidence / maximum) * 100}%` }} /></div><strong>{item.totalSecurityEvidence.toLocaleString("es-ES")}</strong></div>) : <div className="chart-empty">Sin resumen por repositorio.</div>}</div>
+    </article>
+  );
+}
+
+interface FindingFilters {
+  query: string;
+  repository: string;
+  tool: string;
+  severity: string;
+}
+
+const initialFilters: FindingFilters = { query: "", repository: "all", tool: "all", severity: "all" };
+
+function AnalyzerFindings({ data, onClose }: { data: AnalyzerData; onClose: () => void }) {
+  const [filters, setFilters] = useState(initialFilters);
+  const [page, setPage] = useState(0);
+  const repositories = useMemo(() => [...new Set(data.findings.map((finding) => finding.repository))].sort(), [data.findings]);
+  const tools = useMemo(() => [...new Set(data.findings.map((finding) => finding.tool))].sort(), [data.findings]);
+  const filtered = useMemo(() => {
+    const query = filters.query.trim().toLowerCase();
+    return data.findings.filter((finding) => {
+      const matchesQuery = !query || [finding.vulnerabilityType, finding.message, finding.location, finding.packageName, finding.repository]
+        .some((value) => value?.toLowerCase().includes(query));
+      return matchesQuery
+        && (filters.repository === "all" || finding.repository === filters.repository)
+        && (filters.tool === "all" || finding.tool === filters.tool)
+        && (filters.severity === "all" || finding.severity === filters.severity);
+    });
+  }, [data.findings, filters]);
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount - 1);
+  const visible = filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE);
+  const firstVisible = filtered.length ? currentPage * PAGE_SIZE + 1 : 0;
+  const lastVisible = Math.min((currentPage + 1) * PAGE_SIZE, filtered.length);
+  const updateFilters = (next: FindingFilters) => { setFilters(next); setPage(0); };
+
+  return (
+    <section id="findings-section" className="findings-section" aria-labelledby="analyzer-findings-title">
+      <div className="section-heading"><div><div className="section-kicker">EVIDENCIAS CONSOLIDADAS</div><h2 id="analyzer-findings-title">Hallazgos de Analyzer <span className="heading-count">{filtered.length}</span></h2><p>Explora el consolidado generado desde `integrated_findings.csv`.</p></div><button className="button button-outline" onClick={onClose}>Cerrar análisis</button></div>
+      <div className="filter-bar">
+        <label className="search-field"><Search size={16} /><input value={filters.query} onChange={(event) => updateFilters({ ...filters, query: event.target.value })} placeholder="Buscar hallazgo, paquete o ruta..." aria-label="Buscar hallazgo de Analyzer" /></label>
+        <FilterSelect label="Repositorio" value={filters.repository} options={repositories} onChange={(value) => updateFilters({ ...filters, repository: value })} />
+        <FilterSelect label="Herramienta" value={filters.tool} options={tools} onChange={(value) => updateFilters({ ...filters, tool: value })} />
+        <FilterSelect label="Severidad" value={filters.severity} options={severityCategories} display={(value) => severityLabels[value as SeverityCategory]} onChange={(value) => updateFilters({ ...filters, severity: value })} />
+      </div>
+      <div className="table-card analyzer-table-card">
+        <div className="table-scroll">
+          <table aria-label="Hallazgos de Analyzer"><thead><tr><th>HALLAZGO</th><th>REPOSITORIO</th><th>HERRAMIENTA</th><th>SEVERIDAD</th><th>UBICACIÓN</th><th>CLASIFICACIÓN</th></tr></thead><tbody>{visible.map((finding) => <FindingRow finding={finding} key={finding.id} />)}</tbody></table>
+          {!visible.length && <div className="empty-state"><strong>No hay hallazgos para mostrar</strong><span>Prueba con otros filtros o términos de búsqueda.</span></div>}
+        </div>
+        <Pagination first={firstVisible} last={lastVisible} total={filtered.length} page={currentPage} pageCount={pageCount} onPage={setPage} />
+      </div>
     </section>
   );
+}
+
+function FindingRow({ finding }: { finding: AnalyzerFinding }) {
+  const location = finding.location ? `${finding.location}${finding.line ? `:${finding.line}` : ""}` : finding.packageName ?? "—";
+  return <tr><td><span className="finding-name"><strong>{finding.vulnerabilityType}</strong><span>{finding.message || "Sin descripción disponible"}</span></span></td><td><span className="repository-cell">{finding.repository}</span></td><td><ToolBadge tool={finding.tool} /></td><td><SeverityBadge severity={finding.severity} /></td><td><span className="location-cell" title={location}>{location}</span></td><td>{finding.isTest === null ? "—" : finding.isTest ? "Prueba" : "Producción"}</td></tr>;
+}
+
+function RepositoryAnalysis({ data }: { data: AnalyzerData }) {
+  const priorities = new Map(data.priorities.map((item) => [item.repository, item]));
+  const concentration = new Map(data.concentration.map((item) => [item.repository, item]));
+  const rows = [...data.repositories].sort((left, right) => right.totalSecurityEvidence - left.totalSecurityEvidence || left.repository.localeCompare(right.repository));
+  return (
+    <section id="repositories-section" className="repositories-section" aria-labelledby="repository-analysis-title">
+      <div className="section-heading compact-heading"><div><div className="section-kicker">PRIORIZACIÓN</div><h2 id="repository-analysis-title">Resumen por repositorio <span className="heading-count">{rows.length}</span></h2><p>Combina el resumen integrado, la prioridad y la concentración calculadas por Analyzer.</p></div></div>
+      <div className="table-card standalone-table-card"><div className="table-scroll"><table aria-label="Resumen de Analyzer por repositorio"><thead><tr><th>REPOSITORIO</th><th>CODEQL</th><th>GRYPE</th><th>TOTAL</th><th>VULNERABILIDADES ÚNICAS</th><th>PAQUETES</th><th>PRIORIDAD</th><th>CONCENTRACIÓN</th></tr></thead><tbody>{rows.map((item) => {
+        const priority = priorities.get(item.repository);
+        const share = concentration.get(item.repository);
+        return <tr key={item.repository}><td>{item.repository}</td><td>{item.codeqlFindings.toLocaleString("es-ES")}</td><td>{item.grypeDetections.toLocaleString("es-ES")}</td><td><strong>{item.totalSecurityEvidence.toLocaleString("es-ES")}</strong></td><td>{priority?.uniqueVulnerabilities.toLocaleString("es-ES") ?? "—"}</td><td>{priority?.affectedPackages.toLocaleString("es-ES") ?? "—"}</td><td>{priority?.priorityScore.toLocaleString("es-ES", { maximumFractionDigits: 2 }) ?? "—"}</td><td>{share ? `${share.percentage.toLocaleString("es-ES", { maximumFractionDigits: 2 })}%` : "—"}</td></tr>;
+      })}</tbody></table></div><div className="table-footer"><span><strong>{rows.length}</strong> repositorios con evidencia</span><span>{data.severitySummary.map((item) => `${item.severity}: ${item.count}`).join(" · ")}</span></div></div>
+    </section>
+  );
+}
+
+function FilterSelect({ label, value, options, display, onChange }: { label: string; value: string; options: readonly string[]; display?: (value: string) => string; onChange: (value: string) => void }) {
+  return <label className="filter-select"><span className="sr-only">{label}</span><select value={value} onChange={(event) => onChange(event.target.value)} aria-label={label}><option value="all">Todos: {label.toLowerCase()}</option>{options.map((option) => <option value={option} key={option}>{display ? display(option) : option}</option>)}</select></label>;
+}
+
+function Pagination({ first, last, total, page, pageCount, onPage }: { first: number; last: number; total: number; page: number; pageCount: number; onPage: (page: number) => void }) {
+  return <div className="table-footer analyzer-table-footer"><span>Mostrando <strong>{first}–{last}</strong> de {total}</span><div className="pagination-controls"><button aria-label="Página anterior" disabled={page === 0} onClick={() => onPage(Math.max(0, page - 1))}><ArrowLeft size={14} /></button><span>Página {page + 1} de {pageCount}</span><button aria-label="Página siguiente" disabled={page + 1 >= pageCount} onClick={() => onPage(Math.min(pageCount - 1, page + 1))}><ArrowRight size={14} /></button></div></div>;
 }

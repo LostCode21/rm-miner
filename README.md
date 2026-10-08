@@ -127,7 +127,7 @@ python -m pytest
 
 ## Visualizer
 
-El frontend independiente está en [`visualizer/`](visualizer/). Para ejecutarlo, consulta su [guía de instalación y uso](visualizer/README.md). La aplicación carga manualmente el JSON de `miner scan` o las salidas JSON agregadas de Analyzer y los procesa en el navegador, sin enviarlos a un servidor.
+El frontend independiente está en [`visualizer/`](visualizer/). Para ejecutarlo, consulta su [guía de instalación y uso](visualizer/README.md). La aplicación carga manualmente el JSON de `miner scan` o combina las salidas CSV/JSON de Analyzer y las procesa en el navegador, sin enviarlas a un servidor.
 
 ## Reporter: auditoría del propio proyecto
 

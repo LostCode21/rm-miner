@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { importScanResult } from "./application/importScan";
+import { importAnalyzerFiles } from "./adapters/analyzerOutputs";
+import { importScanResult, UnsupportedScanFormatError } from "./application/importScan";
 import { sampleMinerScan } from "./adapters/minerScan.sample";
 import { isAnalyzerData, type VisualizationData } from "./domain/analyzer";
 import { AnalyzerDashboardPage } from "./pages/AnalyzerDashboardPage";
@@ -24,41 +25,58 @@ function App() {
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const showAnalysis = (data: VisualizationData) => {
+    setAnalysis(data);
+    setScanRevision((revision) => revision + 1);
+    setError("");
+  };
+
   const loadData = (data: unknown, sourceName: string) => {
     try {
-      setAnalysis(importScanResult(data, sourceName));
-      setScanRevision((revision) => revision + 1);
-      setError("");
+      showAnalysis(importScanResult(data, sourceName));
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "No se pudo interpretar el archivo seleccionado.");
     }
   };
 
-  const handleFile = async (file?: File) => {
-    if (!file) return;
-    if (!file.name.toLowerCase().endsWith(".json") && file.type !== "application/json") {
-      setError("Selecciona un archivo JSON de resultados.");
+  const handleFiles = async (files: File[]) => {
+    if (!files.length) return;
+    if (files.some((file) => !/\.(json|csv)$/i.test(file.name))) {
+      setError("Selecciona únicamente archivos JSON o CSV de resultados.");
       return;
     }
-    if (file.size > MAX_SCAN_FILE_SIZE_BYTES) {
-      setError(`El archivo supera el límite de ${MAX_SCAN_FILE_SIZE_MB} MB para la carga en el navegador.`);
+    const totalSize = files.reduce((total, file) => total + file.size, 0);
+    if (totalSize > MAX_SCAN_FILE_SIZE_BYTES) {
+      setError(`Los archivos superan el límite conjunto de ${MAX_SCAN_FILE_SIZE_MB} MB para la carga en el navegador.`);
       return;
     }
-    let contents: string;
+    let sources: { name: string; content: string }[];
     try {
-      contents = await readLocalFile(file);
+      sources = await Promise.all(files.map(async (file) => ({ name: file.name, content: await readLocalFile(file) })));
     } catch {
-      setError("No se pudo leer el archivo seleccionado. Comprueba que siga disponible e inténtalo de nuevo.");
+      setError("No se pudieron leer los archivos seleccionados. Comprueba que sigan disponibles e inténtalo de nuevo.");
       return;
     }
-    let data: unknown;
+
     try {
-      data = JSON.parse(contents);
-    } catch {
-      setError("El archivo no contiene JSON válido. Comprueba el archivo e inténtalo de nuevo.");
-      return;
+      if (sources.length === 1 && sources[0].name.toLowerCase().endsWith(".json")) {
+        let document: unknown;
+        try {
+          document = JSON.parse(sources[0].content);
+        } catch {
+          throw new Error("El archivo no contiene JSON válido. Comprueba el archivo e inténtalo de nuevo.");
+        }
+        try {
+          showAnalysis(importScanResult(document, sources[0].name));
+          return;
+        } catch (cause) {
+          if (!(cause instanceof UnsupportedScanFormatError)) throw cause;
+        }
+      }
+      showAnalysis(importAnalyzerFiles(sources));
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "No se pudieron interpretar los archivos seleccionados.");
     }
-    loadData(data, file.name);
   };
 
   return (
@@ -67,9 +85,10 @@ function App() {
         ref={inputRef}
         className="sr-only"
         type="file"
-        accept=".json,application/json"
-        aria-label="Seleccionar JSON de resultados"
-        onChange={(event) => { void handleFile(event.target.files?.[0]); event.currentTarget.value = ""; }}
+        accept=".json,.csv,application/json,text/csv"
+        multiple
+        aria-label="Seleccionar archivos de resultados"
+        onChange={(event) => { void handleFiles(Array.from(event.target.files ?? [])); event.currentTarget.value = ""; }}
       />
       {analysis ? (
         isAnalyzerData(analysis)
@@ -80,7 +99,7 @@ function App() {
           error={error}
           maxFileSizeMb={MAX_SCAN_FILE_SIZE_MB}
           onChooseFile={() => inputRef.current?.click()}
-          onDropFile={(file) => { void handleFile(file); }}
+          onDropFiles={(files) => { void handleFiles(files); }}
           onLoadSample={() => loadData(sampleMinerScan, "ejemplo-miner-scan.json")}
         />
       )}

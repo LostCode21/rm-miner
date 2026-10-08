@@ -1,80 +1,51 @@
-import type { ScanData } from "./scan";
+import type { Finding, ScanData } from "./scan";
 
-export interface AnalyzerRepositorySummaryRow {
-  repository: string;
-  totalFindings: number;
-  uniqueRules: number;
-  filesAffected: number;
-  securityFindings: number;
-  testFindings: number;
-  securityPercentage: number;
-  testPercentage: number;
+export interface AnalyzerFinding extends Finding {
+  isTest: boolean | null;
+  severityWeight: number | null;
 }
 
-export interface AnalyzerSecurityConcentrationRow {
+export interface AnalyzerRepositorySummary {
   repository: string;
-  securityFindings: number;
+  codeqlFindings: number;
+  grypeDetections: number;
+  totalSecurityEvidence: number;
+}
+
+export interface AnalyzerRepositoryPriority {
+  repository: string;
+  detections: number;
+  uniqueVulnerabilities: number;
+  affectedPackages: number;
+  priorityScore: number;
+}
+
+export interface AnalyzerConcentration {
+  repository: string;
+  detections: number;
   percentage: number;
   cumulativePercentage: number;
 }
 
-export interface AnalyzerSbomRepositoryRow {
-  repository: string;
-  uniqueComponents: number;
-  uniqueComponentNames: number;
-  npmComponents: number;
-  githubActionComponents: number;
-  unknownVersions: number;
-  withPurl: number;
-  withCpe: number;
-  withLicense: number;
-  rawComponentOccurrences: number;
-  purlPercentage: number;
-  cpePercentage: number;
-  licensePercentage: number;
-  dependencyEdges: number;
-  dependencySources: number;
-  dependencyTargets: number;
+export interface AnalyzerSeveritySummary {
+  severity: string;
+  count: number;
+  percentage: number;
 }
 
-export interface AnalyzerSharedPackageRow {
-  name: string;
-  repositories: number;
-  versions: number;
-  totalOccurrences: number;
-  repositoryPercentage: number;
-}
-
-interface AnalyzerDataBase {
+export interface AnalyzerData {
   kind: "analyzer";
+  sourceFormat: "analyzer-results-bundle";
   sourceName: string;
+  sourceNames: string[];
+  organization: string;
+  findings: AnalyzerFinding[];
+  repositories: AnalyzerRepositorySummary[];
+  priorities: AnalyzerRepositoryPriority[];
+  concentration: AnalyzerConcentration[];
+  severitySummary: AnalyzerSeveritySummary[];
+  warnings: string[];
 }
-
-export interface AnalyzerRepositorySummaryData extends AnalyzerDataBase {
-  sourceFormat: "analyzer-repository-summary";
-  rows: AnalyzerRepositorySummaryRow[];
-}
-
-export interface AnalyzerSecurityConcentrationData extends AnalyzerDataBase {
-  sourceFormat: "analyzer-security-concentration";
-  rows: AnalyzerSecurityConcentrationRow[];
-}
-
-export interface AnalyzerSbomRepositoryData extends AnalyzerDataBase {
-  sourceFormat: "analyzer-sbom-repository-summary";
-  rows: AnalyzerSbomRepositoryRow[];
-}
-
-export interface AnalyzerSharedPackagesData extends AnalyzerDataBase {
-  sourceFormat: "analyzer-sbom-shared-packages";
-  rows: AnalyzerSharedPackageRow[];
-}
-
-export type AnalyzerData =
-  | AnalyzerRepositorySummaryData
-  | AnalyzerSecurityConcentrationData
-  | AnalyzerSbomRepositoryData
-  | AnalyzerSharedPackagesData;
 
 export type VisualizationData = ScanData | AnalyzerData;
 

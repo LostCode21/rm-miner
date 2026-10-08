@@ -1,16 +1,19 @@
 import type {
-  AnalyzerRepositorySummaryData,
-  AnalyzerRepositorySummaryRow,
-  AnalyzerSbomRepositoryData,
-  AnalyzerSbomRepositoryRow,
-  AnalyzerSecurityConcentrationData,
-  AnalyzerSecurityConcentrationRow,
-  AnalyzerSharedPackageRow,
-  AnalyzerSharedPackagesData,
+  AnalyzerConcentration,
+  AnalyzerData,
+  AnalyzerFinding,
+  AnalyzerRepositoryPriority,
+  AnalyzerRepositorySummary,
+  AnalyzerSeveritySummary,
 } from "../domain/analyzer";
-import type { ScanAdapter } from "./scanAdapter";
+import type { SeverityCategory } from "../domain/scan";
 
-type JsonObject = Record<string, unknown>;
+type SourceRow = Record<string, unknown>;
+
+export interface AnalyzerSourceFile {
+  name: string;
+  content: string;
+}
 
 export class AnalyzerDataError extends Error {
   constructor(message: string) {
@@ -19,129 +22,388 @@ export class AnalyzerDataError extends Error {
   }
 }
 
-const isObject = (value: unknown): value is JsonObject =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
+const findingFields = [
+  "repository", "tool", "vulnerability_type", "severity", "location", "line",
+  "package", "version", "fixed_version", "artifact_type", "language", "message",
+] as const;
 
-const firstRow = (input: unknown): JsonObject | null =>
-  Array.isArray(input) && input.length > 0 && isObject(input[0]) ? input[0] : null;
+const expectedFiles = [
+  "integrated_findings.csv",
+  "codeql_findings.csv",
+  "grype_findings.csv",
+  "repository_integrated_summary.csv",
+  "repository_integrated_summary.json",
+  "grype_repository_priority.csv",
+  "grype_concentration.csv",
+  "grype_severity_summary.json",
+] as const;
 
-const hasFields = (input: unknown, fields: readonly string[]): boolean => {
-  const row = firstRow(input);
-  return row !== null && fields.every((field) => field in row);
-};
+function isObject(value: unknown): value is SourceRow {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
-function rows(input: unknown, format: string): JsonObject[] {
-  if (!Array.isArray(input) || input.length === 0) {
-    throw new AnalyzerDataError(`${format} debe contener una lista no vacía.`);
-  }
-  return input.map((value, index) => {
-    if (!isObject(value)) {
-      throw new AnalyzerDataError(`${format}: la fila ${index + 1} no es un objeto válido.`);
+function hasFields(row: SourceRow, fields: readonly string[]): boolean {
+  return fields.every((field) => field in row);
+}
+
+function nonEmptyRows(rows: SourceRow[], name: string): SourceRow[] {
+  if (!rows.length) throw new AnalyzerDataError(`${name} no contiene filas de datos.`);
+  return rows;
+}
+
+/** Parser RFC 4180 acotado: admite comillas escapadas, comas y saltos de línea en campos. */
+export function parseCsv(content: string, name = "archivo.csv"): SourceRow[] {
+  const matrix: string[][] = [];
+  let currentRow: string[] = [];
+  let field = "";
+  let quoted = false;
+
+  const finishField = () => {
+    currentRow.push(field);
+    field = "";
+  };
+  const finishRow = () => {
+    finishField();
+    if (currentRow.some((value) => value.length > 0)) matrix.push(currentRow);
+    currentRow = [];
+  };
+
+  for (let index = 0; index < content.length; index += 1) {
+    const character = content[index];
+    if (quoted) {
+      if (character === '"') {
+        if (content[index + 1] === '"') {
+          field += '"';
+          index += 1;
+        } else {
+          quoted = false;
+        }
+      } else {
+        field += character;
+      }
+      continue;
     }
-    return value;
+    if (character === '"' && field.length === 0) {
+      quoted = true;
+    } else if (character === ",") {
+      finishField();
+    } else if (character === "\n") {
+      finishRow();
+    } else if (character === "\r") {
+      if (content[index + 1] === "\n") index += 1;
+      finishRow();
+    } else {
+      field += character;
+    }
+  }
+  if (quoted) throw new AnalyzerDataError(`${name} contiene un campo CSV sin cerrar.`);
+  if (field.length || currentRow.length) finishRow();
+  if (!matrix.length) throw new AnalyzerDataError(`${name} está vacío.`);
+
+  const headers = matrix[0].map((value, index) => (index === 0 ? value.replace(/^\uFEFF/, "") : value).trim());
+  if (headers.some((header) => !header) || new Set(headers).size !== headers.length) {
+    throw new AnalyzerDataError(`${name} contiene encabezados vacíos o duplicados.`);
+  }
+  return matrix.slice(1).map((values, rowIndex) => {
+    if (values.length !== headers.length) {
+      throw new AnalyzerDataError(`${name}: la fila ${rowIndex + 2} tiene ${values.length} columnas; se esperaban ${headers.length}.`);
+    }
+    return Object.fromEntries(headers.map((header, index) => [header, values[index]]));
   });
 }
 
-function requiredText(row: JsonObject, field: string, index: number): string {
+function parseJson(content: string, name: string): SourceRow[] {
+  let document: unknown;
+  try {
+    document = JSON.parse(content);
+  } catch {
+    throw new AnalyzerDataError(`${name} no contiene JSON válido.`);
+  }
+  if (!Array.isArray(document) || !document.every(isObject)) {
+    throw new AnalyzerDataError(`${name} debe contener una lista de objetos.`);
+  }
+  return document;
+}
+
+function text(row: SourceRow, field: string, rowIndex: number): string {
   const value = row[field];
   if (typeof value !== "string" || !value.trim()) {
-    throw new AnalyzerDataError(`La fila ${index + 1} no contiene un valor válido para \`${field}\`.`);
+    throw new AnalyzerDataError(`La fila ${rowIndex + 1} no contiene un valor válido para \`${field}\`.`);
   }
-  return value;
+  return value.trim();
 }
 
-function requiredNumber(row: JsonObject, field: string, index: number): number {
+function optionalText(row: SourceRow, field: string): string | null {
   const value = row[field];
-  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
-    throw new AnalyzerDataError(`La fila ${index + 1} no contiene un número válido para \`${field}\`.`);
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function number(row: SourceRow, field: string, rowIndex: number): number {
+  const source = row[field];
+  const value = typeof source === "number" ? source : typeof source === "string" && source.trim() ? Number(source) : Number.NaN;
+  if (!Number.isFinite(value) || value < 0) {
+    throw new AnalyzerDataError(`La fila ${rowIndex + 1} no contiene un número válido para \`${field}\`.`);
   }
   return value;
 }
 
-function repositorySummary(input: unknown, sourceName: string): AnalyzerRepositorySummaryData {
-  const normalized: AnalyzerRepositorySummaryRow[] = rows(input, "repository_summary.json").map((row, index) => ({
-    repository: requiredText(row, "repository", index),
-    totalFindings: requiredNumber(row, "total_findings", index),
-    uniqueRules: requiredNumber(row, "unique_rules", index),
-    filesAffected: requiredNumber(row, "files_affected", index),
-    securityFindings: requiredNumber(row, "security_findings", index),
-    testFindings: requiredNumber(row, "test_findings", index),
-    securityPercentage: requiredNumber(row, "security_percentage", index),
-    testPercentage: requiredNumber(row, "test_percentage", index),
-  }));
-  return { kind: "analyzer", sourceFormat: "analyzer-repository-summary", sourceName, rows: normalized };
+function optionalNumber(row: SourceRow, field: string): number | null {
+  const source = row[field];
+  if (source === null || source === undefined || source === "") return null;
+  const value = typeof source === "number" ? source : Number(source);
+  return Number.isFinite(value) ? value : null;
 }
 
-function securityConcentration(input: unknown, sourceName: string): AnalyzerSecurityConcentrationData {
-  const normalized: AnalyzerSecurityConcentrationRow[] = rows(input, "security_concentration.json").map((row, index) => ({
-    repository: requiredText(row, "repository", index),
-    securityFindings: requiredNumber(row, "security_findings", index),
-    percentage: requiredNumber(row, "percentage", index),
-    cumulativePercentage: requiredNumber(row, "cumulative_percentage", index),
-  }));
-  return { kind: "analyzer", sourceFormat: "analyzer-security-concentration", sourceName, rows: normalized };
+function optionalBoolean(row: SourceRow, field: string): boolean | null {
+  const source = row[field];
+  if (typeof source === "boolean") return source;
+  if (typeof source !== "string" || !source.trim()) return null;
+  if (source.toLowerCase() === "true") return true;
+  if (source.toLowerCase() === "false") return false;
+  return null;
 }
 
-function sbomRepositorySummary(input: unknown, sourceName: string): AnalyzerSbomRepositoryData {
-  const normalized: AnalyzerSbomRepositoryRow[] = rows(input, "sbom_repository_summary.json").map((row, index) => ({
-    repository: requiredText(row, "repository", index),
-    uniqueComponents: requiredNumber(row, "unique_components", index),
-    uniqueComponentNames: requiredNumber(row, "unique_component_names", index),
-    npmComponents: requiredNumber(row, "npm_components", index),
-    githubActionComponents: requiredNumber(row, "github_action_components", index),
-    unknownVersions: requiredNumber(row, "unknown_versions", index),
-    withPurl: requiredNumber(row, "with_purl", index),
-    withCpe: requiredNumber(row, "with_cpe", index),
-    withLicense: requiredNumber(row, "with_license", index),
-    rawComponentOccurrences: requiredNumber(row, "raw_component_occurrences", index),
-    purlPercentage: requiredNumber(row, "purl_percentage", index),
-    cpePercentage: requiredNumber(row, "cpe_percentage", index),
-    licensePercentage: requiredNumber(row, "license_percentage", index),
-    dependencyEdges: requiredNumber(row, "dependency_edges", index),
-    dependencySources: requiredNumber(row, "dependency_sources", index),
-    dependencyTargets: requiredNumber(row, "dependency_targets", index),
-  }));
-  return { kind: "analyzer", sourceFormat: "analyzer-sbom-repository-summary", sourceName, rows: normalized };
+function normalizeSeverity(tool: string, source: string | null): SeverityCategory {
+  const value = source?.toLowerCase();
+  if (!value) return "unknown";
+  if (value === "critical") return "critical";
+  if (value === "high" || (tool === "codeql" && value === "error")) return "high";
+  if (["medium", "moderate"].includes(value) || (tool === "codeql" && ["warning", "warn"].includes(value))) return "medium";
+  if (["low", "negligible"].includes(value)) return "low";
+  if (["info", "informational", "note", "none"].includes(value)) return "info";
+  return "unknown";
 }
 
-function sharedPackages(input: unknown, sourceName: string): AnalyzerSharedPackagesData {
-  const normalized: AnalyzerSharedPackageRow[] = rows(input, "sbom_shared_packages.json").map((row, index) => ({
-    name: requiredText(row, "name", index),
-    repositories: requiredNumber(row, "repositories", index),
-    versions: requiredNumber(row, "versions", index),
-    totalOccurrences: requiredNumber(row, "total_occurrences", index),
-    repositoryPercentage: requiredNumber(row, "repository_percentage", index),
-  }));
-  return { kind: "analyzer", sourceFormat: "analyzer-sbom-shared-packages", sourceName, rows: normalized };
+function findingKey(row: SourceRow): string {
+  return ["repository", "tool", "vulnerability_type", "location", "line", "package", "version", "message"]
+    .map((field) => String(row[field] ?? ""))
+    .join("\u001f");
 }
 
-export const analyzerRepositorySummaryAdapter: ScanAdapter = {
-  id: "analyzer-repository-summary",
-  supports: (input) => hasFields(input, ["repository", "total_findings", "unique_rules", "files_affected", "security_percentage", "test_percentage"]),
-  parse: repositorySummary,
-};
+interface FindingSupplement {
+  isTest: boolean | null;
+  severityWeight: number | null;
+}
 
-export const analyzerSecurityConcentrationAdapter: ScanAdapter = {
-  id: "analyzer-security-concentration",
-  supports: (input) => hasFields(input, ["repository", "security_findings", "percentage", "cumulative_percentage"]),
-  parse: securityConcentration,
-};
+function supplements(codeqlRows: SourceRow[], grypeRows: SourceRow[]): Map<string, FindingSupplement[]> {
+  const result = new Map<string, FindingSupplement[]>();
+  for (const row of [...codeqlRows, ...grypeRows]) {
+    const key = findingKey(row);
+    const values = result.get(key) ?? [];
+    values.push({ isTest: optionalBoolean(row, "is_test"), severityWeight: optionalNumber(row, "severity_weight") });
+    result.set(key, values);
+  }
+  return result;
+}
 
-export const analyzerSbomRepositoryAdapter: ScanAdapter = {
-  id: "analyzer-sbom-repository-summary",
-  supports: (input) => hasFields(input, ["repository", "unique_components", "raw_component_occurrences", "dependency_edges"]),
-  parse: sbomRepositorySummary,
-};
+function normalizeFindings(rows: SourceRow[], codeqlRows: SourceRow[], grypeRows: SourceRow[]): AnalyzerFinding[] {
+  const details = supplements(codeqlRows, grypeRows);
+  return rows.map((row, index) => {
+    const repository = text(row, "repository", index);
+    const tool = text(row, "tool", index).toLowerCase();
+    const vulnerabilityType = text(row, "vulnerability_type", index);
+    const sourceSeverity = optionalText(row, "severity");
+    const detail = details.get(findingKey(row))?.shift();
+    return {
+      id: `${tool}-${index}-${repository}-${vulnerabilityType}`,
+      repository,
+      tool,
+      vulnerabilityType,
+      severity: normalizeSeverity(tool, sourceSeverity),
+      sourceSeverity,
+      location: optionalText(row, "location"),
+      line: optionalNumber(row, "line"),
+      packageName: optionalText(row, "package"),
+      version: optionalText(row, "version"),
+      fixedVersion: optionalText(row, "fixed_version"),
+      artifactType: optionalText(row, "artifact_type"),
+      language: optionalText(row, "language"),
+      message: optionalText(row, "message") ?? "",
+      isTest: detail?.isTest ?? optionalBoolean(row, "is_test"),
+      severityWeight: detail?.severityWeight ?? optionalNumber(row, "severity_weight"),
+    };
+  });
+}
 
-export const analyzerSharedPackagesAdapter: ScanAdapter = {
-  id: "analyzer-sbom-shared-packages",
-  supports: (input) => hasFields(input, ["name", "repositories", "versions", "total_occurrences", "repository_percentage"]),
-  parse: sharedPackages,
-};
+function normalizeRepositories(rows: SourceRow[]): AnalyzerRepositorySummary[] {
+  return rows.map((row, index) => ({
+    repository: text(row, "repository", index),
+    codeqlFindings: number(row, "codeql_findings", index),
+    grypeDetections: number(row, "grype_detections", index),
+    totalSecurityEvidence: number(row, "total_security_evidence", index),
+  }));
+}
 
-export const analyzerAdapters: readonly ScanAdapter[] = [
-  analyzerRepositorySummaryAdapter,
-  analyzerSecurityConcentrationAdapter,
-  analyzerSbomRepositoryAdapter,
-  analyzerSharedPackagesAdapter,
-];
+function normalizePriorities(rows: SourceRow[]): AnalyzerRepositoryPriority[] {
+  return rows.map((row, index) => ({
+    repository: text(row, "repository", index),
+    detections: number(row, "detections", index),
+    uniqueVulnerabilities: number(row, "unique_vulnerabilities", index),
+    affectedPackages: number(row, "affected_packages", index),
+    priorityScore: number(row, "priority_score", index),
+  }));
+}
+
+function normalizeConcentration(rows: SourceRow[]): AnalyzerConcentration[] {
+  return rows.map((row, index) => ({
+    repository: text(row, "repository", index),
+    detections: number(row, "detections", index),
+    percentage: number(row, "percentage", index),
+    cumulativePercentage: number(row, "cumulative_percentage", index),
+  }));
+}
+
+function normalizeSeveritySummary(rows: SourceRow[]): AnalyzerSeveritySummary[] {
+  return rows.map((row, index) => ({
+    severity: text(row, "severity", index),
+    count: number(row, "cantidad", index),
+    percentage: number(row, "porcentaje", index),
+  }));
+}
+
+function summariesMatch(left: AnalyzerRepositorySummary[], right: AnalyzerRepositorySummary[]): boolean {
+  const sort = (items: AnalyzerRepositorySummary[]) => [...items].sort((a, b) => a.repository.localeCompare(b.repository));
+  return JSON.stringify(sort(left)) === JSON.stringify(sort(right));
+}
+
+function deriveRepositories(findings: AnalyzerFinding[]): AnalyzerRepositorySummary[] {
+  const counts = new Map<string, { codeql: number; grype: number }>();
+  for (const finding of findings) {
+    const current = counts.get(finding.repository) ?? { codeql: 0, grype: 0 };
+    if (finding.tool === "codeql") current.codeql += 1;
+    if (finding.tool === "grype") current.grype += 1;
+    counts.set(finding.repository, current);
+  }
+  return [...counts].map(([repository, count]) => ({
+    repository,
+    codeqlFindings: count.codeql,
+    grypeDetections: count.grype,
+    totalSecurityEvidence: count.codeql + count.grype,
+  })).sort((a, b) => b.totalSecurityEvidence - a.totalSecurityEvidence || a.repository.localeCompare(b.repository));
+}
+
+function deriveSeverity(findings: AnalyzerFinding[]): AnalyzerSeveritySummary[] {
+  const grype = findings.filter((finding) => finding.tool === "grype");
+  const counts = new Map<string, number>();
+  for (const finding of grype) {
+    const severity = finding.sourceSeverity ?? "Unknown";
+    counts.set(severity, (counts.get(severity) ?? 0) + 1);
+  }
+  return [...counts].map(([severity, count]) => ({
+    severity,
+    count,
+    percentage: grype.length ? Number(((count / grype.length) * 100).toFixed(2)) : 0,
+  })).sort((a, b) => b.count - a.count);
+}
+
+function organizationFrom(repositories: AnalyzerRepositorySummary[], findings: AnalyzerFinding[]): string {
+  const names = repositories.map((item) => item.repository).concat(findings.map((item) => item.repository));
+  const organizations = new Set(names.map((name) => name.includes("/") ? name.split("/", 1)[0] : "").filter(Boolean));
+  return organizations.size === 1 ? [...organizations][0] : "Analyzer";
+}
+
+export function importAnalyzerFiles(files: readonly AnalyzerSourceFile[]): AnalyzerData {
+  if (!files.length) throw new AnalyzerDataError("Selecciona al menos un archivo generado por Analyzer.");
+
+  let integratedRows: SourceRow[] = [];
+  let codeqlRows: SourceRow[] = [];
+  let grypeRows: SourceRow[] = [];
+  let repositoryCsvRows: SourceRow[] = [];
+  let repositoryJsonRows: SourceRow[] = [];
+  let priorityRows: SourceRow[] = [];
+  let concentrationRows: SourceRow[] = [];
+  let severityRows: SourceRow[] = [];
+  const recognized = new Set<string>();
+  const warnings: string[] = [];
+
+  for (const file of files) {
+    const lowerName = file.name.toLowerCase();
+    const rows = lowerName.endsWith(".csv") ? parseCsv(file.content, file.name) : lowerName.endsWith(".json") ? parseJson(file.content, file.name) : null;
+    if (!rows) {
+      warnings.push(`Se ignoró ${file.name}: no es CSV ni JSON.`);
+      continue;
+    }
+    const first = rows[0];
+    if (!first) {
+      warnings.push(`Se ignoró ${file.name}: no contiene filas.`);
+    } else if (hasFields(first, [...findingFields, "is_test"])) {
+      codeqlRows = nonEmptyRows(rows, file.name);
+      recognized.add("codeql_findings.csv");
+    } else if (hasFields(first, [...findingFields, "severity_weight"])) {
+      grypeRows = nonEmptyRows(rows, file.name);
+      recognized.add("grype_findings.csv");
+    } else if (hasFields(first, findingFields)) {
+      integratedRows = nonEmptyRows(rows, file.name);
+      recognized.add("integrated_findings.csv");
+    } else if (hasFields(first, ["repository", "codeql_findings", "grype_detections", "total_security_evidence"])) {
+      if (lowerName.endsWith(".json")) {
+        repositoryJsonRows = rows;
+        recognized.add("repository_integrated_summary.json");
+      } else {
+        repositoryCsvRows = rows;
+        recognized.add("repository_integrated_summary.csv");
+      }
+    } else if (hasFields(first, ["repository", "detections", "unique_vulnerabilities", "affected_packages", "priority_score"])) {
+      priorityRows = rows;
+      recognized.add("grype_repository_priority.csv");
+    } else if (hasFields(first, ["repository", "detections", "percentage", "cumulative_percentage"])) {
+      concentrationRows = rows;
+      recognized.add("grype_concentration.csv");
+    } else if (hasFields(first, ["severity", "cantidad", "porcentaje"])) {
+      severityRows = rows;
+      recognized.add("grype_severity_summary.json");
+    } else {
+      warnings.push(`Se ignoró ${file.name}: su esquema no corresponde a una salida conocida de Analyzer.`);
+    }
+  }
+
+  if (!recognized.size) throw new AnalyzerDataError("Ningún archivo corresponde a las salidas actuales de Analyzer.");
+
+  const sourceRows = integratedRows.length ? integratedRows : [...codeqlRows, ...grypeRows];
+  const findings = normalizeFindings(sourceRows, codeqlRows, grypeRows);
+  const csvRepositories = repositoryCsvRows.length ? normalizeRepositories(repositoryCsvRows) : [];
+  const jsonRepositories = repositoryJsonRows.length ? normalizeRepositories(repositoryJsonRows) : [];
+  if (csvRepositories.length && jsonRepositories.length && !summariesMatch(csvRepositories, jsonRepositories)) {
+    warnings.push("Los resúmenes de repositorios CSV y JSON no coinciden; se utilizó el JSON.");
+  }
+  const repositories = jsonRepositories.length ? jsonRepositories : csvRepositories.length ? csvRepositories : deriveRepositories(findings);
+  const priorities = priorityRows.length ? normalizePriorities(priorityRows) : [];
+  const concentration = concentrationRows.length ? normalizeConcentration(concentrationRows) : [];
+  const severitySummary = severityRows.length ? normalizeSeveritySummary(severityRows) : deriveSeverity(findings);
+
+  const missing = expectedFiles.filter((name) => !recognized.has(name));
+  if (missing.length) warnings.push(`Faltan salidas de Analyzer: ${missing.join(", ")}. Se muestran los datos disponibles.`);
+  if (!integratedRows.length && findings.length) warnings.push("No se incluyó integrated_findings.csv; los hallazgos se reconstruyeron desde los archivos por herramienta.");
+
+  if (integratedRows.length && codeqlRows.length && grypeRows.length && integratedRows.length !== codeqlRows.length + grypeRows.length) {
+    warnings.push(`El consolidado contiene ${integratedRows.length} hallazgos, pero CodeQL y Grype suman ${codeqlRows.length + grypeRows.length}.`);
+  }
+  const codeqlCount = findings.filter((finding) => finding.tool === "codeql").length;
+  const grypeCount = findings.filter((finding) => finding.tool === "grype").length;
+  if (repositories.length) {
+    const reportedCodeql = repositories.reduce((total, item) => total + item.codeqlFindings, 0);
+    const reportedGrype = repositories.reduce((total, item) => total + item.grypeDetections, 0);
+    if (findings.length && (reportedCodeql !== codeqlCount || reportedGrype !== grypeCount)) {
+      warnings.push("Los totales por repositorio no coinciden con el consolidado de hallazgos.");
+    }
+  }
+  const reportedSeverityTotal = severitySummary.reduce((total, item) => total + item.count, 0);
+  if (grypeCount && reportedSeverityTotal !== grypeCount) {
+    warnings.push(`El resumen de severidades contiene ${reportedSeverityTotal} detecciones y el consolidado Grype contiene ${grypeCount}.`);
+  }
+
+  const sourceNames = files.map((file) => file.name);
+  return {
+    kind: "analyzer",
+    sourceFormat: "analyzer-results-bundle",
+    sourceName: `${sourceNames.length} archivo${sourceNames.length === 1 ? "" : "s"} de Analyzer`,
+    sourceNames,
+    organization: organizationFrom(repositories, findings),
+    findings,
+    repositories,
+    priorities,
+    concentration,
+    severitySummary,
+    warnings,
+  };
+}
