@@ -1,0 +1,677 @@
+repository,rule_id,severity,message,file,start_line,language,is_test,category
+ai,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,examples/ts-code-mode-web/src/routes/_reporting/api.report-event.ts,241,TypeScript,False,security
+ai,js/server-side-unvalidated-url-redirection,warning,Untrusted URL redirection depends on a [user-provided value](1).,examples/ts-react-chat/scripts/serve-chatgpt-callback.mjs,16,TypeScript,False,security
+ai,js/xss-through-dom,warning,[DOM text](1) is reinterpreted as HTML without escaping meta-characters.,examples/ts-react-media/src/components/SeedImageField.tsx,52,TypeScript,False,security
+ai,js/redos,error,This part of the regular expression may cause exponential backtracking on strings starting with 'data:;' and containing many repetitions of ';'.,packages/ai-byteplus/src/adapters/transcription.ts,413,TypeScript,False,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](4) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](5) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](6) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](7) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](8) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](9) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](10) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](11) may run slow on strings with many repetitions of '/'.",packages/ai-byteplus/src/utils/client.ts,132,TypeScript,False,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](4) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](5) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](6) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](7) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](8) may run slow on strings with many repetitions of '/'.",packages/ai-byteplus/src/utils/client.ts,149,TypeScript,False,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](4) may run slow on strings with many repetitions of '/'.",packages/ai-cohere/src/utils/client.ts,49,TypeScript,False,security
+ai,js/polynomial-redos,warning,This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.,packages/ai-durable-stream/src/durable-stream.ts,493,TypeScript,False,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '/'.",packages/ai-fal/src/utils/client.ts,56,TypeScript,False,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](4) may run slow on strings with many repetitions of '/'.",packages/ai-grok/src/adapters/transcription.ts,82,TypeScript,False,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](4) may run slow on strings with many repetitions of '/'.",packages/ai-grok/src/adapters/tts.ts,44,TypeScript,False,security
+ai,js/polynomial-redos,warning,This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.,packages/ai-mistral/src/adapters/text.ts,732,TypeScript,False,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '/'.",packages/ai-ollaya/src/utils/client.ts,41,TypeScript,False,security
+ai,js/biased-cryptographic-random,warning,Using modulo on a [cryptographically secure random number](1) produces biased results.,packages/ai-openrouter/src/pkce.ts,73,TypeScript,False,security
+ai,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",packages/ai-react/tests/chat-ui/text-part.test.tsx,41,TypeScript,True,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '/'.",packages/ai-reactor/src/utils/client.ts,20,TypeScript,False,security
+ai,js/polynomial-redos,warning,This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '9'.,packages/ai-sandbox-blaxel/src/handle.ts,202,TypeScript,False,security
+ai,js/polynomial-redos,warning,This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '-'.,packages/ai-sandbox-boxd/src/handle.ts,271,TypeScript,False,security
+ai,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,packages/ai-sandbox-cloudflare/src/coordinator.ts,160,TypeScript,False,security
+ai,js/remote-property-injection,warning,A property name to write to depends on a [user-provided value](1).,packages/ai-sandbox-cloudflare/src/runner.ts,119,TypeScript,False,security
+ai,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,packages/ai-sandbox-cloudflare/src/worker.ts,101,TypeScript,False,security
+ai,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",packages/ai-sandbox-cloudflare/tests/preview-tool.test.ts,254,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/src/sbx/provider.ts,287,TypeScript,False,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-materialize.test.ts,84,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-materialize.test.ts,221,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-materialize.test.ts,237,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-materialize.test.ts,291,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-materialize.test.ts,381,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-materialize.test.ts,402,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-materialize.test.ts,426,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-materialize.test.ts,459,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-provider.test.ts,165,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-provider.test.ts,189,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-provider.test.ts,1259,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-provider.test.ts,1260,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-provider.test.ts,1277,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-provider.test.ts,1278,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-provider.test.ts,1296,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-provider.test.ts,1329,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-provider.test.ts,1433,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-provider.test.ts,1702,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/ai-sandbox-docker/tests/sbx-provider.test.ts,1703,TypeScript,True,security
+ai,js/incomplete-url-substring-sanitization,warning,"'[ads.example.com](1)' can be anywhere in the URL, and arbitrary hosts may come before or after it.",packages/ai-sandbox-docker/tests/sbx-provider.test.ts,1764,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,"Insecure creation of file in [the os temp dir](1).
+Insecure creation of file in [the os temp dir](2).
+Insecure creation of file in [the os temp dir](3).
+Insecure creation of file in [the os temp dir](4).
+Insecure creation of file in [the os temp dir](5).
+Insecure creation of file in [the os temp dir](6).
+Insecure creation of file in [the os temp dir](7).
+Insecure creation of file in [the os temp dir](8).
+Insecure creation of file in [the os temp dir](9).
+Insecure creation of file in [the os temp dir](10).
+Insecure creation of file in [the os temp dir](11).
+Insecure creation of file in [the os temp dir](12).
+Insecure creation of file in [the os temp dir](13).
+Insecure creation of file in [the os temp dir](14).
+Insecure creation of file in [the os temp dir](15).
+Insecure creation of file in [the os temp dir](16).
+Insecure creation of file in [the os temp dir](17).
+Insecure creation of file in [the os temp dir](18).
+Insecure creation of file in [the os temp dir](19).
+Insecure creation of file in [the os temp dir](20).
+Insecure creation of file in [the os temp dir](21).
+Insecure creation of file in [the os temp dir](22).",packages/ai-sandbox-local-process/src/handle.ts,628,TypeScript,False,security
+ai,js/polynomial-redos,warning,This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.,packages/ai-sandbox-sprites/src/client.ts,170,TypeScript,False,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '/'.",packages/ai-sandbox/src/watch.ts,106,TypeScript,False,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings starting with '<' and with many repetitions of '<'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings starting with '<' and with many repetitions of '<'.",packages/ai-skills/src/validate.ts,50,TypeScript,False,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings starting with '<' and with many repetitions of '<'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings starting with '<' and with many repetitions of '<'.",packages/ai-skills/src/validate.ts,50,TypeScript,False,security
+ai,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",packages/ai-solid/tests/chat-ui/text-part.test.tsx,47,TypeScript,True,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](4) may run slow on strings with many repetitions of '/'.",packages/ai-typesafe/src/utils/client.ts,42,TypeScript,False,security
+ai,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](4) may run slow on strings with many repetitions of '/'.",packages/ai-worldlabs/src/utils/client.ts,23,TypeScript,False,security
+ai,js/incomplete-sanitization,warning,This does not escape backslash characters in the input.,scripts/convert-openrouter-models.ts,146,TypeScript,False,security
+ai,js/incomplete-sanitization,warning,This does not escape backslash characters in the input.,scripts/convert-openrouter-models.ts,284,TypeScript,False,security
+ai,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/distribute-keys.ts,155,TypeScript,False,security
+ai,js/http-to-file-access,warning,Write to file system depends on [Untrusted data](1).,scripts/fetch-lovable-gateway-models.ts,70,TypeScript,False,security
+ai,js/http-to-file-access,warning,Write to file system depends on [Untrusted data](1).,scripts/fetch-openrouter-models.ts,150,TypeScript,False,security
+ai,js/http-to-file-access,warning,Write to file system depends on [Untrusted data](1).,scripts/fetch-openrouter-models.ts,171,TypeScript,False,security
+ai,js/http-to-file-access,warning,Write to file system depends on [Untrusted data](1).,scripts/fetch-vercel-gateway-models.ts,82,TypeScript,False,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.anthropic-bug-test.ts,120,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.anthropic-bug-test.ts,163,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.anthropic-opus-5-combined-wire.ts,175,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.anthropic-skills-wire.ts,159,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.anthropic-structured-usage.ts,81,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.arktype-tool-wire.ts,81,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.bedrock-converse-cache.ts,91,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).",testing/e2e/src/routes/api.byteplus-seedance-1080p-wire.ts,66,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.file-source-wire.ts,107,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).",testing/e2e/src/routes/api.gemini-image-ga-models.ts,103,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).",testing/e2e/src/routes/api.gemini-native-image-wire.ts,61,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.lazy-tools-wire.ts,81,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.max-tool-calls-wire.ts,206,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.moonshot-usage-details.ts,35,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.multimodal-tool-result-wire.ts,72,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).",testing/e2e/src/routes/api.openai-image-2-5-models.ts,41,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.openai-shell-skills-wire.ts,210,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.openai-usage-details.ts,35,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.openrouter-cost.ts,35,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.openrouter-web-tools-wire.ts,75,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).",testing/e2e/src/routes/api.otel-media.ts,54,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).",testing/e2e/src/routes/api.otel-transcription.ts,54,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.otel-usage.ts,102,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.portable-skills-wire.ts,207,TypeScript,True,security
+ai,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).
+This information exposed to the user depends on [stack trace information](3).
+This information exposed to the user depends on [stack trace information](4).
+This information exposed to the user depends on [stack trace information](5).",testing/e2e/src/routes/api.tool-call-lifecycle-wire.ts,150,TypeScript,True,security
+ai,js/file-system-race,warning,The file may have changed since it [was checked](1).,testing/panel/src/routes/api.list-traces.ts,30,TypeScript,True,security
+ai,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,testing/panel/src/routes/api.video-understanding-upload.ts,34,TypeScript,True,security
+ai,js/incomplete-sanitization,warning,This does not escape backslash characters in the input.,testing/panel/src/routes/stream-debugger.tsx,706,TypeScript,True,security
+ai,js/xss-through-dom,warning,[DOM text](1) is reinterpreted as HTML without escaping meta-characters.,testing/panel/src/routes/video-understanding.tsx,95,TypeScript,True,security
+alt-cli,js/file-access-to-http,warning,Outbound network request depends on [file data](1).,packages/cli/src/api/fetch.ts,98,TypeScript,False,security
+alt-cli,js/file-system-race,warning,The file may have changed since it [was checked](1).,packages/cli/src/api/fetch.ts,132,TypeScript,False,security
+alt-cli,js/file-system-race,warning,The file may have changed since it [was checked](1).,packages/cli/src/api/fetch.ts,135,TypeScript,False,security
+alt-cli,js/file-access-to-http,warning,Outbound network request depends on [file data](1).,packages/cli/src/api/fetch.ts,161,TypeScript,False,security
+alt-cli,js/file-access-to-http,warning,Outbound network request depends on [file data](1).,packages/cli/src/api/fetch.ts,175,TypeScript,False,security
+alt-cli,js/file-access-to-http,warning,Outbound network request depends on [file data](1).,packages/cli/src/api/fetch.ts,215,TypeScript,False,security
+alt-cli,js/polynomial-redos,warning,This [regular expression](1) that depends on [library input](2) may run slow on strings starting with '__^__' and with many repetitions of 'a/__^__a'.,packages/cli/src/engine/template.ts,24,TypeScript,False,security
+bling,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,packages/bling/src/server.ts,271,TypeScript,False,security
+bling,js/indirect-command-line-injection,warning,This command depends on an unsanitized [environment variable](1).,scripts/publish.ts,484,TypeScript,False,security
+bling,js/shell-command-injection-from-environment,warning,This shell command depends on an uncontrolled [absolute path](1).,scripts/publish.ts,484,TypeScript,False,security
+bling,js/indirect-command-line-injection,warning,This command depends on an unsanitized [environment variable](1).,scripts/publish.ts,497,TypeScript,False,security
+bling,js/shell-command-injection-from-environment,warning,This shell command depends on an uncontrolled [absolute path](1).,scripts/publish.ts,565,TypeScript,False,security
+charts,js/html-constructed-from-input,error,"This HTML construction which depends on [library input](1) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](4) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](4) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](5) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](5) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](6) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](6) might later allow [cross-site scripting](3).",packages/charts-core-d3/src/svg-renderer.ts,48,TypeScript,False,security
+charts,js/html-constructed-from-input,error,"This HTML construction which depends on [library input](1) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](4) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](4) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](5) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](5) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](6) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](6) might later allow [cross-site scripting](3).",packages/charts-core-d3/src/svg-renderer.ts,48,TypeScript,False,security
+charts,js/html-constructed-from-input,error,"This HTML construction which depends on [library input](1) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](4) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](4) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](5) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](5) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](6) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](6) might later allow [cross-site scripting](3).",packages/charts-core-d3/src/svg-renderer.ts,48,TypeScript,False,security
+charts,js/html-constructed-from-input,error,"This HTML construction which depends on [library input](1) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](4) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](4) might later allow [cross-site scripting](3).",packages/charts-core-d3/src/svg-renderer.ts,48,TypeScript,False,security
+charts,js/html-constructed-from-input,error,This HTML construction which depends on [library input](1) might later allow [cross-site scripting](2).,packages/charts-core/src/reconcile.ts,68,TypeScript,False,security
+charts,js/html-constructed-from-input,error,"This HTML construction which depends on [library input](1) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](4).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](5).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](6).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](7).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](8).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](9).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](10).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](11).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](12).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](13).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](14).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](15).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](16).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](17).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](18).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](19).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](20).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](21).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](4).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](5).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](6).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](7).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](8).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](9).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](10).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](11).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](12).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](13).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](14).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](15).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](16).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](17).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](18).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](19).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](20).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](21).",packages/charts-core/src/svg-renderer.ts,59,TypeScript,False,security
+charts,js/html-constructed-from-input,error,"This HTML construction which depends on [library input](1) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](4).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](5).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](6).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](7).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](8).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](9).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](10).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](11).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](12).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](13).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](14).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](15).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](16).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](17).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](18).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](19).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](20).
+This HTML construction which depends on [library input](1) might later allow [cross-site scripting](21).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](2).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](3).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](4).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](5).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](6).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](7).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](8).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](9).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](10).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](11).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](12).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](13).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](14).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](15).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](16).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](17).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](18).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](19).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](20).
+This HTML construction which depends on [library input](22) might later allow [cross-site scripting](21).",packages/charts-core/src/svg-renderer.ts,59,TypeScript,False,security
+charts,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",scripts/docs-contract.mjs,1341,TypeScript,False,security
+charts,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,scripts/evaluate-chart-authoring.mjs,181,TypeScript,False,security
+charts,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/evaluate-chart-authoring.mjs,1290,TypeScript,False,security
+charts,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,scripts/evaluate-chart-authoring.mjs,2090,TypeScript,False,security
+charts,js/file-access-to-http,warning,Outbound network request depends on [file data](1).,scripts/shadcn-catalog.mjs,207,TypeScript,False,security
+charts,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,scripts/sync-demo-data.mjs,380,TypeScript,False,security
+cli,js/file-system-race,warning,The file may have changed since it [was checked](1).,packages/cli/src/cli.ts,1564,TypeScript,False,security
+cli,js/file-system-race,warning,The file may have changed since it [was checked](1).,packages/cli/tests-e2e/blank-smoke.spec.ts,183,TypeScript,True,security
+cli,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,packages/create/scripts/generate-manifest.mjs,535,TypeScript,False,security
+cli,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,packages/create/scripts/generate-manifest.mjs,547,TypeScript,False,security
+cli,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings starting with '""<%%>' and with many repetitions of '<%%>'.",packages/create/src/attribution.ts,180,TypeScript,False,security
+cli,js/file-system-race,warning,The file may have changed since it [was checked](1).,packages/create/tests/react-template-dependencies.test.ts,28,TypeScript,True,security
+cli,js/http-to-file-access,warning,"Write to file system depends on [Untrusted data](1).
+Write to file system depends on [Untrusted data](2).",scripts/create-github-release.mjs,243,TypeScript,False,security
+cli,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,scripts/create-github-release.mjs,243,TypeScript,False,security
+config,js/file-access-to-http,warning,Outbound network request depends on [file data](1).,.github/changeset-preview/upsert-pr-comment.mjs,66,TypeScript,False,security
+config,js/indirect-command-line-injection,warning,This command depends on an unsanitized [environment variable](1).,.github/comment-on-release/comment-on-release.ts,148,TypeScript,False,security
+config,js/indirect-command-line-injection,warning,This command depends on an unsanitized [environment variable](1).,.github/comment-on-release/comment-on-release.ts,195,TypeScript,False,security
+config,js/indirect-command-line-injection,warning,This command depends on an unsanitized [environment variable](1).,.github/comment-on-release/comment-on-release.ts,238,TypeScript,False,security
+config,js/shell-command-constructed-from-input,error,This string concatenation which depends on [library input](1) is later used in a [shell command](2).,packages/publish-config/src/index.js,242,TypeScript,False,security
+config,js/shell-command-constructed-from-input,error,This path concatenation which depends on [library input](1) is later used in a [shell command](2).,packages/publish-config/src/index.js,458,TypeScript,False,security
+config,js/shell-command-constructed-from-input,error,This path concatenation which depends on [library input](1) is later used in a [shell command](2).,packages/publish-config/src/index.js,458,TypeScript,False,security
+config,js/shell-command-constructed-from-input,error,"This string concatenation which depends on [library input](1) is later used in a [shell command](2).
+This string concatenation which depends on [library input](1) is later used in a [shell command](2).",packages/publish-config/src/index.js,460,TypeScript,False,security
+config,js/shell-command-constructed-from-input,error,This string concatenation which depends on [library input](1) is later used in a [shell command](2).,packages/publish-config/src/index.js,487,TypeScript,False,security
+container,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,examples/sdk-frameworks/server.mjs,41,TypeScript,False,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,fixtures/context-primitives.mjs,90,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,fixtures/wasm-interpreter/browser.worker.mjs,2,TypeScript,False,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,fixtures/wasm-table-cases.mjs,10,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,preview-host/sw.js,35,TypeScript,False,security
+container,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).",preview-host/sw.js,197,TypeScript,False,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/build-sdk-packages.mjs,25,TypeScript,False,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/build-sdk.mjs,130,TypeScript,False,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/capture-wasm-link.mjs,35,TypeScript,False,security
+container,js/http-to-file-access,warning,Write to file system depends on [Untrusted data](1).,scripts/dev-tunnel.mjs,17,TypeScript,False,security
+container,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,scripts/native-firefox-start.mjs,95,TypeScript,False,security
+container,js/http-to-file-access,warning,Write to file system depends on [Untrusted data](1).,scripts/prepare-http2-probe.mjs,17,TypeScript,False,security
+container,js/http-to-file-access,warning,Write to file system depends on [Untrusted data](1).,scripts/prepare-tls-probe.mjs,16,TypeScript,False,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,scripts/probe-guest-wasm-native.mjs,19,TypeScript,False,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,scripts/probe-guest-wasm-native.mjs,19,TypeScript,False,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,scripts/probe-guest-wasm-native.mjs,19,TypeScript,False,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/probe-native-vite-resume.mjs,33,TypeScript,False,security
+container,js/http-to-file-access,warning,Write to file system depends on [Untrusted data](1).,scripts/probe-runtime-loading.mjs,25,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,scripts/probe-webkit-cjs-compile.mjs,9,TypeScript,False,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/run-sdk-desktop-acceptance.mjs,36,TypeScript,False,security
+container,js/double-escaping,warning,This replacement may produce '&' characters that are double-unescaped [here](1).,scripts/run-tanstack-four-example.mjs,61,TypeScript,False,security
+container,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",scripts/run-tanstack-four-example.mjs,61,TypeScript,False,security
+container,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<style](1), which may cause an HTML element injection vulnerability.",scripts/run-tanstack-four-example.mjs,61,TypeScript,False,security
+container,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",scripts/run-tanstack-four-example.mjs,61,TypeScript,False,security
+container,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<!--](1), which may cause an HTML element injection vulnerability.",scripts/run-tanstack-four-example.mjs,61,TypeScript,False,security
+container,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,scripts/safari-framework-proxy.mjs,265,TypeScript,False,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/sdk-size-report.mjs,23,TypeScript,False,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/test-sdk-package.mjs,38,TypeScript,False,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/validate-sdk-release-publish.mjs,39,TypeScript,False,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/validate-sdk-release-publish.mjs,78,TypeScript,False,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/validate-sdk-release-publish.mjs,82,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/compiler/browser-compiler.worker.ts,38,TypeScript,False,security
+container,js/client-side-unvalidated-url-redirection,error,Untrusted URL redirection depends on a [user-provided value](1).,src/compiler/browser-compiler.worker.ts,53,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/compiler/rolldown-parser.worker.mjs,137,TypeScript,False,security
+container,js/client-side-request-forgery,error,The [URL](1) of this request depends on a [user-provided value](2).,src/compiler/rolldown-parser.worker.mjs,200,TypeScript,False,security
+container,js/client-side-unvalidated-url-redirection,error,Untrusted URL redirection depends on a [user-provided value](1).,src/compiler/rolldown-parser.worker.mjs,211,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/compiler/rolldown-probe.worker.mjs,26,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/feasibility/cooperative-interrupt.worker.ts,5,TypeScript,False,security
+container,js/incomplete-sanitization,warning,This replaces only the first occurrence of '/'.,src/npm/project.ts,58,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/runtime/runtime.worker.ts,162,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/sandbox/compiler.worker.ts,4,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/sandbox/guest-runtime.js,36,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/sandbox/kernel.worker.ts,168,TypeScript,False,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,src/sandbox/kernel.worker.ts,1907,TypeScript,False,security
+container,js/bad-code-sanitization,error,"Code construction depends on an [improperly sanitized value](1).
+Code construction depends on an [improperly sanitized value](2).",src/sandbox/kernel.worker.ts,1910,TypeScript,False,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,src/sandbox/kernel.worker.ts,1910,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/sandbox/mvdan-shell.worker.ts,62,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/sandbox/vm-asyncify.worker.ts,10,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/sandbox/vm-asyncify.worker.ts,30,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/sandbox/vm-combined.worker.ts,12,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/sandbox/vm-combined.worker.ts,48,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/sandbox/vm-execution.worker.ts,13,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/sandbox/vm-execution.worker.ts,104,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/sandbox/vm.worker.ts,8,TypeScript,False,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,src/sdk/runtime-package-setup.mjs,21,TypeScript,False,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,src/sdk/runtime-package-setup.mjs,72,TypeScript,False,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,src/vite-browser/engine.ts,108,TypeScript,False,security
+container,js/functionality-from-untrusted-source,warning,Iframe loaded using unencrypted connection.,tests/e2e/url-preview.spec.ts,167,TypeScript,True,security
+container,js/functionality-from-untrusted-source,warning,Iframe loaded using unencrypted connection.,tests/e2e/url-preview.spec.ts,198,TypeScript,True,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,tests/fixtures/rolldown-callable-native/worker.mjs,33,TypeScript,True,security
+container,js/remote-property-injection,warning,A property name to write to depends on a [user-provided value](1).,tests/fixtures/rolldown-callable-native/worker.mjs,96,TypeScript,True,security
+container,js/regex-injection,error,This regular expression is constructed from a [command-line argument](1).,tests/fixtures/rolldown-shared-native/hook-reference.mjs,7,TypeScript,True,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,tests/fs-copy.test.mjs,9,TypeScript,True,security
+container,js/file-system-race,warning,The file may have changed since it [was checked](1).,tests/fs-copy.test.mjs,33,TypeScript,True,security
+container,js/indirect-command-line-injection,warning,"This command depends on an unsanitized [environment variable](1).
+This command depends on an unsanitized [environment variable](2).",tests/guest-shell-api.test.ts,14,TypeScript,True,security
+container,js/shell-command-injection-from-environment,warning,"This shell command depends on an uncontrolled [absolute path](1).
+This shell command depends on an uncontrolled [absolute path](2).
+This shell command depends on an uncontrolled [absolute path](3).
+This shell command depends on an uncontrolled [absolute path](4).
+This shell command depends on an uncontrolled [absolute path](5).
+This shell command depends on an uncontrolled [absolute path](6).",tests/guest-shell-api.test.ts,14,TypeScript,True,security
+container,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,tests/http-agent.test.ts,31,TypeScript,True,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,tests/native-utf8-buffer-engine.test.mjs,43,TypeScript,True,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,tests/native-utf8-buffer-engine.test.mjs,55,TypeScript,True,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,tests/native-utf8-buffer-engine.test.mjs,94,TypeScript,True,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,tests/native-utf8-buffer-engine.test.mjs,94,TypeScript,True,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,tests/native-utf8-engine.test.mjs,29,TypeScript,True,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,tests/sdk/http-asset-diagnostic.spec.mjs,15,TypeScript,True,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,tests/sdk/immediate-io.spec.mjs,30,TypeScript,True,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,tests/sdk/install-full.worker.ts,7,TypeScript,True,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,tests/sdk/install-liveness.spec.mjs,22,TypeScript,True,security
+container,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<!--](1), which may cause an HTML element injection vulnerability.",tests/sdk/start-vite8.spec.mjs,99,TypeScript,True,security
+container,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,tests/sdk/worker-capacity.spec.mjs,36,TypeScript,True,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,tests/workloads/context-globals.worker.js,7,TypeScript,True,security
+container,js/missing-origin-check,warning,Postmessage handler has no origin check.,tests/workloads/context-primitives.worker.js,6,TypeScript,True,security
+db,js/http-to-file-access,warning,"Write to file system depends on [Untrusted data](1).
+Write to file system depends on [Untrusted data](2).",examples/electron/offline-first/server/index.ts,39,TypeScript,False,security
+db,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/electron/offline-first/server/index.ts,65,TypeScript,False,security
+db,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/electron/offline-first/server/index.ts,88,TypeScript,False,security
+db,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/electron/offline-first/server/index.ts,88,TypeScript,False,security
+db,js/tainted-format-string,warning,Format string depends on a [user-provided value](1).,examples/electron/offline-first/server/index.ts,88,TypeScript,False,security
+db,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/electron/offline-first/server/index.ts,108,TypeScript,False,security
+db,js/http-to-file-access,warning,"Write to file system depends on [Untrusted data](1).
+Write to file system depends on [Untrusted data](2).",examples/react-native/offline-transactions/server/index.ts,46,TypeScript,False,security
+db,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/react-native/offline-transactions/server/index.ts,67,TypeScript,False,security
+db,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/react-native/offline-transactions/server/index.ts,90,TypeScript,False,security
+db,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/react-native/offline-transactions/server/index.ts,90,TypeScript,False,security
+db,js/tainted-format-string,warning,Format string depends on a [user-provided value](1).,examples/react-native/offline-transactions/server/index.ts,90,TypeScript,False,security
+db,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/react-native/offline-transactions/server/index.ts,110,TypeScript,False,security
+db,js/insecure-randomness,warning,This uses a cryptographically insecure random number generated at [Math.random()](1) in a security context.,examples/react-native/offline-transactions/src/polyfills.ts,18,TypeScript,False,security
+db,js/insecure-randomness,warning,This uses a cryptographically insecure random number generated at [Math.random()](1) in a security context.,examples/react-native/offline-transactions/src/polyfills.ts,20,TypeScript,False,security
+db,js/insecure-randomness,warning,This uses a cryptographically insecure random number generated at [Math.random()](1) in a security context.,examples/react-native/shopping-list/src/polyfills.ts,18,TypeScript,False,security
+db,js/insecure-randomness,warning,This uses a cryptographically insecure random number generated at [Math.random()](1) in a security context.,examples/react-native/shopping-list/src/polyfills.ts,20,TypeScript,False,security
+db,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/react/todo/src/api/server.ts,215,TypeScript,False,security
+db,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/solid/todo/src/api/server.ts,215,TypeScript,False,security
+db,js/missing-origin-check,warning,Postmessage handler has no origin check.,packages/browser-db-sqlite-persistence/src/opfs-worker.ts,307,TypeScript,False,security
+db,js/polynomial-redos,warning,This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '_'.,packages/db-sqlite-persistence-core/src/sqlite-core-adapter.ts,1599,TypeScript,False,security
+db,js/missing-origin-check,warning,Postmessage handler has no origin check.,packages/db/e2e/indexed-db/host-worker.ts,6,TypeScript,False,security
+db,js/remote-property-injection,warning,A property name to write to depends on a [user-provided value](1).,packages/db/src/indexed-db-wrapper.ts,279,TypeScript,False,security
+db,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,packages/expo-db-sqlite-persistence/tests/helpers/expo-emulator-runtime.ts,58,TypeScript,True,security
+db,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/update-example-deps.ts,40,TypeScript,False,security
+devtools,js/shell-command-constructed-from-input,error,This string concatenation which depends on [library input](1) is later used in a [shell command](2).,packages/devtools-bundler-core/src/package-manager.ts,79,TypeScript,False,security
+devtools,js/shell-command-constructed-from-input,error,This string concatenation which depends on [library input](1) is later used in a [shell command](2).,packages/devtools-bundler-core/src/package-manager.ts,81,TypeScript,False,security
+devtools,js/shell-command-constructed-from-input,error,This string concatenation which depends on [library input](1) is later used in a [shell command](2).,packages/devtools-bundler-core/src/package-manager.ts,83,TypeScript,False,security
+devtools,js/shell-command-constructed-from-input,error,This string concatenation which depends on [library input](1) is later used in a [shell command](2).,packages/devtools-bundler-core/src/package-manager.ts,86,TypeScript,False,security
+devtools,js/polynomial-redos,warning,This [regular expression](1) that depends on [library input](2) may run slow on strings starting with 'source=' and with many repetitions of 'source=!'.,packages/devtools-bundler-core/src/utils.ts,211,TypeScript,False,security
+devtools,js/log-injection,error,"Log entry depends on a [user-provided value](1).
+Log entry depends on a [user-provided value](2).",packages/event-bus/src/client/client.ts,218,TypeScript,False,security
+devtools,js/log-injection,error,"Log entry depends on a [user-provided value](1).
+Log entry depends on a [user-provided value](2).",packages/event-bus/src/server/server.ts,100,TypeScript,False,security
+highlight,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",scripts/verify-docs.mjs,175,TypeScript,False,security
+hotkeys,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/verify-package.ts,107,TypeScript,False,security
+intent,js/file-access-to-http,warning,Outbound network request depends on [file data](1).,evals/intent-discovery/bin/llm-judge.mjs,78,TypeScript,False,security
+intent,js/file-system-race,warning,The file may have changed since it [was checked](1).,packages/intent/src/commands/install/package-json.ts,152,TypeScript,False,security
+intent,js/file-system-race,warning,The file may have changed since it [was checked](1).,packages/intent/src/hooks/install.ts,632,TypeScript,False,security
+intent,js/file-system-race,warning,The file may have changed since it [was checked](1).,packages/intent/src/hooks/install.ts,643,TypeScript,False,security
+intent,js/file-system-race,warning,The file may have changed since it [was checked](1).,packages/intent/src/review/review.ts,455,TypeScript,False,security
+intent,js/file-system-race,warning,The file may have changed since it [was checked](1).,packages/intent/src/setup/project-setup.ts,395,TypeScript,False,security
+intent,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<!--](1), which may cause an HTML element injection vulnerability.",packages/intent/tests/discovery-safety.test.ts,77,TypeScript,True,security
+intent,js/http-to-file-access,warning,Write to file system depends on [Untrusted data](1).,packages/intent/tests/integration/distribution-installers.test.ts,324,TypeScript,True,security
+intent,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/intent/tests/staleness.test.ts,40,TypeScript,True,security
+intent,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/intent/tests/staleness.test.ts,46,TypeScript,True,security
+intent,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/intent/tests/staleness.test.ts,56,TypeScript,True,security
+intent,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/intent/tests/staleness.test.ts,111,TypeScript,True,security
+intent,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/intent/tests/staleness.test.ts,187,TypeScript,True,security
+intent,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/intent/tests/staleness.test.ts,368,TypeScript,True,security
+intent,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/intent/tests/staleness.test.ts,379,TypeScript,True,security
+intent,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/intent/tests/staleness.test.ts,401,TypeScript,True,security
+intent,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/intent/tests/staleness.test.ts,551,TypeScript,True,security
+intent,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/intent/tests/staleness.test.ts,555,TypeScript,True,security
+intent,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,packages/intent/tests/staleness.test.ts,604,TypeScript,True,security
+intent,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,scripts/create-github-release.mjs,261,TypeScript,False,security
+markdown,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<!--](1), which may cause an HTML element injection vulnerability.",scripts/audit-corpus.ts,582,TypeScript,False,security
+markdown,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",scripts/audit-corpus.ts,591,TypeScript,False,security
+markdown,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<!--](1), which may cause an HTML element injection vulnerability.",scripts/audit-corpus.ts,591,TypeScript,False,security
+markdown,js/incomplete-sanitization,warning,This does not escape backslash characters in the input.,scripts/audit-corpus.ts,675,TypeScript,False,security
+markdown,js/regex/missing-regexp-anchor,warning,"When this is used as a regular expression on a URL, it may match anywhere, and arbitrary hosts may come before or after it.",scripts/audit-tanstack-corpus.ts,17,TypeScript,False,security
+markdown,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",scripts/verify-docs.mjs,166,TypeScript,False,security
+markdown,js/polynomial-redos,warning,This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '  '.,src/extensions/callouts.ts,12,TypeScript,False,security
+markdown,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of ' '.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of ' '.
+This [regular expression](1) that depends on [library input](4) may run slow on strings with many repetitions of ' '.",src/extensions/comment-components.ts,52,TypeScript,False,security
+markdown,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '-'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '-'.
+This [regular expression](1) that depends on [library input](4) may run slow on strings with many repetitions of '-'.
+This [regular expression](1) that depends on [library input](5) may run slow on strings with many repetitions of '-'.
+This [regular expression](1) that depends on [library input](6) may run slow on strings with many repetitions of '-'.
+This [regular expression](1) that depends on [library input](7) may run slow on strings with many repetitions of '-'.
+This [regular expression](1) that depends on [library input](8) may run slow on strings with many repetitions of '-'.
+This [regular expression](1) that depends on [library input](9) may run slow on strings with many repetitions of '-'.",src/utils.ts,88,TypeScript,False,security
+pacer,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/verify-package.ts,111,TypeScript,False,security
+preact,js/xss-through-dom,warning,[DOM text](1) is reinterpreted as HTML without escaping meta-characters.,demo/logger.jsx,98,TypeScript,False,security
+preact,js/redos,error,"This part of the regular expression may cause exponential backtracking on strings starting with '<- -=""' and containing many repetitions of '"" -=""'.",test/_util/helpers.jsx,252,TypeScript,True,security
+query,js/resource-exhaustion,warning,This creates a timer with a user-controlled duration from a [user-provided value](1).,examples/react/nextjs-suspense-streaming/src/app/api/wait/route.ts,7,TypeScript,False,security
+query,js/missing-origin-check,warning,Postmessage handler has no origin check.,examples/react/offline/public/mockServiceWorker.js,22,TypeScript,False,security
+query,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<!--](1), which may cause an HTML element injection vulnerability.",packages/lit-query/src/__tests__/ssr.test.ts,24,TypeScript,True,security
+query,js/http-to-file-access,warning,"Write to file system depends on [Untrusted data](1).
+Write to file system depends on [Untrusted data](2).",scripts/create-github-release.mjs,254,TypeScript,False,security
+query,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,scripts/create-github-release.mjs,254,TypeScript,False,security
+redact,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,examples/ssr-demo/server.ts,33,TypeScript,False,security
+redact,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<!--](1), which may cause an HTML element injection vulnerability.",packages/redact/src/server/renderToString.ts,34,TypeScript,False,security
+redact,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings starting with '<head ' and with many repetitions of '<head '.
+This [regular expression](1) that depends on [library input](3) may run slow on strings starting with '<head ' and with many repetitions of '<head '.",packages/redact/src/server/stream.ts,277,TypeScript,False,security
+redact,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,scripts/perf-research.mjs,143,TypeScript,False,security
+redact,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,scripts/profile-runtime.mjs,37,TypeScript,False,security
+redact,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,scripts/profile-runtime.mjs,38,TypeScript,False,security
+redact,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,scripts/profile-runtime.mjs,59,TypeScript,False,security
+redact,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,scripts/verify-security-parity.mjs,46,TypeScript,False,security
+redact,js/file-access-to-http,warning,Outbound network request depends on [file data](1).,scripts/verify-tanner-site.mjs,231,TypeScript,False,security
+router,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",e2e/react-start/basic/server.js,73,TypeScript,False,security
+router,js/cors-misconfiguration-for-credentials,error,[Credential](1) leak vulnerability due to a [misconfigured CORS header value](2).,e2e/react-start/transform-asset-urls/tests/cdn-server.mjs,25,TypeScript,True,security
+router,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",e2e/solid-start/basic/server.js,73,TypeScript,False,security
+router,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,e2e/vue-router/basic-esbuild-file-based/src/esbuild.run.js,134,TypeScript,False,security
+router,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",e2e/vue-start/basic/server.js,73,TypeScript,False,security
+router,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/react/basic-ssr-file-based/server.js,59,TypeScript,False,security
+router,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,examples/react/basic-ssr-file-based/server.js,61,TypeScript,False,security
+router,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/react/basic-ssr-file-based/server.js,86,TypeScript,False,security
+router,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,examples/react/basic-ssr-file-based/server.js,91,TypeScript,False,security
+router,js/xss-through-exception,warning,[Exception text](1) is reinterpreted as HTML without escaping meta-characters.,examples/react/basic-ssr-file-based/server.js,91,TypeScript,False,security
+router,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/react/basic-ssr-streaming-file-based/server.js,59,TypeScript,False,security
+router,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,examples/react/basic-ssr-streaming-file-based/server.js,61,TypeScript,False,security
+router,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/react/basic-ssr-streaming-file-based/server.js,86,TypeScript,False,security
+router,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,examples/react/basic-ssr-streaming-file-based/server.js,91,TypeScript,False,security
+router,js/xss-through-exception,warning,[Exception text](1) is reinterpreted as HTML without escaping meta-characters.,examples/react/basic-ssr-streaming-file-based/server.js,91,TypeScript,False,security
+router,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",examples/react/with-trpc-react-query/src/server/server.ts,53,TypeScript,False,security
+router,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",examples/react/with-trpc-react-query/src/server/server.ts,71,TypeScript,False,security
+router,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",examples/react/with-trpc/src/server/server.ts,53,TypeScript,False,security
+router,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",examples/react/with-trpc/src/server/server.ts,71,TypeScript,False,security
+router,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/solid/basic-ssr-file-based/server.js,59,TypeScript,False,security
+router,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,examples/solid/basic-ssr-file-based/server.js,61,TypeScript,False,security
+router,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/solid/basic-ssr-file-based/server.js,86,TypeScript,False,security
+router,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,examples/solid/basic-ssr-file-based/server.js,91,TypeScript,False,security
+router,js/xss-through-exception,warning,[Exception text](1) is reinterpreted as HTML without escaping meta-characters.,examples/solid/basic-ssr-file-based/server.js,91,TypeScript,False,security
+router,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/solid/basic-ssr-streaming-file-based/server.js,59,TypeScript,False,security
+router,js/reflected-xss,error,Cross-site scripting vulnerability due to a [user-provided value](1).,examples/solid/basic-ssr-streaming-file-based/server.js,61,TypeScript,False,security
+router,js/log-injection,error,Log entry depends on a [user-provided value](1).,examples/solid/basic-ssr-streaming-file-based/server.js,86,TypeScript,False,security
+router,js/stack-trace-exposure,warning,This information exposed to the user depends on [stack trace information](1).,examples/solid/basic-ssr-streaming-file-based/server.js,91,TypeScript,False,security
+router,js/xss-through-exception,warning,[Exception text](1) is reinterpreted as HTML without escaping meta-characters.,examples/solid/basic-ssr-streaming-file-based/server.js,91,TypeScript,False,security
+router,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",examples/solid/with-trpc/src/server/server.ts,53,TypeScript,False,security
+router,js/missing-rate-limiting,warning,"This route handler performs [a file system access](1), but is not rate-limited.",examples/solid/with-trpc/src/server/server.ts,71,TypeScript,False,security
+router,js/incomplete-url-substring-sanitization,warning,'[http://app.example.com](1)' may be followed by an arbitrary host name.,packages/react-router/tests/link.test.tsx,7664,TypeScript,True,security
+router,js/incomplete-url-substring-sanitization,warning,'[test.domain.com](1)' may be followed by an arbitrary host name.,packages/react-router/tests/router.test.tsx,2926,TypeScript,True,security
+router,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](4) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](5) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](6) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](7) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](8) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](9) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](10) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](11) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](12) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](13) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](14) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](15) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](16) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](17) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](18) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](19) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](20) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](21) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](22) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](23) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](24) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](25) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](26) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](27) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](28) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](29) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](30) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](31) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](32) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](33) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](34) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](35) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](36) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](37) may run slow on strings with many repetitions of '/'.
+This [regular expression](1) that depends on [library input](38) may run slow on strings with many repetitions of '/'.",packages/router-core/src/path.ts,36,TypeScript,False,security
+router,js/incomplete-sanitization,warning,This does not escape backslash characters in the input.,packages/router-core/src/path.ts,200,TypeScript,False,security
+router,js/xss-through-dom,warning,[DOM text](1) is reinterpreted as HTML without escaping meta-characters.,packages/router-core/src/router.ts,2780,TypeScript,False,security
+router,js/xss-through-dom,warning,[DOM text](1) is reinterpreted as HTML without escaping meta-characters.,packages/router-core/src/router.ts,2782,TypeScript,False,security
+router,js/incomplete-sanitization,warning,This replaces only the first occurrence of '\\'.,packages/router-core/src/ssr/ssr-server.ts,678,TypeScript,False,security
+router,js/polynomial-redos,warning,This [regular expression](1) that depends on [library input](2) may run slow on strings with many repetitions of '/'.,packages/router-core/src/utils.ts,748,TypeScript,False,security
+router,js/polynomial-redos,warning,This [regular expression](1) that depends on [library input](2) may run slow on strings starting with '(' and with many repetitions of '('.,packages/router-generator/src/generator.ts,1484,TypeScript,False,security
+router,js/prototype-polluting-assignment,warning,This assignment may alter Object.prototype if a malicious '__proto__' string is injected from [library input](1).,packages/router-generator/src/generator.ts,1522,TypeScript,False,security
+router,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings starting with '\[' and with many repetitions of '\[a'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings starting with '\[' and with many repetitions of '\[a'.
+This [regular expression](1) that depends on [library input](4) may run slow on strings starting with '\[' and with many repetitions of '\[a'.",packages/router-generator/src/utils.ts,202,TypeScript,False,security
+router,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings starting with '\[' and with many repetitions of '\[a'.
+This [regular expression](1) that depends on [library input](3) may run slow on strings starting with '\[' and with many repetitions of '\[a'.
+This [regular expression](1) that depends on [library input](4) may run slow on strings starting with '\[' and with many repetitions of '\[a'.",packages/router-generator/src/utils.ts,217,TypeScript,False,security
+router,js/polynomial-redos,warning,"This [regular expression](1) that depends on [library input](2) may run slow on strings starting with '(' and with many repetitions of '('.
+This [regular expression](1) that depends on [library input](3) may run slow on strings starting with '(' and with many repetitions of '('.
+This [regular expression](1) that depends on [library input](4) may run slow on strings starting with '(' and with many repetitions of '('.
+This [regular expression](1) that depends on [library input](5) may run slow on strings starting with '(' and with many repetitions of '('.",packages/router-generator/src/utils.ts,847,TypeScript,False,security
+router,js/incomplete-url-scheme-check,warning,This check does not consider data: and vbscript:.,packages/solid-router/tests/link.test.tsx,117,TypeScript,True,security
+router,js/incomplete-url-substring-sanitization,warning,'[http://app.example.com](1)' may be followed by an arbitrary host name.,packages/solid-router/tests/link.test.tsx,7746,TypeScript,True,security
+router,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<!--](1), which may cause an HTML element injection vulnerability.",packages/solid-router/tests/server/lazyRouteComponent.test.tsx,56,TypeScript,True,security
+router,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",packages/solid-router/tests/server/lazyRouteComponent.test.tsx,56,TypeScript,True,security
+router,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",packages/solid-router/tests/server/link-href-safety.test.tsx,53,TypeScript,True,security
+router,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<script](1), which may cause an HTML element injection vulnerability.",packages/solid-router/tests/server/link-path-matching.test.tsx,36,TypeScript,True,security
+router,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,packages/start-plugin-core/src/rsbuild/virtual-modules.ts,139,TypeScript,False,security
+router,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,packages/start-plugin-core/src/start-compiler/server-fn-resolver-module.ts,29,TypeScript,False,security
+router,js/stack-trace-exposure,warning,"This information exposed to the user depends on [stack trace information](1).
+This information exposed to the user depends on [stack trace information](2).",packages/start-server-core/src/server-functions-handler.ts,529,TypeScript,False,security
+router,js/incomplete-url-substring-sanitization,warning,'[http://app.example.com](1)' may be followed by an arbitrary host name.,packages/vue-router/tests/link.test.tsx,8215,TypeScript,True,security
+router,js/log-injection,error,"Log entry depends on a [user-provided value](1).
+Log entry depends on a [user-provided value](2).
+Log entry depends on a [user-provided value](3).
+Log entry depends on a [user-provided value](4).",packages/vue-start-client/src/hydrateStart.ts,42,TypeScript,False,security
+router,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/benchmarks/bundle-size/measure.mjs,849,TypeScript,False,security
+router,js/file-access-to-http,warning,Outbound network request depends on [file data](1).,scripts/benchmarks/common/upsert-pr-comment.mjs,66,TypeScript,False,security
+router,js/http-to-file-access,warning,"Write to file system depends on [Untrusted data](1).
+Write to file system depends on [Untrusted data](2).",scripts/create-github-release.mjs,254,TypeScript,False,security
+router,js/insecure-temporary-file,warning,Insecure creation of file in [the os temp dir](1).,scripts/create-github-release.mjs,254,TypeScript,False,security
+router,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/set-ts-version.js,86,TypeScript,False,security
+router,js/file-system-race,warning,The file may have changed since it [was checked](1).,scripts/set-ts-version.js,119,TypeScript,False,security
+table,js/missing-origin-check,warning,Postmessage handler has no origin check.,examples/alpine/realtime-trading/src/feed/worker/market-feed.worker.ts,26,TypeScript,False,security
+table,js/missing-origin-check,warning,Postmessage handler has no origin check.,examples/angular/realtime-trading/src/app/feed/worker/market-feed.worker.ts,26,TypeScript,False,security
+table,js/missing-origin-check,warning,Postmessage handler has no origin check.,examples/ember/realtime-trading/app/feed/worker/market-feed.worker.ts,26,TypeScript,False,security
+table,js/missing-origin-check,warning,Postmessage handler has no origin check.,examples/lit/realtime-trading/src/feed/worker/market-feed.worker.ts,26,TypeScript,False,security
+table,js/missing-origin-check,warning,Postmessage handler has no origin check.,examples/octane/realtime-trading/src/feed/worker/market-feed.worker.ts,26,TypeScript,False,security
+table,js/missing-origin-check,warning,Postmessage handler has no origin check.,examples/preact/realtime-trading/src/feed/worker/market-feed.worker.ts,26,TypeScript,False,security
+table,js/missing-origin-check,warning,Postmessage handler has no origin check.,examples/react/realtime-trading/src/feed/worker/market-feed.worker.ts,26,TypeScript,False,security
+table,js/missing-origin-check,warning,Postmessage handler has no origin check.,examples/solid/realtime-trading/src/feed/worker/market-feed.worker.ts,26,TypeScript,False,security
+table,js/missing-origin-check,warning,Postmessage handler has no origin check.,examples/svelte/realtime-trading/src/feed/worker/market-feed.worker.ts,26,TypeScript,False,security
+table,js/missing-origin-check,warning,Postmessage handler has no origin check.,examples/vue/realtime-trading/src/feed/worker/market-feed.worker.ts,26,TypeScript,False,security
+table,js/incomplete-multi-character-sanitization,warning,"This string may still contain [<!--](1), which may cause an HTML element injection vulnerability.",packages/octane-table/tests/ssr/ssr.test.ts,10,TypeScript,True,security
+table,js/missing-origin-check,warning,Postmessage handler has no origin check.,packages/table-core/src/worker/initTableWorker.ts,68,TypeScript,False,security
+table,js/unvalidated-dynamic-method-call,warning,Invocation of method with [user-controlled](1) name may dispatch to unexpected target and cause an exception.,packages/table-core/src/worker/initTableWorker.ts,138,TypeScript,False,security
+table,js/remote-property-injection,warning,A property name to write to depends on a [user-provided value](1).,packages/table-core/src/worker/initTableWorker.ts,143,TypeScript,False,security
+table,js/remote-property-injection,warning,A property name to write to depends on a [user-provided value](1).,packages/table-core/src/worker/initTableWorker.ts,146,TypeScript,False,security
+table,js/remote-property-injection,warning,A property name to write to depends on a [user-provided value](1).,packages/table-core/src/worker/initTableWorker.ts,147,TypeScript,False,security
+table,js/bad-code-sanitization,error,Code construction depends on an [improperly sanitized value](1).,scripts/tests/e2e-infrastructure.test.mjs,56,TypeScript,True,security
+table,js/redos,error,"This part of the regular expression may cause exponential backtracking on strings starting with 'from ""@tanstack/!-' and containing many repetitions of '!-'.",scripts/validate-skill-content.mjs,104,TypeScript,False,security
