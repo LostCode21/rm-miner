@@ -20,7 +20,8 @@ workspace/
 __pycache__/
 *.pyc
 results.json
-results-sboms/
+results-sboms
+/analyzer/output/
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
