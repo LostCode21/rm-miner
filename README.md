@@ -125,6 +125,23 @@ Por tanto, el inventario no es una copia literal del manifiesto ni del lockfile:
 python -m pytest
 ```
 
+## Analyzer (notebooks)
+
+Tras `miner scan`, los notebooks en `analyzer/notebooks/` consolidan `results.json` y los SBOMs en tablas y graficos bajo `analyzer/output/`. El script `analyzer/run_analyzer.sh` instala las dependencias del analyzer (`analyzer/requirements.txt`) si faltan y ejecuta ambos notebooks de forma headless:
+
+```bash
+miner scan --organization example-org --output results.json
+./analyzer/run_analyzer.sh
+```
+
+Variables de entorno opcionales (los defaults asumen la estructura estandar del repo):
+
+- `ANALYZER_RESULTS_JSON`: ruta a `results.json` (default `../../results.json` relativo a `analyzer/notebooks/`).
+- `ANALYZER_SBOM_DIR`: carpeta con los `*.cdx.json` (default `../../results-sboms`).
+- `ANALYZER_OUTPUT_DIR`: carpeta de salida (default `../output`, es decir `analyzer/output/`).
+
+No requiere el paquete `rm-miner` ni `GITHUB_TOKEN`; solo los archivos generados por el miner.
+
 ## Reporter: auditoría del propio proyecto
 
 Reporter es independiente de `miner scan` y `miner sbom`: no usa sus resultados, no clona repositorios ni requiere paquetes Python adicionales. Analiza exclusivamente archivos versionados en la raíz Git indicada de **rm-miner**, nunca los repositorios descargados en `.miner-work/`, `workspace/` u otros directorios sin seguimiento. Rechaza ejecutar desde un clon anidado o un proyecto distinto. Los enlaces simbólicos no se leen.
