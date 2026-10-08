@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import { importScanResult } from "./application/importScan";
 import { sampleMinerScan } from "./adapters/minerScan.sample";
+import { isAnalyzerData, type VisualizationData } from "./domain/analyzer";
+import { AnalyzerDashboardPage } from "./pages/AnalyzerDashboardPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { UploadPage } from "./pages/UploadPage";
-import type { ScanData } from "./domain/scan";
 
 const MAX_SCAN_FILE_SIZE_BYTES = 25 * 1024 * 1024;
 const MAX_SCAN_FILE_SIZE_MB = MAX_SCAN_FILE_SIZE_BYTES / (1024 * 1024);
@@ -18,14 +19,14 @@ function readLocalFile(file: File): Promise<string> {
 }
 
 function App() {
-  const [scan, setScan] = useState<ScanData | null>(null);
+  const [analysis, setAnalysis] = useState<VisualizationData | null>(null);
   const [scanRevision, setScanRevision] = useState(0);
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const loadData = (data: unknown, sourceName: string) => {
     try {
-      setScan(importScanResult(data, sourceName));
+      setAnalysis(importScanResult(data, sourceName));
       setScanRevision((revision) => revision + 1);
       setError("");
     } catch (cause) {
@@ -70,8 +71,10 @@ function App() {
         aria-label="Seleccionar JSON de resultados"
         onChange={(event) => { void handleFile(event.target.files?.[0]); event.currentTarget.value = ""; }}
       />
-      {scan ? (
-        <DashboardPage key={scanRevision} scan={scan} error={error} onChooseFile={() => inputRef.current?.click()} onClose={() => { setScan(null); setError(""); }} />
+      {analysis ? (
+        isAnalyzerData(analysis)
+          ? <AnalyzerDashboardPage key={scanRevision} data={analysis} error={error} onChooseFile={() => inputRef.current?.click()} onClose={() => { setAnalysis(null); setError(""); }} />
+          : <DashboardPage key={scanRevision} scan={analysis} error={error} onChooseFile={() => inputRef.current?.click()} onClose={() => { setAnalysis(null); setError(""); }} />
       ) : (
         <UploadPage
           error={error}

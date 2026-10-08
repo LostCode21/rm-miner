@@ -2,6 +2,12 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { describe, expect, it } from "vitest";
 import App from "./App";
 import { sampleMinerScan } from "./adapters/minerScan.sample";
+import {
+  sampleAnalyzerRepositorySummary,
+  sampleAnalyzerSbomRepositorySummary,
+  sampleAnalyzerSecurityConcentration,
+  sampleAnalyzerSharedPackages,
+} from "./adapters/analyzerOutputs.sample";
 
 describe("Visualizer", () => {
   it("muestra los resultados de ejemplo y permite abrir el detalle de un hallazgo", async () => {
@@ -75,5 +81,20 @@ describe("Visualizer", () => {
     expect(within(table).getByText("analyzer sast")).toBeInTheDocument();
     expect(screen.queryByText("CodeQL")).not.toBeInTheDocument();
     expect(within(table).getByText("Sin dato")).toBeInTheDocument();
+  });
+
+  it.each([
+    ["repository_summary.json", sampleAnalyzerRepositorySummary, /resumen de repositorios/i, "api"],
+    ["security_concentration.json", sampleAnalyzerSecurityConcentration, /concentración de seguridad/i, "web"],
+    ["sbom_repository_summary.json", sampleAnalyzerSbomRepositorySummary, /resumen sbom por repositorio/i, "api"],
+    ["sbom_shared_packages.json", sampleAnalyzerSharedPackages, /paquetes compartidos/i, "react"],
+  ])("carga la salida %s de Analyzer", async (filename, contents, heading, expectedRow) => {
+    render(<App />);
+    const file = new File([JSON.stringify(contents)], filename, { type: "application/json" });
+    fireEvent.change(screen.getByLabelText("Seleccionar JSON de resultados"), { target: { files: [file] } });
+
+    expect(await screen.findByRole("heading", { name: heading, level: 1 })).toBeInTheDocument();
+    expect(screen.getAllByText(expectedRow).length).toBeGreaterThan(0);
+    expect(screen.getByText(filename)).toBeInTheDocument();
   });
 });

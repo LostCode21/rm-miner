@@ -20,7 +20,7 @@ export function UploadPage({ error, maxFileSizeMb, onChooseFile, onDropFile, onL
         <div className="welcome-copy">
           <div className="eyebrow"><span className="eyebrow-line" /> VISUALIZACIÓN DE SEGURIDAD</div>
           <h1>Conoce tus riesgos.<br /><span>Prioriza lo importante.</span></h1>
-          <p className="welcome-description">Explora los hallazgos consolidados. Tus resultados permanecen en tu dispositivo: no se envían a ningún servidor.</p>
+          <p className="welcome-description">Explora resultados consolidados de Miner y resúmenes generados por Analyzer. Tus datos permanecen en tu dispositivo: no se envían a ningún servidor.</p>
           <div className="welcome-actions">
             <button className="button button-primary button-large" onClick={onChooseFile}>
               <ArrowDownToLine size={17} /> Cargar resultados JSON
@@ -32,12 +32,12 @@ export function UploadPage({ error, maxFileSizeMb, onChooseFile, onDropFile, onL
           </div>
         </div>
         <div className="upload-card">
-          <div className="upload-card-heading"><div className="upload-icon"><FileJson2 size={20} /></div><div><strong>Importar un análisis</strong><span>JSON generado por Miner</span></div></div>
+          <div className="upload-card-heading"><div className="upload-icon"><FileJson2 size={20} /></div><div><strong>Importar un análisis</strong><span>JSON generado por Miner o Analyzer</span></div></div>
           <button className="drop-zone" onClick={onChooseFile} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); onDropFile(event.dataTransfer.files[0]); }}>
             <div className="drop-icon"><ArrowDownToLine size={21} /></div>
             <strong>Selecciona o arrastra tu archivo</strong>
             <span>Solo lectura · JSON · Máximo {maxFileSizeMb} MB</span>
-            <span className="file-example"><FileJson2 size={14} /> resultados.json</span>
+            <span className="file-example"><FileJson2 size={14} /> resultados.json · repository_summary.json</span>
           </button>
           {error && <div role="alert" className="alert alert-error"><AlertTriangle size={17} />{error}</div>}
           <div className="upload-footnote"><ShieldCheck size={15} /><span>El archivo se lee localmente y se descarta al cerrar o recargar esta página.</span></div>

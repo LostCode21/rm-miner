@@ -299,5 +299,7 @@ export const minerScanAdapter: ScanAdapter = {
   supports(input) {
     return isObject(input) && (Array.isArray(input.repositories) || Array.isArray(input.findings));
   },
-  parse: parseMinerScan,
+  parse(input, sourceName) {
+    return { ...parseMinerScan(input, sourceName), sourceFormat: "miner-scan" };
+  },
 };
