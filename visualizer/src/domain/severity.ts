@@ -1,4 +1,4 @@
-import type { SeverityCategory } from "./scan";
+import type { SeverityCategory } from "./analyzer";
 
 export const severityCategories: readonly SeverityCategory[] = ["critical", "high", "medium", "low", "info", "unknown"];
 

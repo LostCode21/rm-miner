@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import App from "./App";
 import { sampleAnalyzerFiles } from "./adapters/analyzerOutputs.sample";
 
@@ -8,6 +8,8 @@ const analyzerFiles = () => sampleAnalyzerFiles.map((source) => new File([source
 }));
 
 describe("Visualizer", () => {
+  beforeEach(() => window.history.replaceState(null, "", "/"));
+
   it("muestra un ejemplo compuesto exclusivamente por salidas de Analyzer", async () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: /ver datos de ejemplo/i }));
@@ -21,6 +23,7 @@ describe("Visualizer", () => {
     fireEvent.change(screen.getByLabelText("Seleccionar carpeta de Analyzer"), { target: { files: analyzerFiles() } });
 
     expect(await screen.findByRole("heading", { name: /resumen de seguridad integrado/i, level: 1 })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("link", { name: /hallazgos/i }));
     const findingsTable = screen.getByRole("table", { name: /hallazgos de analyzer/i });
     expect(within(findingsTable).getByText("js/sql-injection")).toBeInTheDocument();
     expect(within(findingsTable).getByText("CVE-2026-0001")).toBeInTheDocument();

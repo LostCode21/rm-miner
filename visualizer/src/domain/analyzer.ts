@@ -1,6 +1,20 @@
-import type { Finding, ScanData } from "./scan";
+export type SeverityCategory = "critical" | "high" | "medium" | "low" | "info" | "unknown";
 
-export interface AnalyzerFinding extends Finding {
+export interface AnalyzerFinding {
+  id: string;
+  repository: string;
+  tool: string;
+  vulnerabilityType: string;
+  severity: SeverityCategory;
+  sourceSeverity: string | null;
+  location: string | null;
+  line: number | null;
+  packageName: string | null;
+  version: string | null;
+  fixedVersion: string | null;
+  artifactType: string | null;
+  language: string | null;
+  message: string;
   isTest: boolean | null;
   severityWeight: number | null;
 }
@@ -98,10 +112,4 @@ export interface AnalyzerData {
   severitySummary: AnalyzerSeveritySummary[];
   sbom: AnalyzerSbomSummary | null;
   warnings: string[];
-}
-
-export type VisualizationData = ScanData | AnalyzerData;
-
-export function isAnalyzerData(data: VisualizationData): data is AnalyzerData {
-  return "kind" in data && data.kind === "analyzer";
 }

@@ -9,8 +9,8 @@ import type {
   AnalyzerSbomSummary,
   AnalyzerSharedPackage,
   AnalyzerVersionDiversity,
+  SeverityCategory,
 } from "../domain/analyzer";
-import type { SeverityCategory } from "../domain/scan";
 
 type SourceRow = Record<string, unknown>;
 

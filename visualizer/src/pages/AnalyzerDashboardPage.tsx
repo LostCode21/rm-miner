@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -17,9 +17,8 @@ import { Brand } from "../components/Brand";
 import { SeverityBadge, ToolBadge } from "../components/Badges";
 import { SeverityChart, ToolChart } from "../components/Charts";
 import { MetricCard } from "../components/MetricCard";
-import type { AnalyzerData, AnalyzerFinding } from "../domain/analyzer";
+import type { AnalyzerData, AnalyzerFinding, SeverityCategory } from "../domain/analyzer";
 import { deriveAnalyzerInsights } from "../domain/analyzerInsights";
-import type { SeverityCategory } from "../domain/scan";
 import { severityCategories, severityLabels } from "../domain/severity";
 
 interface AnalyzerDashboardPageProps {
@@ -30,12 +29,50 @@ interface AnalyzerDashboardPageProps {
 }
 
 const PAGE_SIZE = 100;
+type AnalyzerView = "resumen" | "hallazgos" | "repositorios" | "sbom" | "conclusiones";
+
+const analyzerViews: readonly AnalyzerView[] = ["resumen", "hallazgos", "repositorios", "sbom", "conclusiones"];
+
+function viewFromHash(hasSbom: boolean): AnalyzerView {
+  const candidate = window.location.hash.slice(1) as AnalyzerView;
+  if (!analyzerViews.includes(candidate) || (candidate === "sbom" && !hasSbom)) return "resumen";
+  return candidate;
+}
 
 export function AnalyzerDashboardPage({ data, error, onChooseFile, onClose }: AnalyzerDashboardPageProps) {
   const codeqlCount = data.findings.filter((finding) => finding.tool === "codeql").length;
   const grypeCount = data.findings.filter((finding) => finding.tool === "grype").length;
   const repositoryCount = data.repositories.length || new Set(data.findings.map((finding) => finding.repository)).size;
   const insights = useMemo(() => deriveAnalyzerInsights(data), [data]);
+  const [activeView, setActiveView] = useState<AnalyzerView>(() => viewFromHash(Boolean(data.sbom)));
+  const viewCopy: Record<AnalyzerView, { eyebrow: string; title: string; description: string }> = {
+    resumen: { eyebrow: "RESULTADOS DE ANALYZER", title: "Resumen de seguridad integrado", description: `CodeQL, Grype y agregados calculados para ${data.organization}.` },
+    hallazgos: { eyebrow: "EVIDENCIAS CONSOLIDADAS", title: "Hallazgos de Analyzer", description: "Explora y filtra el consolidado generado desde integrated_findings.csv." },
+    repositorios: { eyebrow: "PRIORIZACIÓN", title: "Resumen por repositorio", description: "Compara la evidencia, prioridad y concentración calculadas por Analyzer." },
+    sbom: { eyebrow: "COMPOSICIÓN DE SOFTWARE", title: "Resumen de resultados SBOM", description: "Revisa los agregados de inventario generados por Analyzer a partir de Syft." },
+    conclusiones: { eyebrow: "LECTURA EJECUTIVA", title: "Conclusiones del análisis", description: "Consulta observaciones y criterios metodológicos derivados de las salidas de Analyzer." },
+  };
+  const currentView = viewCopy[activeView];
+
+  useEffect(() => {
+    const syncViewWithHash = () => {
+      const nextView = viewFromHash(Boolean(data.sbom));
+      setActiveView(nextView);
+      if (window.location.hash !== `#${nextView}`) {
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#${nextView}`);
+      }
+    };
+    syncViewWithHash();
+    window.addEventListener("hashchange", syncViewWithHash);
+    return () => window.removeEventListener("hashchange", syncViewWithHash);
+  }, [data.sbom]);
+
+  const navClass = (view: AnalyzerView) => `sidebar-nav-item${activeView === view ? " active" : ""}`;
+  const navCurrent = (view: AnalyzerView) => activeView === view ? "page" as const : undefined;
+  const navigateToView = (view: AnalyzerView) => {
+    setActiveView(view);
+    if (window.location.hash !== `#${view}`) window.location.hash = view;
+  };
 
   return (
     <div className="app-shell">
@@ -45,11 +82,11 @@ export function AnalyzerDashboardPage({ data, error, onChooseFile, onClose }: An
         <div className="workspace-button"><div className="workspace-icon"><FolderGit2 size={17} /></div><span><strong>{data.organization}</strong><small>Analyzer · {data.sourceNames.length} archivos</small></span></div>
         <div className="sidebar-section-label sidebar-section-spaced">ANÁLISIS</div>
         <nav aria-label="Análisis de Analyzer">
-          <a className="sidebar-nav-item active" href="#overview"><ShieldAlert size={17} /><span>Resumen</span><span className="nav-count">{data.findings.length}</span></a>
-          <a className="sidebar-nav-item" href="#findings-section"><Bug size={17} /><span>Hallazgos</span><span className="nav-count muted-count">{data.findings.length}</span></a>
-          <a className="sidebar-nav-item" href="#repositories-section"><PackageSearch size={17} /><span>Repositorios</span><span className="nav-count muted-count">{repositoryCount}</span></a>
-          {data.sbom && <a className="sidebar-nav-item" href="#sbom-section"><Boxes size={17} /><span>Composición SBOM</span><span className="nav-count muted-count">{data.sbom.sbomCount}</span></a>}
-          <a className="sidebar-nav-item" href="#conclusions-section"><ShieldCheck size={17} /><span>Conclusiones</span></a>
+          <a className={navClass("resumen")} href="#resumen" aria-current={navCurrent("resumen")} onClick={(event) => { event.preventDefault(); navigateToView("resumen"); }} title="Resumen"><ShieldAlert size={17} /><span>Resumen</span><span className={`nav-count${activeView === "resumen" ? "" : " muted-count"}`}>{data.findings.length}</span></a>
+          <a className={navClass("hallazgos")} href="#hallazgos" aria-current={navCurrent("hallazgos")} onClick={(event) => { event.preventDefault(); navigateToView("hallazgos"); }} title="Hallazgos"><Bug size={17} /><span>Hallazgos</span><span className={`nav-count${activeView === "hallazgos" ? "" : " muted-count"}`}>{data.findings.length}</span></a>
+          <a className={navClass("repositorios")} href="#repositorios" aria-current={navCurrent("repositorios")} onClick={(event) => { event.preventDefault(); navigateToView("repositorios"); }} title="Repositorios"><PackageSearch size={17} /><span>Repositorios</span><span className={`nav-count${activeView === "repositorios" ? "" : " muted-count"}`}>{repositoryCount}</span></a>
+          {data.sbom && <a className={navClass("sbom")} href="#sbom" aria-current={navCurrent("sbom")} onClick={(event) => { event.preventDefault(); navigateToView("sbom"); }} title="Composición SBOM"><Boxes size={17} /><span>Composición SBOM</span><span className={`nav-count${activeView === "sbom" ? "" : " muted-count"}`}>{data.sbom.sbomCount}</span></a>}
+          <a className={navClass("conclusiones")} href="#conclusiones" aria-current={navCurrent("conclusiones")} onClick={(event) => { event.preventDefault(); navigateToView("conclusiones"); }} title="Conclusiones"><ShieldCheck size={17} /><span>Conclusiones</span></a>
         </nav>
         <div className="sidebar-spacer" />
         <div className="sidebar-privacy"><span className="privacy-shield"><ShieldCheck size={17} /></span><div><strong>Datos en este dispositivo</strong><small>Los archivos no se transmiten</small></div><span className="privacy-dot" /></div>
@@ -57,30 +94,27 @@ export function AnalyzerDashboardPage({ data, error, onChooseFile, onClose }: An
       </aside>
 
       <main className="main-content">
-        <header className="topbar"><div className="breadcrumb"><span>Analyzer</span><span className="breadcrumb-slash">/</span><strong>Resultados integrados</strong></div><div className="topbar-right"><span className="loaded-file"><FileJson2 size={14} />{data.sourceName}</span><button className="icon-button" aria-label="Cargar otro análisis" title="Cargar otro análisis" onClick={onChooseFile}><FileJson2 size={17} /></button></div></header>
+        <header className="topbar"><div className="breadcrumb"><span>Analyzer</span><span className="breadcrumb-slash">/</span><strong>{currentView.title}</strong></div><div className="topbar-right"><span className="loaded-file"><FileJson2 size={14} />{data.sourceName}</span><button className="icon-button" aria-label="Cargar otro análisis" title="Cargar otro análisis" onClick={onChooseFile}><FileJson2 size={17} /></button></div></header>
         <div className="content-wrap">
-          <div className="page-heading"><div><div className="eyebrow page-eyebrow"><span className="eyebrow-line" /> RESULTADOS DE ANALYZER</div><h1>Resumen de seguridad integrado</h1><p>CodeQL, Grype y agregados calculados para <strong>{data.organization}</strong>.</p></div><div className="scan-stamp"><span className="stamp-dot" /> {data.sourceNames.length} archivos combinados localmente</div></div>
+          <div className="page-heading"><div><div className="eyebrow page-eyebrow"><span className="eyebrow-line" /> {currentView.eyebrow}</div><h1>{currentView.title}</h1><p>{currentView.description}</p></div><div className="page-heading-actions"><div className="data-stamp"><span className="stamp-dot" /> {data.sourceNames.length} archivos combinados localmente</div>{activeView === "hallazgos" && <button className="button button-outline" onClick={onClose}>Cerrar análisis</button>}</div></div>
 
           {error && <div className="alert alert-error dashboard-error" role="alert"><AlertTriangle size={16} />{error}</div>}
           {data.warnings.length > 0 && <div className="warning-stack">{data.warnings.map((warning) => <div className="alert alert-warning" role="status" key={warning}>{warning}</div>)}</div>}
 
-          <section id="overview" className="metrics-grid" aria-label="Métricas de Analyzer">
-            <MetricCard icon={<FolderGit2 size={18} />} label="Repositorios con evidencia" value={repositoryCount} detail="Presentes en las salidas de Analyzer" tone="blue" />
-            <MetricCard icon={<ShieldAlert size={18} />} label="Evidencias" value={data.findings.length} detail="Consolidado sin duplicar archivos" tone="teal" />
-            <MetricCard icon={<Wrench size={18} />} label="CodeQL" value={codeqlCount} detail="Hallazgos de análisis estático" tone="slate" />
-            <MetricCard icon={<Bug size={18} />} label="Grype" value={grypeCount} detail="Detecciones de dependencias" tone="orange" />
-          </section>
-
-          <section className="overview-grid" aria-label="Visualizaciones de Analyzer">
-            <SeverityChart findings={data.findings} />
-            <ToolChart findings={data.findings} />
-            <RepositoryEvidenceChart data={data} />
-          </section>
-
-          <AnalyzerInsightsSection insights={insights} />
-          <SbomAnalysis data={data} />
-          <AnalyzerFindings data={data} onClose={onClose} />
-          <RepositoryAnalysis data={data} />
+          {activeView === "resumen" && <section aria-label="Resumen de Analyzer"><div className="metrics-grid">
+              <MetricCard icon={<FolderGit2 size={18} />} label="Repositorios con evidencia" value={repositoryCount} detail="Presentes en las salidas de Analyzer" tone="blue" />
+              <MetricCard icon={<ShieldAlert size={18} />} label="Evidencias" value={data.findings.length} detail="Consolidado sin duplicar archivos" tone="teal" />
+              <MetricCard icon={<Wrench size={18} />} label="CodeQL" value={codeqlCount} detail="Hallazgos de análisis estático" tone="slate" />
+              <MetricCard icon={<Bug size={18} />} label="Grype" value={grypeCount} detail="Detecciones de dependencias" tone="orange" />
+            </div><div className="overview-grid" aria-label="Visualizaciones de Analyzer">
+              <SeverityChart findings={data.findings} />
+              <ToolChart findings={data.findings} />
+              <RepositoryEvidenceChart data={data} />
+            </div></section>}
+          {activeView === "hallazgos" && <AnalyzerFindings data={data} />}
+          {activeView === "repositorios" && <RepositoryAnalysis data={data} />}
+          {activeView === "sbom" && <SbomAnalysis data={data} />}
+          {activeView === "conclusiones" && <AnalyzerInsightsSection insights={insights} />}
 
           <footer className="app-footer"><span>Octa-Core · Miner Visualizer</span><span><ShieldCheck size={14} /> Los resultados se procesan localmente en tu navegador.</span></footer>
         </div>
@@ -91,9 +125,8 @@ export function AnalyzerDashboardPage({ data, error, onChooseFile, onClose }: An
 
 function AnalyzerInsightsSection({ insights }: { insights: ReturnType<typeof deriveAnalyzerInsights> }) {
   return (
-    <section id="conclusions-section" className="findings-section" aria-labelledby="conclusions-title">
-      <div className="section-heading compact-heading"><div><div className="section-kicker">LECTURA EJECUTIVA</div><h2 id="conclusions-title">Conclusiones del análisis</h2><p>Observaciones y criterios metodológicos calculados localmente desde las salidas de Analyzer.</p></div></div>
-      <div className="overview-grid insights-grid">
+    <section aria-label="Conclusiones del análisis">
+      <div className="overview-grid insights-grid view-grid">
         <InsightCard eyebrow="SEGURIDAD" title="Principales observaciones" items={insights.securityObservations} />
         <InsightCard eyebrow="COMPOSICIÓN" title="Principales resultados SBOM" items={insights.sbomResults} empty="No se cargaron resultados SBOM." />
         <InsightCard eyebrow="METODOLOGÍA" title="Conclusión metodológica" items={insights.methodology} />
@@ -118,8 +151,7 @@ function SbomAnalysis({ data }: { data: AnalyzerData }) {
   const packageBars = sbom.sharedPackages.slice(0, 5).map((item) => ({ name: item.name, value: item.repositories }));
   const diversityBars = sbom.versionDiversity.slice(0, 5).map((item) => ({ name: item.name, value: item.distinctVersions }));
   return (
-    <section id="sbom-section" className="findings-section" aria-labelledby="sbom-title">
-      <div className="section-heading compact-heading"><div><div className="section-kicker">COMPOSICIÓN DE SOFTWARE</div><h2 id="sbom-title">Resumen de resultados SBOM <span className="heading-count">{sbom.sbomCount}</span></h2><p>Agregados generados por Analyzer a partir del inventario de Syft.</p></div></div>
+    <section aria-label="Resumen de resultados SBOM">
       <div className="metrics-grid">
         <MetricCard icon={<Boxes size={18} />} label="Componentes únicos" value={sbom.uniqueComponents} detail={`${sbom.rawComponentOccurrences.toLocaleString("es-ES")} apariciones antes de deduplicar`} tone="blue" />
         <MetricCard icon={<PackageSearch size={18} />} label="Paquetes compartidos" value={sbom.sharedPackages.length} detail="Paquetes npm presentes en uno o más repositorios" tone="teal" />
@@ -167,7 +199,7 @@ interface FindingFilters {
 
 const initialFilters: FindingFilters = { query: "", repository: "all", tool: "all", severity: "all" };
 
-function AnalyzerFindings({ data, onClose }: { data: AnalyzerData; onClose: () => void }) {
+function AnalyzerFindings({ data }: { data: AnalyzerData }) {
   const [filters, setFilters] = useState(initialFilters);
   const [page, setPage] = useState(0);
   const repositories = useMemo(() => [...new Set(data.findings.map((finding) => finding.repository))].sort(), [data.findings]);
@@ -191,8 +223,7 @@ function AnalyzerFindings({ data, onClose }: { data: AnalyzerData; onClose: () =
   const updateFilters = (next: FindingFilters) => { setFilters(next); setPage(0); };
 
   return (
-    <section id="findings-section" className="findings-section" aria-labelledby="analyzer-findings-title">
-      <div className="section-heading"><div><div className="section-kicker">EVIDENCIAS CONSOLIDADAS</div><h2 id="analyzer-findings-title">Hallazgos de Analyzer <span className="heading-count">{filtered.length}</span></h2><p>Explora el consolidado generado desde `integrated_findings.csv`.</p></div><button className="button button-outline" onClick={onClose}>Cerrar análisis</button></div>
+    <section aria-label="Hallazgos de Analyzer">
       <div className="filter-bar">
         <label className="search-field"><Search size={16} /><input value={filters.query} onChange={(event) => updateFilters({ ...filters, query: event.target.value })} placeholder="Buscar hallazgo, paquete o ruta..." aria-label="Buscar hallazgo de Analyzer" /></label>
         <FilterSelect label="Repositorio" value={filters.repository} options={repositories} onChange={(value) => updateFilters({ ...filters, repository: value })} />
@@ -220,8 +251,7 @@ function RepositoryAnalysis({ data }: { data: AnalyzerData }) {
   const concentration = new Map(data.concentration.map((item) => [item.repository, item]));
   const rows = [...data.repositories].sort((left, right) => right.totalSecurityEvidence - left.totalSecurityEvidence || left.repository.localeCompare(right.repository));
   return (
-    <section id="repositories-section" className="repositories-section" aria-labelledby="repository-analysis-title">
-      <div className="section-heading compact-heading"><div><div className="section-kicker">PRIORIZACIÓN</div><h2 id="repository-analysis-title">Resumen por repositorio <span className="heading-count">{rows.length}</span></h2><p>Combina el resumen integrado, la prioridad y la concentración calculadas por Analyzer.</p></div></div>
+    <section aria-label="Resumen de Analyzer por repositorio">
       <div className="table-card standalone-table-card"><div className="table-scroll"><table aria-label="Resumen de Analyzer por repositorio"><thead><tr><th>REPOSITORIO</th><th>CODEQL</th><th>GRYPE</th><th>TOTAL</th><th>VULNERABILIDADES ÚNICAS</th><th>PAQUETES</th><th>PRIORIDAD</th><th>CONCENTRACIÓN</th></tr></thead><tbody>{rows.map((item) => {
         const priority = priorities.get(item.repository);
         const share = concentration.get(item.repository);

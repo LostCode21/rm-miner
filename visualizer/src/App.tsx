@@ -11,13 +11,13 @@ const MAX_ANALYZER_BUNDLE_SIZE_MB = MAX_ANALYZER_BUNDLE_SIZE_BYTES / (1024 * 102
 
 function App() {
   const [analysis, setAnalysis] = useState<AnalyzerData | null>(null);
-  const [scanRevision, setScanRevision] = useState(0);
+  const [analysisRevision, setAnalysisRevision] = useState(0);
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const showAnalysis = (data: AnalyzerData) => {
     setAnalysis(data);
-    setScanRevision((revision) => revision + 1);
+    setAnalysisRevision((revision) => revision + 1);
     setError("");
   };
 
@@ -52,7 +52,7 @@ function App() {
         onChange={(event) => { void handleFiles(Array.from(event.target.files ?? [])); event.currentTarget.value = ""; }}
       />
       {analysis ? (
-        <AnalyzerDashboardPage key={scanRevision} data={analysis} error={error} onChooseFile={() => inputRef.current?.click()} onClose={() => { setAnalysis(null); setError(""); }} />
+        <AnalyzerDashboardPage key={analysisRevision} data={analysis} error={error} onChooseFile={() => inputRef.current?.click()} onClose={() => { setAnalysis(null); setError(""); }} />
       ) : (
         <UploadPage
           error={error}
