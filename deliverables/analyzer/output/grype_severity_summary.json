@@ -1,0 +1,22 @@
+[
+  {
+    "severity":"High",
+    "cantidad":2395,
+    "porcentaje":46.18
+  },
+  {
+    "severity":"Medium",
+    "cantidad":2199,
+    "porcentaje":42.4
+  },
+  {
+    "severity":"Low",
+    "cantidad":409,
+    "porcentaje":7.89
+  },
+  {
+    "severity":"Critical",
+    "cantidad":183,
+    "porcentaje":3.53
+  }
+]
