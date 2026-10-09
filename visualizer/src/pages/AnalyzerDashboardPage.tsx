@@ -3,6 +3,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  Boxes,
   Bug,
   FileJson2,
   FolderGit2,
@@ -17,6 +18,7 @@ import { SeverityBadge, ToolBadge } from "../components/Badges";
 import { SeverityChart, ToolChart } from "../components/Charts";
 import { MetricCard } from "../components/MetricCard";
 import type { AnalyzerData, AnalyzerFinding } from "../domain/analyzer";
+import { deriveAnalyzerInsights } from "../domain/analyzerInsights";
 import type { SeverityCategory } from "../domain/scan";
 import { severityCategories, severityLabels } from "../domain/severity";
 
@@ -33,6 +35,7 @@ export function AnalyzerDashboardPage({ data, error, onChooseFile, onClose }: An
   const codeqlCount = data.findings.filter((finding) => finding.tool === "codeql").length;
   const grypeCount = data.findings.filter((finding) => finding.tool === "grype").length;
   const repositoryCount = data.repositories.length || new Set(data.findings.map((finding) => finding.repository)).size;
+  const insights = useMemo(() => deriveAnalyzerInsights(data), [data]);
 
   return (
     <div className="app-shell">
@@ -45,6 +48,8 @@ export function AnalyzerDashboardPage({ data, error, onChooseFile, onClose }: An
           <a className="sidebar-nav-item active" href="#overview"><ShieldAlert size={17} /><span>Resumen</span><span className="nav-count">{data.findings.length}</span></a>
           <a className="sidebar-nav-item" href="#findings-section"><Bug size={17} /><span>Hallazgos</span><span className="nav-count muted-count">{data.findings.length}</span></a>
           <a className="sidebar-nav-item" href="#repositories-section"><PackageSearch size={17} /><span>Repositorios</span><span className="nav-count muted-count">{repositoryCount}</span></a>
+          {data.sbom && <a className="sidebar-nav-item" href="#sbom-section"><Boxes size={17} /><span>Composición SBOM</span><span className="nav-count muted-count">{data.sbom.sbomCount}</span></a>}
+          <a className="sidebar-nav-item" href="#conclusions-section"><ShieldCheck size={17} /><span>Conclusiones</span></a>
         </nav>
         <div className="sidebar-spacer" />
         <div className="sidebar-privacy"><span className="privacy-shield"><ShieldCheck size={17} /></span><div><strong>Datos en este dispositivo</strong><small>Los archivos no se transmiten</small></div><span className="privacy-dot" /></div>
@@ -72,6 +77,8 @@ export function AnalyzerDashboardPage({ data, error, onChooseFile, onClose }: An
             <RepositoryEvidenceChart data={data} />
           </section>
 
+          <AnalyzerInsightsSection insights={insights} />
+          <SbomAnalysis data={data} />
           <AnalyzerFindings data={data} onClose={onClose} />
           <RepositoryAnalysis data={data} />
 
@@ -80,6 +87,61 @@ export function AnalyzerDashboardPage({ data, error, onChooseFile, onClose }: An
       </main>
     </div>
   );
+}
+
+function AnalyzerInsightsSection({ insights }: { insights: ReturnType<typeof deriveAnalyzerInsights> }) {
+  return (
+    <section id="conclusions-section" className="findings-section" aria-labelledby="conclusions-title">
+      <div className="section-heading compact-heading"><div><div className="section-kicker">LECTURA EJECUTIVA</div><h2 id="conclusions-title">Conclusiones del análisis</h2><p>Observaciones y criterios metodológicos calculados localmente desde las salidas de Analyzer.</p></div></div>
+      <div className="overview-grid insights-grid">
+        <InsightCard eyebrow="SEGURIDAD" title="Principales observaciones" items={insights.securityObservations} />
+        <InsightCard eyebrow="COMPOSICIÓN" title="Principales resultados SBOM" items={insights.sbomResults} empty="No se cargaron resultados SBOM." />
+        <InsightCard eyebrow="METODOLOGÍA" title="Conclusión metodológica" items={insights.methodology} />
+      </div>
+    </section>
+  );
+}
+
+function InsightCard({ eyebrow, title, items, empty = "Sin observaciones disponibles." }: { eyebrow: string; title: string; items: string[]; empty?: string }) {
+  return (
+    <article className="chart-card insight-card">
+      <div className="chart-heading"><div><span className="chart-eyebrow">{eyebrow}</span><h3>{title}</h3></div><span className="chart-total">{items.length}</span></div>
+      {items.length ? <ul className="insight-list">{items.map((item) => <li key={item}>{item}</li>)}</ul> : <div className="chart-empty insight-empty">{empty}</div>}
+    </article>
+  );
+}
+
+function SbomAnalysis({ data }: { data: AnalyzerData }) {
+  const sbom = data.sbom;
+  if (!sbom) return null;
+  const repositoryBars = sbom.repositories.slice(0, 5).map((item) => ({ name: item.repository, value: item.uniqueComponents }));
+  const packageBars = sbom.sharedPackages.slice(0, 5).map((item) => ({ name: item.name, value: item.repositories }));
+  const diversityBars = sbom.versionDiversity.slice(0, 5).map((item) => ({ name: item.name, value: item.distinctVersions }));
+  return (
+    <section id="sbom-section" className="findings-section" aria-labelledby="sbom-title">
+      <div className="section-heading compact-heading"><div><div className="section-kicker">COMPOSICIÓN DE SOFTWARE</div><h2 id="sbom-title">Resumen de resultados SBOM <span className="heading-count">{sbom.sbomCount}</span></h2><p>Agregados generados por Analyzer a partir del inventario de Syft.</p></div></div>
+      <div className="metrics-grid">
+        <MetricCard icon={<Boxes size={18} />} label="Componentes únicos" value={sbom.uniqueComponents} detail={`${sbom.rawComponentOccurrences.toLocaleString("es-ES")} apariciones antes de deduplicar`} tone="blue" />
+        <MetricCard icon={<PackageSearch size={18} />} label="Paquetes compartidos" value={sbom.sharedPackages.length} detail="Paquetes npm presentes en uno o más repositorios" tone="teal" />
+        <MetricCard icon={<Wrench size={18} />} label="Relaciones" value={sbom.dependencyEdges} detail="Aristas de dependencia exportadas por Analyzer" tone="slate" />
+        <MetricCard icon={<AlertTriangle size={18} />} label="Versiones desconocidas" value={sbom.unknownVersions} detail={`${sbom.emptySboms} SBOM vacíos`} tone="orange" />
+      </div>
+      <div className="overview-grid">
+        <CompactBarChart eyebrow="COMPONENTES" title="Repositorios con más componentes" items={repositoryBars} />
+        <CompactBarChart eyebrow="REUTILIZACIÓN" title="Paquetes más compartidos" items={packageBars} />
+        <CompactBarChart eyebrow="VERSIONES" title="Mayor diversidad de versiones" items={diversityBars} />
+      </div>
+      <div className="table-card standalone-table-card sbom-table-card">
+        <div className="table-scroll"><table aria-label="Resumen SBOM por repositorio"><thead><tr><th>REPOSITORIO</th><th>COMPONENTES</th><th>NPM</th><th>ACCIONES</th><th>SIN VERSIÓN</th><th>PURL</th><th>CPE</th><th>LICENCIAS</th><th>RELACIONES</th></tr></thead><tbody>{sbom.repositories.map((item) => <tr key={item.repository}><td>{item.repository}</td><td>{item.uniqueComponents.toLocaleString("es-ES")}</td><td>{item.npmComponents.toLocaleString("es-ES")}</td><td>{item.githubActionComponents.toLocaleString("es-ES")}</td><td>{item.unknownVersions.toLocaleString("es-ES")}</td><td>{item.purlPercentage.toLocaleString("es-ES", { maximumFractionDigits: 2 })}%</td><td>{item.cpePercentage.toLocaleString("es-ES", { maximumFractionDigits: 2 })}%</td><td>{item.licensePercentage.toLocaleString("es-ES", { maximumFractionDigits: 2 })}%</td><td>{item.dependencyEdges.toLocaleString("es-ES")}</td></tr>)}</tbody></table></div>
+        <div className="table-footer"><span><strong>{sbom.repositories.length}</strong> repositorios inventariados</span><span>PURL {sbom.purlPercentage.toLocaleString("es-ES", { maximumFractionDigits: 2 })}% · CPE {sbom.cpePercentage.toLocaleString("es-ES", { maximumFractionDigits: 2 })}% · Licencias {sbom.licensePercentage.toLocaleString("es-ES", { maximumFractionDigits: 2 })}%</span></div>
+      </div>
+    </section>
+  );
+}
+
+function CompactBarChart({ eyebrow, title, items }: { eyebrow: string; title: string; items: { name: string; value: number }[] }) {
+  const maximum = Math.max(1, ...items.map((item) => item.value));
+  return <article className="chart-card repo-chart"><div className="chart-heading"><div><span className="chart-eyebrow">{eyebrow}</span><h3>{title}</h3></div><span className="chart-total">{items.length}</span></div><div className="repo-bars">{items.length ? items.map((item) => <div className="repo-bar-row" key={item.name}><span title={item.name}>{item.name}</span><div className="bar-track"><span className="bar-fill repo-fill" style={{ width: `${item.value / maximum * 100}%` }} /></div><strong>{item.value.toLocaleString("es-ES")}</strong></div>) : <div className="chart-empty">Sin datos disponibles.</div>}</div></article>;
 }
 
 function RepositoryEvidenceChart({ data }: { data: AnalyzerData }) {

@@ -510,6 +510,12 @@ tbody tr.selected-row { background: rgba(74, 222, 128, .06); }
 .standalone-table-card td { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .standalone-table-card td:first-child { color: #e4e4e7; font-weight: 600; }
 .analyzer-table-footer { min-height: 40px; }
+.insights-grid { align-items: stretch; }
+.insight-card { min-height: 0; }
+.insight-list { display: grid; gap: 7px; margin: 13px 0 0; padding-left: 17px; color: var(--muted); font-size: var(--text-small); line-height: 1.5; }
+.insight-list li::marker { color: var(--accent); }
+.insight-empty { margin-top: 13px; }
+.sbom-table-card { margin-top: 10px; }
 .pagination-controls { display: flex; align-items: center; gap: 8px; }
 .pagination-controls button {
   display: grid;
