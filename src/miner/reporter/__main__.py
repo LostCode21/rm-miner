@@ -17,7 +17,16 @@ MAX_BYTES = 150_000
 MAX_FILES = 500
 MAX_CANDIDATES = 100
 MAX_PROMPT_CHARS = 45_000
-ROOT_EXCLUDED = {".miner-work", "workspace", ".venv", ".git", "codeql", "results-sboms", ".reporter-output"}
+ROOT_EXCLUDED = {
+    ".miner-work",
+    "workspace",
+    ".venv",
+    ".git",
+    "codeql",
+    "results-sboms",
+    ".reporter-output",
+    "deliverables",
+}
 NESTED_EXCLUDED = {"node_modules", "__pycache__", ".venv", ".git", "rm_miner.egg-info"}
 TEXT_SUFFIXES = {".py", ".js", ".ts", ".sh", ".yml", ".yaml", ".toml", ".json", ".ini", ".cfg", ".lock"}
 SECRET_HINT = re.compile(r"(?i)(password|passwd|secret|token|api[_-]?key|private[_-]?key|authorization|credential)")
@@ -130,7 +139,7 @@ def interpret(items: list[dict]) -> list[dict]:
                 "sin demostrar su precondicion. Responde SOLO JSON: {\"findings\":[{\"id\":1,\"status\":\"confirmed|review\","
                 "\"severity\":\"high|medium|low\",\"explanation\":\"...\",\"recommendation\":\"...\"}]}. "
                 "confirmed significa configuracion o conducta insegura demostrada por la linea; review indica que faltan datos. "
-                "No repitas secretos ni agregues rutas o numeros de linea. Puedes devolver findings vacio."
+                "No repitas credenciales ni agregues rutas o numeros de linea. Puedes devolver findings vacio."
             )},
             {"role": "user", "content": prompt},
         ],
