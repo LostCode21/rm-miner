@@ -2,6 +2,30 @@
 
 CLI para analizar con CodeQL los repositorios de una organizacion de GitHub, generar sus SBOMs con Syft, detectar vulnerabilidades en las dependencias con Grype y consolidar los resultados en JSON.
 
+## Resultados y evidencias v1.0.0
+
+Los resultados finales se publican en el release
+[`evidence-v1.0.0`](https://github.com/LostCode21/rm-miner/releases/tag/evidence-v1.0.0).
+También pueden consultarse directamente en el árbol del tag:
+
+- [`deliverables/miner/`](deliverables/miner/): resultado consolidado de Miner y SBOMs CycloneDX.
+- [`deliverables/analyzer/`](deliverables/analyzer/): datasets CSV/JSON y notebooks ejecutados.
+- [`deliverables/reporter/security-report.md`](deliverables/reporter/security-report.md): auditoría del propio proyecto.
+- [`deliverables/metadata/`](deliverables/metadata/): información de ejecución, procedencia, versiones y checksums.
+- [`docs/afiche_octa_core.pdf`](docs/afiche_octa_core.pdf): afiche del proyecto.
+
+Para explorar los resultados con Visualizer, descargue y descomprima
+`analyzer-v1.0.0.zip` desde el release, inicie la aplicación y seleccione la
+carpeta extraída `analyzer/output/`:
+
+```bash
+npm --prefix visualizer ci
+npm --prefix visualizer run dev
+```
+
+La interfaz procesa los archivos localmente en el navegador y no los envía a
+un servidor.
+
 ## Ejecución recomendada: Dev Container
 
 El repositorio incluye un entorno Linux x86_64 reproducible con Python 3.12, Node.js 22, Jupyter, CodeQL, Syft y Grype. Solo se necesita:

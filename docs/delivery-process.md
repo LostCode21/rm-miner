@@ -40,6 +40,31 @@ git archive --format=zip --output=deliverables-v1.0.0.zip HEAD:deliverables
 
 Publique `deliverables-v1.0.0.zip` también como asset. El árbol del tag conserva las evidencias incluso si el asset deja de estar disponible.
 
+## 4. Consulta de resultados publicados
+
+El release
+[`evidence-v1.0.0`](https://github.com/LostCode21/rm-miner/releases/tag/evidence-v1.0.0)
+publica los resultados en paquetes separados y en un paquete completo:
+
+- `miner-v1.0.0.zip`: resultado consolidado y SBOMs CycloneDX.
+- `analyzer-v1.0.0.zip`: datasets CSV/JSON y notebooks ejecutados.
+- `reporter-v1.0.0.zip`: reporte de seguridad del proyecto.
+- `metadata-v1.0.0.zip`: información de ejecución, procedencia y checksums.
+- `deliverables-v1.0.0.zip`: conjunto completo de evidencias.
+
+En el árbol Git del tag, los mismos archivos se encuentran bajo
+`deliverables/miner/`, `deliverables/analyzer/`, `deliverables/reporter/` y
+`deliverables/metadata/`. Para comprobar una descarga, guarde también el
+archivo `SHA256SUMS` publicado con los assets y ejecute:
+
+```bash
+sha256sum --check SHA256SUMS
+```
+
+Para usar Visualizer, descomprima `analyzer-v1.0.0.zip`, inicie la aplicación
+según [`visualizer/README.md`](../visualizer/README.md) y seleccione
+`analyzer/output/` mediante **Cargar carpeta Analyzer**.
+
 ## Contenido que no debe publicarse
 
 - `.env` o tokens.
