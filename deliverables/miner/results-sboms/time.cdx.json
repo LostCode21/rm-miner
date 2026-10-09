@@ -1,0 +1,25 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.7.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.7",
+  "serialNumber": "urn:uuid:78f45a35-4b43-45ea-8cfa-f96c3869e556",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-09T05:29:25Z",
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "author": "anchore",
+          "name": "syft",
+          "version": "1.54.1"
+        }
+      ]
+    },
+    "component": {
+      "bom-ref": "59c273fc53ca4809",
+      "type": "file",
+      "name": "/workspaces/dev-container-test/.miner-work/time"
+    }
+  }
+}
