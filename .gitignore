@@ -13,6 +13,7 @@
 *.env
 /codeql/*
 .venv/
+*.egg-info/
 .pytest_cache/
 .miner-work/
 .reporter-output/
@@ -20,7 +21,8 @@ workspace/
 __pycache__/
 *.pyc
 results.json
-results-sboms/
+results-sboms
+/analyzer/output/
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
@@ -326,6 +328,11 @@ FakesAssemblies/
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
 node_modules/
+/visualizer/dist/
+/visualizer/.vite/
+/visualizer/coverage/
+/visualizer/.env.local
+/visualizer/.env.*.local
 
 # Visual Studio 6 build log
 *.plg
