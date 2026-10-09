@@ -48,8 +48,8 @@ Los formatos se detectan por columnas y estructura, no solo por nombre. Los arch
 
 La importación combinada de Analyzer vive en `src/adapters/analyzerOutputs.ts`; allí se analizan CSV con campos citados y JSON, se validan esquemas y se concilian los conteos antes de construir el modelo de la interfaz.
 
-Los totales de hallazgos y vulnerabilidades en el dashboard cuentan los registros válidos normalizados. Si difieren de los valores declarados por Miner, se muestra una advertencia. El conteo de repositorios con errores se presenta como no disponible cuando falta información suficiente para calcularlo sin asumir.
+Los totales del dashboard cuentan los registros válidos normalizados. Cuando dos salidas de Analyzer declaran valores incompatibles, la interfaz muestra una advertencia sin completar información mediante suposiciones.
 
 ## Privacidad
 
-Los archivos se procesan localmente en la pestaña. No hay llamadas de red para enviar resultados, credenciales o SBOMs ni almacenamiento persistente; al recargar o cerrar la página, los datos cargados desaparecen. El límite conjunto de carga es 25 MB.
+Los archivos se procesan localmente en la pestaña. No hay llamadas de red para enviar resultados, credenciales o SBOMs ni almacenamiento persistente; al recargar o cerrar la página, los datos cargados desaparecen. El límite conjunto de carga es 64 MB.
