@@ -27,7 +27,14 @@ def fake_git(monkeypatch, root, paths):
 
 def test_inventory_excludes_clones_and_symlinks_even_when_listed(monkeypatch, tmp_path):
     root = project(tmp_path)
-    fake_git(monkeypatch, root, ["src/miner/scanner.py", ".miner-work/foreign/unsafe.py", "outside.py"])
+    (root / "deliverables").mkdir()
+    (root / "deliverables/results.json").write_text('{"unsafe": "eval(input())"}', encoding="utf-8")
+    fake_git(monkeypatch, root, [
+        "src/miner/scanner.py",
+        ".miner-work/foreign/unsafe.py",
+        "deliverables/results.json",
+        "outside.py",
+    ])
     commit, files, omitted = reporter.inventory(root)
     assert commit == "abcdef"
     assert [name for name, _ in files] == ["src/miner/scanner.py"]

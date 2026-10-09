@@ -2,7 +2,51 @@
 
 CLI para analizar con CodeQL los repositorios de una organizacion de GitHub, generar sus SBOMs con Syft, detectar vulnerabilidades en las dependencias con Grype y consolidar los resultados en JSON.
 
-## Requisitos
+## Ejecución recomendada: Dev Container
+
+El repositorio incluye un entorno Linux x86_64 reproducible con Python 3.12, Node.js 22, Jupyter, CodeQL, Syft y Grype. Solo se necesita:
+
+- Docker.
+- Visual Studio Code con la extensión **Dev Containers**, o un cliente compatible con la especificación.
+
+En VS Code, abra el repositorio y seleccione **Dev Containers: Reopen in Container**. La primera construcción descarga las herramientas de análisis y puede tardar varios minutos. Al terminar, `.devcontainer/post-create.sh` crea `.venv`, instala el paquete, las dependencias del Analyzer y ejecuta `npm ci` para Visualizer.
+
+Compruebe el entorno con:
+
+```bash
+python --version
+node --version
+codeql version --format=terse
+syft version
+grype version
+```
+
+Para pasar secretos desde el equipo anfitrión, expórtelos **antes** de abrir el contenedor:
+
+```bash
+export GITHUB_TOKEN="..."       # opcional para repositorios públicos
+export REPORTER_API_KEY="..."  # necesario para Reporter
+export REPORTER_MODEL="..."    # modelo Chat Completions
+# export REPORTER_API_URL="https://..."  # opcional
+```
+
+No escriba estos valores en `devcontainer.json`, scripts ni archivos de resultados.
+
+### Ejecutar la entrega completa
+
+Desde el contenedor y sobre un commit limpio:
+
+```bash
+./scripts/run-delivery.sh ORGANIZACION 50
+```
+
+El script ejecuta las pruebas de Python y Visualizer, construye el frontend, corre Miner, Analyzer y Reporter, y crea `deliverables/` con resultados, notebooks ejecutados, versiones y checksums. El segundo argumento es opcional y limita Miner entre 1 y 50 repositorios.
+
+El script nunca elimina una entrega existente ni crea commits o tags. Si `deliverables/` ya existe, debe revisarlo y eliminarlo manualmente antes de repetir la ejecución. Consulte [`docs/delivery-process.md`](docs/delivery-process.md) para publicar los releases de código y evidencias.
+
+Para generar el reporte y registrar el commit, Git debe poder leer los metadatos del checkout. En un clon normal esto no requiere configuración adicional. Si se abre un *worktree* enlazado cuyo directorio Git común está fuera de la carpeta montada, use el clon principal para ejecutar `run-delivery.sh` o monte también esos metadatos.
+
+## Instalación sin Dev Container
 
 - Linux, Python 3.10 o posterior, Git, CodeQL CLI, [Syft](https://github.com/anchore/syft) y [Grype](https://github.com/anchore/grype) disponibles en `PATH`.
 - Un token de GitHub en `GITHUB_TOKEN` para organizaciones privadas o para evitar limites bajos de la API. El token se usa solo para la API; Git debe tener configuradas sus propias credenciales HTTPS para clonar repositorios privados.
@@ -29,7 +73,7 @@ grype version
 
 Grype analiza el SBOM CycloneDX generado por Syft, por lo que no vuelve a inspeccionar el codigo fuente. Si el comando `grype` no esta disponible, el SBOM se conserva y el repositorio queda registrado con un error de Grype sin interrumpir el resto del procesamiento.
 
-## Configuracion e instalacion
+### Configuracion e instalacion
 
 ```bash
 cp .env.example .env
@@ -129,9 +173,15 @@ python -m pytest
 
 El frontend independiente está en [`visualizer/`](visualizer/). Para ejecutarlo, consulta su [guía de instalación y uso](visualizer/README.md). La aplicación carga exclusivamente las salidas CSV/JSON generadas bajo `analyzer/output/`, las combina y las procesa en el navegador sin enviarlas a un servidor.
 
+Dentro del Dev Container, Vite queda disponible en el puerto reenviado `5173`:
+
+```bash
+npm --prefix visualizer run dev -- --host 0.0.0.0
+```
+
 ## Analyzer (notebooks)
 
-Tras `miner scan`, los notebooks en `analyzer/notebooks/` consolidan `results.json` y los SBOMs en tablas y graficos bajo `analyzer/output/`. El script `analyzer/run_analyzer.sh` instala las dependencias del analyzer (`analyzer/requirements.txt`) si faltan y ejecuta ambos notebooks de forma headless:
+Tras `miner scan`, los notebooks en `analyzer/notebooks/` consolidan `results.json` y los SBOMs en tablas y graficos bajo `analyzer/output/`. El script `analyzer/run_analyzer.sh` instala las dependencias del analyzer (`analyzer/requirements.txt`) si faltan y ejecuta copias de ambos notebooks de forma headless, sin modificar los archivos fuente:
 
 ```bash
 miner scan --organization example-org --output results.json
@@ -143,12 +193,13 @@ Variables de entorno opcionales (los defaults asumen la estructura estandar del 
 - `ANALYZER_RESULTS_JSON`: ruta a `results.json` (default `../../results.json` relativo a `analyzer/notebooks/`).
 - `ANALYZER_SBOM_DIR`: carpeta con los `*.cdx.json` (default `../../results-sboms`).
 - `ANALYZER_OUTPUT_DIR`: carpeta de salida (default `../output`, es decir `analyzer/output/`).
+- `ANALYZER_EXECUTED_NOTEBOOK_DIR`: carpeta para las copias ejecutadas (default `analyzer/output/executed-notebooks/`).
 
 No requiere el paquete `rm-miner` ni `GITHUB_TOKEN`; solo los archivos generados por el miner.
 
 ## Reporter: auditoría del propio proyecto
 
-Reporter es independiente de `miner scan` y `miner sbom`: no usa sus resultados, no clona repositorios ni requiere paquetes Python adicionales. Analiza exclusivamente archivos versionados en la raíz Git indicada de **rm-miner**, nunca los repositorios descargados en `.miner-work/`, `workspace/` u otros directorios sin seguimiento. Rechaza ejecutar desde un clon anidado o un proyecto distinto. Los enlaces simbólicos no se leen.
+Reporter es independiente de `miner scan` y `miner sbom`: no usa sus resultados, no clona repositorios ni requiere paquetes Python adicionales. Analiza exclusivamente archivos versionados en la raíz Git indicada de **rm-miner**, nunca los repositorios descargados en `.miner-work/`, `workspace/`, `deliverables/` u otros directorios de resultados. Rechaza ejecutar desde un clon anidado o un proyecto distinto. Los enlaces simbólicos no se leen.
 
 Configure `REPORTER_API_KEY` y `REPORTER_MODEL` para una API compatible con Chat Completions; opcionalmente, `REPORTER_API_URL` (HTTPS; por defecto `https://api.openai.com/v1/chat/completions`). No se carga `.env` ni se usa `GITHUB_TOKEN`.
 
@@ -159,3 +210,8 @@ PYTHONPATH=src python -m miner.reporter --repository . --output .reporter-output
 El comando siempre intenta guardar un Markdown con commit, alcance, evidencias y recomendaciones. Devuelve código 1 si falta el modelo, falla su respuesta o la cobertura es incompleta; en ese caso el archivo indica que la auditoría no concluyó. No se transmiten archivos completos al proveedor: solo líneas candidatas filtradas, sin líneas que parezcan contener credenciales, y con literales de código ocultos. **Evite auditar código confidencial con un proveedor externo sin autorización.** La detección es heurística: se centra en algunos patrones de ejecución dinámica, TLS, configuraciones, dependencias declaradas y workflows. No comprueba CVE ni garantiza una revisión exhaustiva de dependencias o configuraciones. Los resultados del modelo se presentan como asuntos que requieren revisión, no como vulnerabilidades confirmadas.
 
 El workflow `.github/workflows/reporter-security.yml` ejecuta la auditoría semanalmente o bajo demanda sobre el propio checkout. Guarde el secreto `REPORTER_API_KEY` y la variable `REPORTER_MODEL` en el repositorio; `REPORTER_API_URL` es opcional. El reporte queda disponible durante 30 días como artifact `rm-miner-security-report`, incluso si el modelo falla tras iniciar la auditoría. El workflow no publica issues ni modifica archivos versionados.
+
+## Diseño y entrega
+
+- [`docs/design-decisions.md`](docs/design-decisions.md) resume las principales decisiones de arquitectura, privacidad y reproducibilidad.
+- [`docs/delivery-process.md`](docs/delivery-process.md) describe la creación del release limpio `v1.0.0` y del release `evidence-v1.0.0` con resultados versionados.

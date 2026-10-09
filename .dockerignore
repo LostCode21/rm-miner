@@ -1,0 +1,14 @@
+.git
+.env
+.venv
+.pytest_cache
+.miner-work
+.reporter-output
+deliverables
+results.json
+results-sboms
+analyzer/output
+visualizer/node_modules
+visualizer/dist
+**/__pycache__
+**/*.pyc
