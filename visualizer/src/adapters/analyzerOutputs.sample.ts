@@ -40,4 +40,47 @@ export const sampleAnalyzerFiles: AnalyzerSourceFile[] = [
     name: "grype_severity_summary.json",
     content: JSON.stringify([{ severity: "High", cantidad: 1, porcentaje: 100 }]),
   },
+  {
+    name: "sbom_metadata.csv",
+    content: "repository,bom_format,spec_version,serial_number,timestamp,syft_version,raw_components,dependency_nodes\napi,CycloneDX,1.6,urn:api,2026-01-01,Syft 1.0,3,2\nweb,CycloneDX,1.6,urn:web,2026-01-01,Syft 1.0,0,0\n",
+  },
+  {
+    name: "sbom_components.csv",
+    content: "repository,component_type,name,version,purl,ecosystem,cpe,licenses,found_by,language,package_type,metadata_type,location,bom_ref,component_identity\napi,library,react,18.0.0,pkg:npm/react@18.0.0,npm,cpe:react,MIT,cataloger,javascript,npm,lock,/package-lock.json,react-ref,pkg:npm/react@18.0.0\n",
+  },
+  {
+    name: "sbom_repository_summary.csv",
+    content: "repository,unique_components,unique_component_names,npm_components,github_action_components,unknown_versions,with_purl,with_cpe,with_license,raw_component_occurrences,purl_percentage,cpe_percentage,license_percentage,dependency_edges,dependency_sources,dependency_targets\napi,2,2,1,1,0,2,1,1,3,100,50,50,2,1,2\nweb,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0\n",
+  },
+  {
+    name: "sbom_repository_summary.json",
+    content: JSON.stringify([
+      { repository: "api", unique_components: 2, unique_component_names: 2, npm_components: 1, github_action_components: 1, unknown_versions: 0, with_purl: 2, with_cpe: 1, with_license: 1, raw_component_occurrences: 3, purl_percentage: 100, cpe_percentage: 50, license_percentage: 50, dependency_edges: 2, dependency_sources: 1, dependency_targets: 2 },
+      { repository: "web", unique_components: 0, unique_component_names: 0, npm_components: 0, github_action_components: 0, unknown_versions: 0, with_purl: 0, with_cpe: 0, with_license: 0, raw_component_occurrences: 0, purl_percentage: 0, cpe_percentage: 0, license_percentage: 0, dependency_edges: 0, dependency_sources: 0, dependency_targets: 0 },
+    ]),
+  },
+  {
+    name: "sbom_shared_packages.csv",
+    content: "name,repositories,distinct_versions,occurrences,repository_percentage\nreact,1,1,1,50\n",
+  },
+  {
+    name: "sbom_shared_packages.json",
+    content: JSON.stringify([{ name: "react", repositories: 1, distinct_versions: 1, occurrences: 1, repository_percentage: 50 }]),
+  },
+  {
+    name: "sbom_version_diversity.csv",
+    content: "name,distinct_versions,repositories\ntypescript,2,1\n",
+  },
+  {
+    name: "sbom_unknown_versions.csv",
+    content: "repository,component_type,name,version,purl,ecosystem,cpe,licenses,found_by,language,package_type,metadata_type,location,bom_ref,component_identity\n",
+  },
+  {
+    name: "sbom_dependency_edges.csv",
+    content: "repository,source_ref,target_ref\napi,app,react-ref\napi,app,action-ref\n",
+  },
+  {
+    name: "sbom_component_concentration.csv",
+    content: "repository,unique_components,percentage,cumulative_percentage\napi,2,100,100\nweb,0,0,100\n",
+  },
 ];

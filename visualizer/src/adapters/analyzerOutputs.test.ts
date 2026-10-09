@@ -18,6 +18,8 @@ describe("importación de salidas de Analyzer", () => {
       severity: "medium",
     });
     expect(result.findings[1]).toMatchObject({ tool: "grype", severityWeight: 3, severity: "high" });
+    expect(result.sbom).toMatchObject({ sbomCount: 2, uniqueComponents: 2, rawComponentOccurrences: 3, dependencyEdges: 2 });
+    expect(result.sbom?.sharedPackages[0]).toMatchObject({ name: "react", repositories: 1 });
   });
 
   it("analiza campos CSV con comas, comillas y saltos de línea", () => {
@@ -37,6 +39,11 @@ describe("importación de salidas de Analyzer", () => {
       .toThrow(AnalyzerDataError);
   });
 
+  it("rechaza resultados de Miner y SBOM CycloneDX originales", () => {
+    expect(() => importAnalyzerFiles([{ name: "results.json", content: "{}" }])).toThrow(/analyzer\/output/i);
+    expect(() => importAnalyzerFiles([{ name: "api.cdx.json", content: "{}" }])).toThrow(/analyzer\/output/i);
+  });
+
   it("prioriza el resumen JSON y advierte si difiere del CSV", () => {
     const files = sampleAnalyzerFiles.map((file) => file.name === "repository_integrated_summary.csv"
       ? { ...file, content: file.content.replace("TanStack/api,1,0,1", "TanStack/api,9,0,9") }
@@ -44,5 +51,11 @@ describe("importación de salidas de Analyzer", () => {
     const result = importAnalyzerFiles(files);
     expect(result.repositories[0].codeqlFindings).toBe(1);
     expect(result.warnings.join(" ")).toMatch(/no coinciden/);
+  });
+
+  it("ignora de forma explícita archivos duplicados", () => {
+    const result = importAnalyzerFiles([...sampleAnalyzerFiles, sampleAnalyzerFiles[0]]);
+    expect(result.findings).toHaveLength(2);
+    expect(result.warnings.join(" ")).toMatch(/ya se había cargado/);
   });
 });

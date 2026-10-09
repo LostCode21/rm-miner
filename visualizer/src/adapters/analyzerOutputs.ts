@@ -5,6 +5,10 @@ import type {
   AnalyzerRepositoryPriority,
   AnalyzerRepositorySummary,
   AnalyzerSeveritySummary,
+  AnalyzerSbomRepositorySummary,
+  AnalyzerSbomSummary,
+  AnalyzerSharedPackage,
+  AnalyzerVersionDiversity,
 } from "../domain/analyzer";
 import type { SeverityCategory } from "../domain/scan";
 
@@ -27,7 +31,7 @@ const findingFields = [
   "package", "version", "fixed_version", "artifact_type", "language", "message",
 ] as const;
 
-const expectedFiles = [
+export const expectedAnalyzerFiles = [
   "integrated_findings.csv",
   "codeql_findings.csv",
   "grype_findings.csv",
@@ -36,6 +40,16 @@ const expectedFiles = [
   "grype_repository_priority.csv",
   "grype_concentration.csv",
   "grype_severity_summary.json",
+  "sbom_metadata.csv",
+  "sbom_components.csv",
+  "sbom_repository_summary.csv",
+  "sbom_repository_summary.json",
+  "sbom_shared_packages.csv",
+  "sbom_shared_packages.json",
+  "sbom_version_diversity.csv",
+  "sbom_unknown_versions.csv",
+  "sbom_dependency_edges.csv",
+  "sbom_component_concentration.csv",
 ] as const;
 
 function isObject(value: unknown): value is SourceRow {
@@ -261,6 +275,97 @@ function normalizeSeveritySummary(rows: SourceRow[]): AnalyzerSeveritySummary[] 
   }));
 }
 
+function normalizeSbomRepositories(rows: SourceRow[]): AnalyzerSbomRepositorySummary[] {
+  return rows.map((row, index) => ({
+    repository: text(row, "repository", index),
+    uniqueComponents: number(row, "unique_components", index),
+    uniqueComponentNames: number(row, "unique_component_names", index),
+    npmComponents: number(row, "npm_components", index),
+    githubActionComponents: number(row, "github_action_components", index),
+    unknownVersions: number(row, "unknown_versions", index),
+    withPurl: number(row, "with_purl", index),
+    withCpe: number(row, "with_cpe", index),
+    withLicense: number(row, "with_license", index),
+    rawComponentOccurrences: number(row, "raw_component_occurrences", index),
+    purlPercentage: number(row, "purl_percentage", index),
+    cpePercentage: number(row, "cpe_percentage", index),
+    licensePercentage: number(row, "license_percentage", index),
+    dependencyEdges: optionalNumber(row, "dependency_edges") ?? 0,
+    dependencySources: optionalNumber(row, "dependency_sources") ?? 0,
+    dependencyTargets: optionalNumber(row, "dependency_targets") ?? 0,
+  }));
+}
+
+function normalizeSharedPackages(rows: SourceRow[]): AnalyzerSharedPackage[] {
+  return rows.map((row, index) => ({
+    name: text(row, "name", index),
+    repositories: number(row, "repositories", index),
+    distinctVersions: number(row, "distinct_versions", index),
+    occurrences: number(row, "occurrences", index),
+    repositoryPercentage: number(row, "repository_percentage", index),
+  }));
+}
+
+function normalizeVersionDiversity(rows: SourceRow[]): AnalyzerVersionDiversity[] {
+  return rows.map((row, index) => ({
+    name: text(row, "name", index),
+    distinctVersions: number(row, "distinct_versions", index),
+    repositories: number(row, "repositories", index),
+  }));
+}
+
+function sbomSummariesMatch(left: AnalyzerSbomRepositorySummary[], right: AnalyzerSbomRepositorySummary[]): boolean {
+  const sort = (items: AnalyzerSbomRepositorySummary[]) => [...items].sort((a, b) => a.repository.localeCompare(b.repository));
+  return JSON.stringify(sort(left)) === JSON.stringify(sort(right));
+}
+
+function buildSbomSummary(
+  repositories: AnalyzerSbomRepositorySummary[],
+  sharedPackages: AnalyzerSharedPackage[],
+  versionDiversity: AnalyzerVersionDiversity[],
+  metadataRows: SourceRow[],
+  componentRows: SourceRow[],
+  dependencyRows: SourceRow[],
+): AnalyzerSbomSummary | null {
+  if (!repositories.length && !metadataRows.length && !componentRows.length) return null;
+  const orderedRepositories = [...repositories].sort((left, right) => right.uniqueComponents - left.uniqueComponents || left.repository.localeCompare(right.repository));
+  const orderedSharedPackages = [...sharedPackages].sort((left, right) => right.repositories - left.repositories || right.occurrences - left.occurrences || left.name.localeCompare(right.name));
+  const orderedVersionDiversity = [...versionDiversity].sort((left, right) => right.distinctVersions - left.distinctVersions || right.repositories - left.repositories || left.name.localeCompare(right.name));
+  const uniqueComponents = repositories.length
+    ? repositories.reduce((sum, item) => sum + item.uniqueComponents, 0)
+    : componentRows.length;
+  const rawComponentOccurrences = repositories.reduce((sum, item) => sum + item.rawComponentOccurrences, 0) || uniqueComponents;
+  const sum = (field: "npmComponents" | "githubActionComponents" | "unknownVersions" | "withPurl" | "withCpe" | "withLicense" | "dependencyEdges") =>
+    repositories.reduce((total, item) => total + item[field], 0);
+  const percentage = (value: number) => uniqueComponents ? value / uniqueComponents * 100 : 0;
+  const componentCounts = orderedRepositories.map((item) => item.uniqueComponents);
+  const topThreeComponentShare = uniqueComponents
+    ? componentCounts.slice(0, 3).reduce((total, value) => total + value, 0) / uniqueComponents * 100
+    : 0;
+  const emptySboms = metadataRows.length
+    ? metadataRows.filter((row) => (optionalNumber(row, "raw_components") ?? 0) === 0).length
+    : repositories.filter((item) => item.uniqueComponents === 0).length;
+
+  return {
+    sbomCount: metadataRows.length || repositories.length,
+    rawComponentOccurrences,
+    uniqueComponents,
+    duplicateOccurrences: Math.max(0, rawComponentOccurrences - uniqueComponents),
+    npmComponents: sum("npmComponents") || componentRows.filter((row) => optionalText(row, "package_type") === "npm").length,
+    githubActionComponents: sum("githubActionComponents") || componentRows.filter((row) => ["github-action", "github-action-workflow"].includes(optionalText(row, "package_type") ?? "")).length,
+    unknownVersions: sum("unknownVersions"),
+    emptySboms,
+    purlPercentage: percentage(sum("withPurl")),
+    cpePercentage: percentage(sum("withCpe")),
+    licensePercentage: percentage(sum("withLicense")),
+    dependencyEdges: sum("dependencyEdges") || dependencyRows.length,
+    topThreeComponentShare,
+    repositories: orderedRepositories,
+    sharedPackages: orderedSharedPackages,
+    versionDiversity: orderedVersionDiversity,
+  };
+}
+
 function summariesMatch(left: AnalyzerRepositorySummary[], right: AnalyzerRepositorySummary[]): boolean {
   const sort = (items: AnalyzerRepositorySummary[]) => [...items].sort((a, b) => a.repository.localeCompare(b.repository));
   return JSON.stringify(sort(left)) === JSON.stringify(sort(right));
@@ -313,19 +418,70 @@ export function importAnalyzerFiles(files: readonly AnalyzerSourceFile[]): Analy
   let priorityRows: SourceRow[] = [];
   let concentrationRows: SourceRow[] = [];
   let severityRows: SourceRow[] = [];
+  let sbomMetadataRows: SourceRow[] = [];
+  let sbomComponentRows: SourceRow[] = [];
+  let sbomRepositoryCsvRows: SourceRow[] = [];
+  let sbomRepositoryJsonRows: SourceRow[] = [];
+  let sbomSharedCsvRows: SourceRow[] = [];
+  let sbomSharedJsonRows: SourceRow[] = [];
+  let sbomVersionRows: SourceRow[] = [];
+  let sbomUnknownVersionRows: SourceRow[] = [];
+  let sbomDependencyRows: SourceRow[] = [];
   const recognized = new Set<string>();
+  const seenNames = new Set<string>();
   const warnings: string[] = [];
 
   for (const file of files) {
     const lowerName = file.name.toLowerCase();
+    if (seenNames.has(lowerName)) {
+      warnings.push(`Se ignoró ${file.name}: ya se había cargado un archivo con ese nombre.`);
+      continue;
+    }
+    seenNames.add(lowerName);
+    if (lowerName === "results.json" || lowerName.endsWith(".cdx.json")) {
+      throw new AnalyzerDataError(`${file.name} no es una salida tabular de Analyzer. Selecciona la carpeta analyzer/output.`);
+    }
     const rows = lowerName.endsWith(".csv") ? parseCsv(file.content, file.name) : lowerName.endsWith(".json") ? parseJson(file.content, file.name) : null;
     if (!rows) {
       warnings.push(`Se ignoró ${file.name}: no es CSV ni JSON.`);
       continue;
     }
     const first = rows[0];
+    if (!first && (expectedAnalyzerFiles as readonly string[]).includes(lowerName)) {
+      recognized.add(lowerName);
+      continue;
+    }
     if (!first) {
       warnings.push(`Se ignoró ${file.name}: no contiene filas.`);
+    } else if (lowerName === "sbom_metadata.csv") {
+      sbomMetadataRows = rows;
+      recognized.add(lowerName);
+    } else if (lowerName === "sbom_components.csv") {
+      sbomComponentRows = rows;
+      recognized.add(lowerName);
+    } else if (lowerName === "sbom_repository_summary.csv") {
+      sbomRepositoryCsvRows = rows;
+      recognized.add(lowerName);
+    } else if (lowerName === "sbom_repository_summary.json") {
+      sbomRepositoryJsonRows = rows;
+      recognized.add(lowerName);
+    } else if (lowerName === "sbom_shared_packages.csv") {
+      sbomSharedCsvRows = rows;
+      recognized.add(lowerName);
+    } else if (lowerName === "sbom_shared_packages.json") {
+      sbomSharedJsonRows = rows;
+      recognized.add(lowerName);
+    } else if (lowerName === "sbom_version_diversity.csv") {
+      sbomVersionRows = rows;
+      recognized.add(lowerName);
+    } else if (lowerName === "sbom_unknown_versions.csv") {
+      sbomUnknownVersionRows = rows;
+      recognized.add(lowerName);
+    } else if (lowerName === "sbom_dependency_edges.csv") {
+      sbomDependencyRows = rows;
+      recognized.add(lowerName);
+    } else if (lowerName === "sbom_component_concentration.csv") {
+      recognized.add(lowerName);
     } else if (hasFields(first, [...findingFields, "is_test"])) {
       codeqlRows = nonEmptyRows(rows, file.name);
       recognized.add("codeql_findings.csv");
@@ -371,7 +527,22 @@ export function importAnalyzerFiles(files: readonly AnalyzerSourceFile[]): Analy
   const concentration = concentrationRows.length ? normalizeConcentration(concentrationRows) : [];
   const severitySummary = severityRows.length ? normalizeSeveritySummary(severityRows) : deriveSeverity(findings);
 
-  const missing = expectedFiles.filter((name) => !recognized.has(name));
+  const csvSbomRepositories = sbomRepositoryCsvRows.length ? normalizeSbomRepositories(sbomRepositoryCsvRows) : [];
+  const jsonSbomRepositories = sbomRepositoryJsonRows.length ? normalizeSbomRepositories(sbomRepositoryJsonRows) : [];
+  if (csvSbomRepositories.length && jsonSbomRepositories.length && !sbomSummariesMatch(csvSbomRepositories, jsonSbomRepositories)) {
+    warnings.push("Los resúmenes SBOM CSV y JSON no coinciden; se utilizó el JSON.");
+  }
+  const sbomRepositories = jsonSbomRepositories.length ? jsonSbomRepositories : csvSbomRepositories;
+  const csvSharedPackages = sbomSharedCsvRows.length ? normalizeSharedPackages(sbomSharedCsvRows) : [];
+  const jsonSharedPackages = sbomSharedJsonRows.length ? normalizeSharedPackages(sbomSharedJsonRows) : [];
+  const sharedPackages = jsonSharedPackages.length ? jsonSharedPackages : csvSharedPackages;
+  const versionDiversity = sbomVersionRows.length ? normalizeVersionDiversity(sbomVersionRows) : [];
+  const sbom = buildSbomSummary(sbomRepositories, sharedPackages, versionDiversity, sbomMetadataRows, sbomComponentRows, sbomDependencyRows);
+  if (sbom && sbomUnknownVersionRows.length && sbomUnknownVersionRows.length !== sbom.unknownVersions) {
+    warnings.push(`El detalle contiene ${sbomUnknownVersionRows.length} componentes sin versión y el resumen reporta ${sbom.unknownVersions}.`);
+  }
+
+  const missing = expectedAnalyzerFiles.filter((name) => !recognized.has(name));
   if (missing.length) warnings.push(`Faltan salidas de Analyzer: ${missing.join(", ")}. Se muestran los datos disponibles.`);
   if (!integratedRows.length && findings.length) warnings.push("No se incluyó integrated_findings.csv; los hallazgos se reconstruyeron desde los archivos por herramienta.");
 
@@ -404,6 +575,7 @@ export function importAnalyzerFiles(files: readonly AnalyzerSourceFile[]): Analy
     priorities,
     concentration,
     severitySummary,
+    sbom,
     warnings,
   };
 }
